@@ -1,0 +1,15 @@
+//Напишете програма, която преобразува дадено число от десетична в двоична бройна система.
+import java.util.Scanner;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Въведете име:");
+		String name = scan.nextLine();
+		System.out.print("Въведете години:");
+		int age = scan.nextInt();
+		System.out.print("Въведете средна оценка:");
+		double grade = scan.nextDouble();
+		System.out.printf("Име: %s, години: %d, средна оценка %.2f",name, age, grade);
+	}	
+}
