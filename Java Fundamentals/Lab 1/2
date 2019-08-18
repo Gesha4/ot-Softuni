@@ -5,7 +5,7 @@ public class lqlq {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		System.out.print("Въведете име:");
+		System.out.print("Въведете оценка:");
 		double grade = scan.nextDouble();
 		if (grade>=3.00) {
 			System.out.print("Passed!");
