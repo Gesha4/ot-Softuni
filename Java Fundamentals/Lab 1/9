@@ -1,0 +1,20 @@
+//Write a program that prints the next n odd numbers (starting from 1) and on the
+//last row prints the sum of them.
+
+import java.util.Scanner;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Въведете брой нечетни:");
+		int n = scan.nextInt();
+		int num = 1;
+		int sum = 0;
+		for (int i=1; i<=n; i++) {
+			sum= sum + num;
+			System.out.println(num);
+			num = num + 2;
+		}
+		System.out.print("Sum:"+sum);
+	}	
+}
