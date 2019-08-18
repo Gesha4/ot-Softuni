@@ -1,0 +1,20 @@
+//Take as an input an even number and print its absolute value. If the number is odd, 
+//print "Please write an even number." and continue reading numbers.
+
+import java.util.Scanner;
+import java.lang.Math;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		boolean a = true;
+		while(a) {
+		System.out.print("Въведете четно число:");
+		int n = scan.nextInt();
+		if (n%2==0) {
+			System.out.println("Числото е:"+Math.abs(n));
+			a = false;
+		}
+		}
+	}	
+}
