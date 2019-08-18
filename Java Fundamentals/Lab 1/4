@@ -1,0 +1,25 @@
+//Every time Stamat tries to pay his bills he sees on the cash desk the sign: 
+//"I will be back in 30 minutes". One day Stamat was sick of waiting and 
+//decided he needs a program, which prints the time after 30 minutes. That way he
+//won’t have to wait on the desk and come at the appropriate time. He gave the assignment
+//to you, so you have to do it.
+import java.util.Scanner;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Въведете час:");
+		int h = scan.nextInt();
+		System.out.print("Въведете минути:");
+		int m = scan.nextInt();
+		m=m+30;
+		if (m>=60) {
+			m=m-60;
+			h=h+1;
+		}
+		if (h>=24) {
+			h=h-24;
+		}
+		System.out.printf("%d:%02d",h,m);
+	}	
+}
