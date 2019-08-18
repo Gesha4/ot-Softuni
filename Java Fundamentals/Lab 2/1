@@ -1,0 +1,27 @@
+//Write a program that determines whether based on the given age a person is: baby, 
+//child, teenager, adult, elder.
+
+import java.util.Scanner;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Въведете число:");
+		int n = scan.nextInt();
+		if (n>=0 && n<=2) {
+			System.out.print("baby");
+		}
+		else if (n>=3 && n<=13) {
+			System.out.print("child");
+		}
+		else if (n>=14 && n<=19) {
+			System.out.print("teenager");
+		}
+		else if (n>=20 && n<=65) {
+			System.out.print("adult");
+		}
+		else if (n>=65) {
+			System.out.print("elder");
+		}
+	}	
+}
