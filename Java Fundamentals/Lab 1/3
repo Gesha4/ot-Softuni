@@ -1,0 +1,18 @@
+//Write a program, which takes as an input a grade and prints "Passed!";
+//if the grade is equal or more than 3.00.
+//Modify the above program, so it will print "Failed!"; if the grade is lower than 3.00.
+import java.util.Scanner;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Въведете име:");
+		double grade = scan.nextDouble();
+		if (grade>=3.00) {
+			System.out.print("Passed!");
+		}
+		else {
+			System.out.print("Failed!");
+		}
+	}	
+}
