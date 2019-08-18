@@ -1,4 +1,6 @@
-//Напишете програма, която преобразува дадено число от десетична в двоична бройна система.
+//You will be given 3 lines of input – student name, age and average grade. Your task is to print all the info about the
+//student in the following format: "Name: {student name}, Age: {student age}, Grade: {student
+//grade}".
 import java.util.Scanner;
 public class lqlq {
 
