@@ -1,0 +1,23 @@
+//Rewrite you program so it can receive the multiplier from the console. Print the table 
+//from the given multiplier to 10. If the given multiplier is more than 10 - 
+//print only one row with the integer, the given multiplier and the product.
+
+import java.util.Scanner;
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Въведете число:");
+		int n = scan.nextInt();
+		System.out.print("Въведете число:");
+		int k = scan.nextInt();
+		if (k<=10) {
+		for (int i =k; i<=10; i++) {
+			System.out.println(n+" x "+i+" = "+n*i);
+		}
+		}
+		else {
+			System.out.println(n+" x "+k+" = "+n*k);
+		}
+	}	
+}
