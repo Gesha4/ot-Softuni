@@ -10,54 +10,48 @@
 //the total price by 5%
 
 import java.util.Scanner;
+
 public class lqlq {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		System.out.print("Въведете брой хора:");
 		int num = scan.nextInt();
+		scan.nextLine();
 		System.out.println("Въведете тип хора:");
 		String type = scan.nextLine();
 		System.out.print("Въведете ден от седмицата:");
 		String day = scan.nextLine();
-		double price=0;
-		if (type=="Student" && day=="Friday") {
-			price=8.45;
-		}
-		else if (type=="Student" && day=="Saturday") {
-			price=9.80;
-		}
-		else if (type=="Student" && day=="Sunday") {
-			price=10.46;
-		}
-		else if (type=="Business" && day=="Friday") {
-			price=10.90;
-		}
-		else if (type== "Business" && day=="Saturday") {
-			price=15.60;
-		}
-		else if (type== "Business" && day=="Sunday") {
-			price=16;
-		}
-		else if (type=="Regular" && day=="Friday") {
+		double price = 0;
+		if (type.equals("Student") && day.equals("Friday")) {
+			price = 8.45;
+		} else if (type.equals("Student") && day.equals("Saturday")) {
+			price = 9.80;
+		} else if (type.equals("Student") && day.equals("Sunday")) {
+			price = 10.46;
+		} else if (type.equals("Business") && day.equals("Friday")) {
+			price = 10.90;
+		} else if (type.equals("Business") && day.equals("Saturday")) {
+			price = 15.60;
+		} else if (type.equals("Business") && day.equals("Sunday")) {
+			price = 16;
+		} else if (type.equals("Regular") && day.equals("Friday")) {
 			price = 15;
-		}
-		else if (type=="Regular" && day=="Saturday") {
+		} else if (type.equals("Regular") && day.equals("Saturday")) {
 			price = 20;
-		}
-		else if (type=="Regular" && day=="Sunday") {
+		} else if (type.equals("Regular") && day.equals("Sunday")) {
 			price = 22.50;
 		}
-		double total=num*price;
-		if (type=="Student" && num>=30) {
-			total=total-total*0.15;
+		double total = num * price;
+		if (type.equals("Student") && num >= 30) {
+			total = total - total * 0.15;
 		}
-		if (type=="Business" && num>=100) {
-			total=total-10*price;
+		if (type.equals("Business") && num >= 100) {
+			total = total - 10 * price;
 		}
-		if (type=="Regular" && num>=10 && num<=20) {
-			total=total-total*0.05;
+		if (type.equals("Regular") && num >= 10 && num <= 20) {
+			total = total - total * 0.05;
 		}
-		System.out.print("Total price:"+total);
-	}	
+		System.out.print("Total price:" + total);
+	}
 }
