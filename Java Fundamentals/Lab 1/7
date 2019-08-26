@@ -3,6 +3,7 @@
 //You can see the prices in the table below:
 
 import java.util.Scanner;
+
 public class lqlq {
 
 	public static void main(String[] args) {
@@ -11,35 +12,32 @@ public class lqlq {
 		String day = scan.nextLine().toLowerCase();
 		System.out.print("Въведете години:");
 		int age = scan.nextInt();
-		if (day=="weekday") {
-			if ((age>=0 && age<=18) || (age>64 && age<=122)) {
-				System.out.print("12$");
+		if (age >= 0) {
+			if (day.equals("weekeday")) {
+				if ((age >= 0 && age <= 18) || (age > 64 && age <= 122)) {
+					System.out.print("12$");
+				} else if (age > 18 && age <= 64) {
+					System.out.print("18$");
+				}
+			} else if (day.equals("weekend")) {
+				if ((age >= 0 && age <= 18) || (age > 64 && age <= 122)) {
+					System.out.print("15$");
+				} else if (age > 18 && age <= 64) {
+					System.out.print("20$");
+				}
+			} else if (day.equals("holiday")) {
+				if (age > 0 && age <= 18) {
+					System.out.print("5$");
+				} else if (age > 18 && age <= 64) {
+					System.out.print("12$");
+				} else if (age > 64 && age <= 122) {
+					System.out.print("10$");
+				} 
+			} else {
+				System.out.print("Error!");
 			}
-			else if (age>18 && age<=64) {
-				System.out.print("18$");
-			}
-		}
-		else if (day=="weekend") {
-			if ((age>=0 && age<=18) || (age>64 && age<=122)) {
-				System.out.print("15$");
-			}
-			else if (age>18 && age<=64) {
-				System.out.print("20$");
-			}
-		}
-		else if (day=="holiday") {
-			if (age>0 && age<=18) {
-				System.out.print("5$");
-			}
-			else if (age>18 && age<=64) {
-				System.out.print("12$");
-			}
-			else if (age>64 && age<=122) {
-				System.out.print("10$");
-			}
-		}
-		else {
+		} else {
 			System.out.print("Error!");
 		}
-	}	
+	}
 }
