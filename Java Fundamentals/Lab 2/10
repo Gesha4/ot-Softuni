@@ -1,0 +1,27 @@
+//As a MOBA challenger player, Pesho has the bad habit to trash his PC when he loses a game 
+//and rage quits. His gaming setup consists of headset, mouse, keyboard and display. You will
+//receive Pesho`s lost games count. Every second lost game, Pesho trashes his headset. Every 
+//third lost game, Pesho trashes his mouse. When Pesho trashes both his mouse and headset in 
+//the same lost game, he also trashes his keyboard. Every second time, when he trashes his 
+//keyboard, he also trashes his display. You will receive the price of each item in his 
+//gaming setup. Calculate his rage expenses for renewing his gaming equipment.
+
+import java.util.Scanner;
+
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int games = scan.nextInt();
+		float p_headset = scan.nextFloat();
+		float p_mouse = scan.nextFloat();
+		float p_keyboard = scan.nextFloat();
+		float p_disp = scan.nextFloat();
+		int n_headset = games / 2;
+		int n_mouse = games / 3;
+		int n_keyboard = games / 6;
+		int n_disp = games / 12;
+		float price = n_headset * p_headset + n_mouse * p_mouse + n_keyboard * p_keyboard + n_disp * p_disp;
+		System.out.printf("Rage expenses: %.2f lv.", price);
+	}
+}
