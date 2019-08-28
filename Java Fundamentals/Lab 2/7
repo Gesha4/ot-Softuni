@@ -1,0 +1,61 @@
+//You task is to calculate the total price of a purchase from a vending machine. Until you 
+//receive "Start" you will be given different coins that are being inserted in the machine.
+//You have to sum them in order to have the total money inserted. There is a problem though.
+//Your vending machine only works with 0.1, 0.2, 0.5, 1, and 2 coins. If someone tries to 
+//insert some other coins you have to display "Cannot accept {money}", where the value is 
+//formated to the second digit after the decimal point and not add it to the total money. 
+//On the next few lines until you receive "End" you will be given products to purchase. 
+//Your machine has however only "Nuts", "Water", "Crisps", "Soda", "Coke". The prices are:
+//2.0, 0.7, 1.5, 0.8, 1.0 respectively. If the person tries to purchase a not existing product
+//print “Invalid product”. Be careful that the person may try to purchase a product for 
+//which he doesn`t have money. In that case print "Sorry, not enough money". If the person
+//purchases a product successfully print "Purchased {product name}". After the “End” command 
+//print the money that are left formatted to the second decimal point in the format 
+//"Change: {money left}".
+import java.util.Scanner;
+
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		double sum = 0;
+		double in = scan.nextDouble();
+		scan.nextLine();
+		String start = scan.nextLine();
+		while (!start.equals("Start")) {
+			if (in == 0.1 || in == 0.2 || in == 0.5 || in == 1 || in == 2) {
+				sum += in;
+			} else {
+				System.out.printf("Cannot accept %.2f%n", in);
+			}
+			in = scan.nextDouble();
+			scan.nextLine();
+			start = scan.nextLine();
+		}
+		String purchase = scan.nextLine();
+		double price = 0;
+		while (!purchase.equals("End")) {
+			if (purchase.equals("Nuts")) {
+				price = 2;
+			} else if (purchase.equals("Water")) {
+				price = 0.7;
+			} else if (purchase.equals("Crisps")) {
+				price = 1.5;
+			} else if (purchase.equals("Soda")) {
+				price = 0.8;
+			} else if (purchase.equals("Coke")) {
+				price = 1;
+			} else {
+				System.out.print("Invalid product");
+			}
+			if (sum - price >= 0) {
+				System.out.println("Purchased " + purchase);
+				sum = sum - price;
+			} else {
+				System.out.println("Sorry, not enough money");
+			}
+			purchase = scan.nextLine();
+		}
+		System.out.println("Change: " + sum);
+	}
+}
