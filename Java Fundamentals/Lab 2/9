@@ -1,0 +1,29 @@
+//Yoda is starting his newly created Jedi academy. So, he asked master Ivan Cho to buy the 
+//needed equipment. The number of items depends on how many students will sign up. 
+//The equipment for the Padawan contains lightsabers,belts and robes. You will be given 
+//the amount of money Ivan Cho has, the number of students and the prices of each item. You
+//have to help Ivan Cho calculate if the money he has is enough to buy all of the equipment,
+//or how much more money he needs. Because the lightsabres sometimes brake, Ivan Cho should 
+//buy 10% more, rounded up to the next integer. Also, every sixth belt is free.
+import java.util.Scanner;
+
+public class lqlq {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		float money = scan.nextFloat();
+		int students = scan.nextInt();
+		float p_lightsaber = scan.nextFloat();
+		float p_robe = scan.nextFloat();
+		float p_belt = scan.nextFloat();
+		double lightsabers = Math.ceil(students + students * 0.1);
+		int belts = students - students / 6;
+		double price = lightsabers * p_lightsaber + students * p_robe + belts * p_belt;
+		if (price <= money) {
+			System.out.printf("The money is enough - it will cost %.2f" + "lv.", price);
+		} else {
+			price = price - money;
+			System.out.printf("Ivan Cho will need %.2f" + "lv more.", price);
+		}
+	}
+}
