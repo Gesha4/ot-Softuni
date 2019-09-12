@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title> test </title>
+</head>
+<body>
+	<table>
+	<thead>
+		<tr><h1><div1><th>List exercise</th></div1> <div2><th>Table exercise</th></div2> <div3><th>Forms exercise</th></div3></h1></tr>
+	</theat>
+	<tbody>
+		<tr><td>The lists contain at least two elements. The most common types are ordered and unordered lists.</td>
+		    <td>Tables is a structured set of data made up of rows and columns.</td>
+		    <td>An HTML Form is made of one or more widgets. Those widgets can be text fields (single line or multiline), select boxes, buttons, checkboxes, or radio buttons.</td></tr>
+	</tbody>
+	<thead>
+		<tr><h2><th><div4>Example</div4></td>
+			<div5><th>Example</div5></td>
+			<div6><th>Example</div6></h2></td></h2></tr>
+	</thead>
+	<tbody>
+		<tr><td><ol>
+			<li>Apple<ul><li>Fruit</li>
+				     <li>It`s Healty</li></ul></li>
+			<li>Cucumber<ul><li>Vegetable</li>
+					<li>The perfect salad ingredient</li></ul></li>
+			<li>Bonster<ul><li>Energy drink</li>
+					<li>Contains coffee</li></ul></li>
+			</ol></td>
+		<td><table>
+			<thead>
+				<tr><th>Programming Language</th><th>Developed by</th><th>First appeared</th></tr>
+			</thead>
+			<tbody>
+				<tr><td>C#</td><td>Microsoft</td><td>2000</td></tr>
+				<tr><td>Java</td><td>Oracle</td><td>1995</td></tr>
+				<tr><td>PHP</td><td>Zend Technologies</td><td>1995</td></tr>
+			</tbody>
+		    </table></td>
+		<td><form>
+			<label for="userName">User name</label>
+			<input id="userName" type="text" name="userName"/><br>
+			<label for="password">Password</label>
+			<input id="password" type="text" name="Password"/><br>
+			<label for="email">Email</label>
+			<input id="email" type="text" name="Email"/><br>
+			<label for="age">Age</label>
+			<input type="radio" name="Age">Under 20
+			<input type="radio" name="Age">20 or more<br>
+			<button type="submit">Submit</button>
+		</form></td></tr>
+		<tr><td><img src="pic3.png"></td>
+		    <td><img src="pic2.png"></td>
+		    <td><img src="pic.png"></td></tr>
+		<tr><td>List icon link <a href="https://softuni.bg/trainings/2342/java-fundamentals-may-2019?fbclid=IwAR0mSVtvzJtqGDh0mW5cK4pXNbO79FwxAsPZ6R9Wc24oM-m_5_agfUiy8ag#lesson-11479">HERE</td>
+		    <td>Table icon link <a href="https://softuni.bg/trainings/2342/java-fundamentals-may-2019?fbclid=IwAR0mSVtvzJtqGDh0mW5cK4pXNbO79FwxAsPZ6R9Wc24oM-m_5_agfUiy8ag#lesson-11479">HERE</td>
+		    <td>Form icon link <a href="https://softuni.bg/trainings/2342/java-fundamentals-may-2019?fbclid=IwAR0mSVtvzJtqGDh0mW5cK4pXNbO79FwxAsPZ6R9Wc24oM-m_5_agfUiy8ag#lesson-11479">HERE</td></tr>
+	</tbody>
+</body>
+</html>
