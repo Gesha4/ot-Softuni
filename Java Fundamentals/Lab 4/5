@@ -1,0 +1,15 @@
+
+//Read two names and a delimiter. Print the names joined by the delimiter.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String name1 = scan.nextLine();
+		String name2 = scan.nextLine();
+		String del = scan.nextLine();
+		System.out.print(name1+del+name2);
+	}
+}
