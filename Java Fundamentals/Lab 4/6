@@ -1,0 +1,15 @@
+//Write a program that reads 3 lines of input. On each line you get a single character.
+//Combine all the characters into one string and print it on the console.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String c1 = scan.nextLine();
+		String c2 = scan.nextLine();
+		String c3 = scan.nextLine();
+		System.out.print(c3+c2+c1);
+	}
+}
