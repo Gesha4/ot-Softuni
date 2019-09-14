@@ -1,0 +1,20 @@
+
+//Calculate how many courses will be needed to elevate n persons by using an elevator with 
+//capacity of p persons. The input holds two lines: the number of people n and the capacity p 
+//of the elevator.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int numOfPpl = scan.nextInt();
+		int capacity = scan.nextInt();
+		int courses = numOfPpl / capacity;
+		if (numOfPpl % capacity != 0) {
+			courses++;
+		}
+		System.out.print(courses);
+	}
+}
