@@ -1,0 +1,25 @@
+
+//You have a water tank with capacity of 255 liters. On the next n lines, you will receive 
+//liters of water, which you have to pour in your tank. If the capacity is not enough, print 
+//“Insufficient capacity!” and continue reading the next line. On the last line, print the 
+//liters in the tank.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int times = scan.nextInt();
+		int fill = 0;
+		for (int i = 0; i < times; i++) {
+			int liters = scan.nextInt();
+			if (fill + liters > 255) {
+				System.out.println("Insufficient capacity!");
+			} else {
+				fill = fill + liters;
+			}
+		}
+		System.out.print(fill);
+	}
+}
