@@ -1,0 +1,18 @@
+
+//On the first line of input you will receive the char index you should start with and on the
+//second line - the index of the last character you should print.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int start = scan.nextInt();
+		int end = scan.nextInt();
+		for (int i = start; i <= end; i++) {
+			char ch = (char) i;
+			System.out.print(ch);
+		}
+	}
+}
