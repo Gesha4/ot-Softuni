@@ -1,0 +1,38 @@
+
+//You will receive N – an integer, the number of snowballs being made by Tony and Andi.
+//For each snowball you will receive 3 input lines:
+// - On the first line you will get the snowballSnow – an integer.
+// - On the second line you will get the snowballTime – an integer.
+// - On the third line you will get the snowballQuality – an integer.
+//For each snowball you must calculate its snowballValue by the following formula:
+//(snowballSnow / snowballTime) ^ snowballQuality
+//At the end you must print the highest calculated snowballValue.
+
+import java.lang.Math;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int snowballs = scan.nextInt();
+		int[] snowballSnow = new int[snowballs];
+		int[] snowballTime = new int[snowballs];
+		int[] snowballQuality = new int[snowballs];
+		int snowballValueNew = 0;
+		int snowballValueBig = 0;
+		int index = 0;
+		for (int i = 0; i < snowballs; i++) {
+			snowballSnow[i] = scan.nextInt();
+			snowballTime[i] = scan.nextInt();
+			snowballQuality[i] = scan.nextInt();
+			snowballValueNew = (int) Math.pow((snowballSnow[i] / snowballTime[i]), snowballQuality[i]);
+			if (snowballValueNew > snowballValueBig) {
+				snowballValueBig = snowballValueNew;
+				index = i;
+			}
+		}
+		System.out.printf("%d : %d = %d (%d)", snowballSnow[index], snowballTime[index], 
+				snowballValueBig, snowballQuality[index]);
+	}
+}
