@@ -1,0 +1,19 @@
+
+//Refactor Volume of Pyramid
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		System.out.print("Length: ");
+		double length = scan.nextDouble();
+		System.out.print("Width: ");
+		double width = scan.nextDouble();
+		System.out.print("Heigth: ");
+		double heigth = scan.nextDouble();
+		double volume = (length + width + heigth) / 3;
+		System.out.printf("Pyramid Volume: %.2f", volume);
+	}
+}
