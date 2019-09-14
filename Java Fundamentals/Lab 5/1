@@ -1,0 +1,18 @@
+
+//Read four integer numbers.Add first to the second, divide (integer) the sum by the third
+//number and multiply the result by the fourth number. Print the result.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int num1 = scan.nextInt();
+		int num2 = scan.nextInt();
+		int num3 = scan.nextInt();
+		int num4 = scan.nextInt();
+		int calculation = ((num1 + num2) / num3) * num4;
+		System.out.print(calculation);
+	}
+}
