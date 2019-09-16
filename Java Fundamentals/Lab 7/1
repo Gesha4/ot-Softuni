@@ -1,0 +1,19 @@
+
+//Enter a day number [1…7] and print the day name (in English) or "Invalid day!". 
+//Use an array of strings.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] week = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+		int num = scan.nextInt();
+		if (num > 0 && num < 8) {
+			System.out.print(week[num - 1]);
+		} else {
+			System.out.print("Invalid day!");
+		}
+	}
+}
