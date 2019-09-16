@@ -1,0 +1,26 @@
+
+//Write a program to read an array of integers and condense them by summing adjacent couples of
+//elements until a single integer is obtained. For example, if we have 3 elements {2, 10, 3}, 
+//we sum the first two and the second two elements and obtain {2+10, 10+3} = {12, 13}, then we
+//sum again all adjacent elements and obtain {12+13} = {25}.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		String[] str = input.split(" ");
+		int[] nums = Arrays.stream(str).mapToInt(Integer::parseInt).toArray();
+		int times = nums.length - 1;
+		while (times > 0) {
+			for (int i = 0; i < times; i++) {
+				nums[i] = nums[i] + nums[i + 1];
+			}
+			times--;
+		}
+		System.out.print(nums[0]);
+	}
+}
