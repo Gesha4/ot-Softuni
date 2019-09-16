@@ -1,0 +1,41 @@
+h1 {
+color: blue;
+}
+p {
+color : darkviolet;
+}
+li {
+border-style: solid;
+border-width: 5px;
+border-color: yellow;
+}
+span {
+border-style: dotted;
+border-width: 1px;
+border-color: blue;
+}
+div {
+display: inline-block;
+padding 20px;
+border: 3px solid yellow;
+margin: 20px;
+font-family: 'Chilanka', cursive;
+font-size: 10px;
+font-weight: bold;
+font-color: white;
+}
+.green {
+background-color: green;
+}
+.blue {
+background-color: blue;
+}
+.red {
+background-color: red;
+}
+.purple {
+background-color: purple;
+}
+.orange {
+background-color: orange;
+}
