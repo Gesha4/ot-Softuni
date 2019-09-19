@@ -1,0 +1,36 @@
+
+//Write a program that finds the longest sequence of equal elements in an array of integers. 
+//If several longest sequences exist, print the leftmost one.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		String[] str = input.split(" ");
+		int[] nums = Arrays.stream(str).mapToInt(Integer::parseInt).toArray();
+		int count = 0;
+		int index = 0;
+		int tempCount = 0;
+		int tempIndex = 0;
+		for (int i = 0; i < nums.length; i++) {
+			if (nums[tempIndex] == nums[i]) {
+				tempCount++;
+			} else {
+				tempIndex = i;
+				tempCount = 1;
+			}
+			if (tempCount > count) {
+				count = tempCount;
+				index = tempIndex;
+			}
+		}
+		for (int i = 0; i < count; i++) {
+			System.out.print(nums[index] + " ");
+			index++;
+		}
+	}
+}
