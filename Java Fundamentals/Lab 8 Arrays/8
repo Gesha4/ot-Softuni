@@ -1,0 +1,24 @@
+
+//Write a program, which prints all unique pairs in an array of integers whose sum is equal 
+//to a given number.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		String[] str = input.split(" ");
+		int[] nums = Arrays.stream(str).mapToInt(Integer::parseInt).toArray();
+		int given = scan.nextInt();
+		for (int i = 0; i < nums.length; i++) {
+			for (int j = i + 1; j < nums.length; j++) {
+				if (given == nums[i] + nums[j]) {
+					System.out.println(nums[i] + " " + nums[j]);
+				}
+			}
+		}
+	}
+}
