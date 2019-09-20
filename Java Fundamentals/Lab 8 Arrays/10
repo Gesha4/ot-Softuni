@@ -1,0 +1,51 @@
+
+//You are given a field size and the indexes of ladybugs inside the field. After that on every
+//new line until the "end" command is given, a ladybug changes its position either to its left 
+//or to its right by a given fly length. A command to a ladybug looks like this: "0 right 1". 
+//This means that the little insect placed on index 0 should fly one index to its right. If the
+//ladybug lands on a fellow ladybug, it continues to fly in the same direction by the same fly
+//length. If the ladybug flies out of the field, it is gone.Your job is to create the program,
+//simulating the ladybugs flying around doing nothing. At the end, print all cells in the field
+//separated by blank spaces. For each cell that has a ladybug on it print '1' and for each empty
+//cells print '0'.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int size = scan.nextInt();
+		scan.nextLine();
+		String input = scan.nextLine();
+		String[] str = input.split(" ");
+		int[] bugs = new int[size];
+		bugs = Arrays.stream(str).mapToInt(Integer::parseInt).toArray();
+		String command = scan.nextLine();
+		do {
+			String[] fly = command.split(" ");
+			int index = Integer.valueOf(fly[0]);
+			int flyLength = Integer.valueOf(fly[2]);
+			if (index >= 0 && index < size) {
+				if (bugs[index] != 0) {
+					while (index >= 0 && index < size && bugs[index] != 0) {
+						if (fly[1].equals("right")) {
+							index += flyLength;
+						} else {
+							index -= flyLength;
+						}
+					}
+					bugs[Integer.valueOf(fly[0])] = 0;
+					if (index >= 0 && index < size) {
+						bugs[index] = 1;
+					}
+				}
+			}
+			command = scan.nextLine();
+		} while (!command.equals("end"));
+		for (int i = 0; i < size; i++) {
+			System.out.print(bugs[i] + " ");
+		}
+	}
+}
