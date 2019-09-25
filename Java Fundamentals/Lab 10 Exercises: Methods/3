@@ -1,0 +1,29 @@
+//Write a method that receives two characters and prints on a single line all the characters in
+//between them according to ASCII.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void printCharsBetween(char arg1, char arg2) {
+		if (arg1 > arg2) {
+			char temp = arg1;
+			arg1 = arg2;
+			arg2 = temp;
+		}
+		arg1++;
+		while (arg1 < arg2) {
+			System.out.print(arg1 + " ");
+			arg1++;
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String firstChar = scan.nextLine();
+		firstChar.toCharArray();
+		String secondChar = scan.nextLine();
+		secondChar.toCharArray();
+		printCharsBetween(firstChar.charAt(0), secondChar.charAt(0));
+	}	
+}
