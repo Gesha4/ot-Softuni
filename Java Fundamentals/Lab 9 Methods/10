@@ -1,0 +1,45 @@
+
+//Create a program that reads an integer number and multiplies the sum of all its even digits 
+//by the sum of all its odd digits:
+
+import java.util.Scanner;
+import java.lang.Math;
+
+public class zadachi {
+	
+	public static int getMultipleOfEvensAndOdds(int arg) {
+		int evensSum = getSumOfEvenDigits(arg);
+		int oddSum = getSumOfOddDigits(arg);
+		return evensSum * oddSum;
+	}
+	
+	public static int getSumOfEvenDigits(int arg) {
+		int evensSum = 0;
+		while (arg / 10 != 0 && arg % 10 != 0) {
+			if (arg % 10 == 0) {
+				evensSum++;
+			}
+			arg /= 10;
+		}
+		return evensSum;
+	}
+	
+	public static int getSumOfOddDigits(int arg) {
+		int oddsSum = 0;
+		while (arg / 10 != 0 && arg % 10 != 0) {
+			if (arg % 10 != 0) {
+				oddsSum++;
+			}
+			arg /= 10;
+		}
+		return oddsSum;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int num = scan.nextInt();
+		Math.abs(num);
+		int result = getMultipleOfEvensAndOdds(num);
+		System.out.print(result);
+	}	
+}
