@@ -1,0 +1,20 @@
+
+//Create a method that calculates and returns the area of a rectangle by given width and length.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static double rectArea(double arg1, double arg2) {
+		double area = arg1 * arg2;
+		return area;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		double width = scan.nextDouble();
+		double height = scan.nextDouble();
+		double area = rectArea(width, height);
+		System.out.print(area);
+	}
+}
