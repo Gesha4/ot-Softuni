@@ -1,0 +1,49 @@
+
+//You are given two values of the same type as input. The values can be of type int, char of 
+//String. Create a method getMax() that returns the greater of the two values:
+
+import java.util.Scanner;
+import java.lang.Math;;
+
+public class zadachi {
+	
+	public static int getMax(int arg1, int arg2) {
+		if (arg1 > arg2) {
+			return arg1;
+		} else {
+			return arg2;
+		}
+	}
+	
+	public static char getMax(char arg1, char arg2) {
+		if (arg1 > arg2) {
+			return arg1;
+		} else {
+			return arg2;
+		}
+	}
+	
+	public static String getMax(String arg1, String arg2) {
+		if (arg1.compareTo(arg2) >= 0 ) {
+			return arg1;
+		} else {
+			return arg2;
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String type = scan.nextLine();
+		switch (type) {
+		case "int": int num1 = scan.nextInt();
+					int num2 = scan.nextInt();
+					System.out.print(getMax(num1,num2));break;
+		case "char": String a = scan.nextLine();a.toCharArray();
+					String b = scan.nextLine();b.toCharArray();
+					System.out.print(getMax(a,b));break;
+		case "string": String line1 = scan.nextLine();
+						String line2 = scan.nextLine();
+						System.out.print(getMax(line1,line2));break;
+		}
+	}
+}
