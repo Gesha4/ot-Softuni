@@ -1,0 +1,30 @@
+
+//Write a method that receives two numbers and an operator, calculates the result and returns 
+//it. You will be given three lines of input. The first will be the first number, the second 
+//one will be the operator and the last one will be the second number. The possible operators 
+//are: / * + - Print the result rounded up to the second decimal point.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static double calculate (double arg1, double arg2, String arg3) {
+		switch (arg3) {
+		case "+":return arg1 + arg2;
+		case "-":return arg1 - arg2;
+		case "*":return arg1 * arg2;
+		case "/":return arg1 / arg2;
+		default: return 0;
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		double firstNum = scan.nextDouble();
+		scan.nextLine();
+		String operator = scan.nextLine();
+		double secondNum = scan.nextDouble();
+		double result = calculate(firstNum, secondNum, operator);
+		System.out.printf("%.2f", result);
+	}
+}
