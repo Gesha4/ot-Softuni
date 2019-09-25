@@ -1,0 +1,24 @@
+
+//Write a method that receives a string and a repeat count n (integer). The method should 
+//return a new string (the old one repeated n times).
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static String repeat(String arg1, int arg2) {
+		String result = "";
+		for (int i = 0; i < arg2; i++) {
+			result += arg1;
+		}
+		return result;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String word = scan.nextLine();
+		int times = scan.nextInt();
+		String result = repeat(word, times);
+		System.out.print(result);
+	}
+}
