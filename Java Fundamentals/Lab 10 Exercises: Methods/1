@@ -1,0 +1,20 @@
+//Write a method to print the smallest of three integer numbers. 
+//Use appropriate name for the method.
+
+import java.util.Scanner;
+import java.lang.Math;
+
+public class zadachi {
+	
+	public static void printSmallestNumber(int arg1, int arg2, int arg3) {
+		System.out.print(Math.min(Math.min(arg1, arg2), arg3));
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int num1 = scan.nextInt();
+		int num2 = scan.nextInt();
+		int num3 = scan.nextInt();
+		printSmallestNumber(num1, num2, num3);
+	}	
+}
