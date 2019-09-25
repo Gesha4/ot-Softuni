@@ -1,0 +1,32 @@
+
+//Write a method that calculates the total price of an order and prints it on the console. 
+//The method should receive one of the following products: coffee, water, coke, snacks and a 
+//quantity of the product. The prices for a single piece of each product are:
+// coffee – 1.50
+// water – 1.00
+// coke – 1.40
+// snacks – 2.00
+//Print the result rounded to the second decimal place.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void order(double arg1, int arg2) {
+		System.out.printf("%.2f",arg1 * arg2);
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String product = scan.nextLine();
+		int quantity = scan.nextInt();
+		double price = 0;
+		switch (product){
+		case "coffee": price = 1.50;break;
+		case "water": price = 1.00;break;
+		case "coke": price = 1.40;break;
+		case "snacks": price = 2.00;break;
+		}
+		order(price, quantity);
+	}
+}
