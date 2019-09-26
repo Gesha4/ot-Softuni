@@ -1,0 +1,33 @@
+
+//You are given a number num1, num2 and num3. Write a program that finds if num1 * num2 * num3 
+//(the product) is negative, positive or zero. Try to do this WITHOUT multiplying the 3 numbers.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static int sign(int arg) {
+		if (arg > 0) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int num1 = scan.nextInt();
+		int num2 = scan.nextInt();
+		int num3 = scan.nextInt();
+		if (num1 == 0 || num2 == 0 || num3 == 0) {
+			System.out.print("zero");
+		} else {
+			int count = sign(num1) + sign(num2) + sign(num3);
+			if (count == 2 || count == 0) {
+				System.out.print("negative");
+			} else {
+				System.out.print("positive");
+			}
+		}
+	}
+}
