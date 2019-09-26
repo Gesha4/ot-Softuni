@@ -1,0 +1,37 @@
+
+//Write a program that, depending on the first line of the input, reads an int, double or string.
+//If the data type is int, multiply the number by 2.
+//If the data type is real, multiply the number by 1.5 and format it to the second decimal point.
+//If the data type is string, surround the input with "$".
+//Print the result on the console.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void methodInt(int arg) {
+		System.out.print(2 * arg);
+	}
+	
+	public static void methodDouble(double arg) {
+		double answer = 1.5 * arg;
+		System.out.printf("%.2f",answer);
+	}
+	
+	public static void methodString(String arg) {
+		System.out.printf("$%s$",arg);
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String type = scan.nextLine();
+		switch (type) {
+		case "int": int numI = scan.nextInt();
+					methodInt(numI);break;
+		case "real": double numD = scan.nextDouble();
+					methodDouble(numD);break;
+		case "string": String word = scan.nextLine();
+						methodString(word);break;
+		}
+	}
+}
