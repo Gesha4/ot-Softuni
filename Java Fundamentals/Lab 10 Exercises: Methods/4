@@ -1,0 +1,65 @@
+//Write a program that checks if a given password is valid. Password rules are:
+// 6 – 10 characters (inclusive);
+// Consists only of letters and digits;
+// Have at least 2 digits.
+//If a password is valid, print &quot;Password is valid&quot;. If it is not valid, for every 
+//unfulfilled rule print a message:
+//"Password must be between 6 and 10 characters"
+//"Password must consist only of letters and digits"
+//"Password must have at least 2 digits"
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static int passLength(String arg) {
+		if (arg.length() < 6 || arg.length() > 10) {
+			System.out.println("Password must be between 6 and 10 characters");
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
+	public static int passDigits(String arg) {
+		int count = 0;
+		for (int i = 0; i < arg.length(); i++) {
+			if (arg.charAt(i) > 47 && arg.charAt(i) < 58) {
+				count++;
+			}
+		}
+		if (count < 2) {
+			System.out.println("Password must have at least 2 digits");
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
+	public static int passConsist(String arg) {
+		int consist = 0;
+		for (int i = 0; i < arg.length(); i++) {
+			if(arg.charAt(i) < 48 || (arg.charAt(i) > 57 && arg.charAt(i) < 97) || arg.charAt(i) > 122) {
+				consist++;
+			}
+		}
+		if (consist > 0) {
+			System.out.println("Password must consist only of letters and digits");
+		}
+		return consist;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String password = scan.nextLine();
+		password = password.toLowerCase();
+		password.toCharArray();
+		int valid = 0;
+		valid += passLength(password);
+		valid += passDigits(password);
+		valid += passConsist(password);
+		if (valid == 0) {
+			System.out.print("Password is valid");
+		}
+	}	
+}
