@@ -1,0 +1,30 @@
+
+//Write a program that sum all numbers in a list in the following order:
+//first + last, first + 1 + last - 1, first + 2 + last - 2, … first + n, last - n.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> numbers = new ArrayList<>();
+		String line = scan.nextLine();
+		String[] strings = line.split(" ");
+		for (String string: strings) {
+			numbers.add(Integer.parseInt(string));
+		}
+		List<Integer> modified = new ArrayList<>();
+		for (int i = 0; i < numbers.size() / 2; i++) {
+			modified.add(numbers.get(i) + numbers.get(numbers.size() - 1 - i));
+		}
+		if (numbers.size() % 2 != 0) {
+			modified.add(numbers.get(numbers.size() / 2));
+		}
+		for (int number : modified) {
+			System.out.print(number + " ");
+		}
+ 	}
+}
