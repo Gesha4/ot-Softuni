@@ -1,0 +1,57 @@
+
+//You will be given numbers (list of integers) on the first input line. Until you receive "end" you will be given
+//operations you have to apply on the list. The possible commands are:
+//Add {number} - add number at the end
+//Insert {number} {index} - insert number at given index
+//Remove {index} - remove that index
+//Shift left {count} - first number becomes last 'count' times
+//Shift right {count} - last number becomes first 'count' times
+//Note: It is possible that the index given is outside of the bounds of the array. In that case print "Invalid index".
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void shift(List<Integer> nums, String direction, int times) {
+		if (direction.equals("left")) {
+			for(int i = 0; i < times; i++) {
+				int num = nums.get(0);
+				nums.add(num);
+				nums.remove(0);
+			}
+		} else {
+			for (int i = 0; i < times; i++) {
+				int num = nums.get(nums.size() - 1);
+				nums.add(0, Integer.valueOf(num));
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> nums = Arrays.stream(scan.nextLine().split(" ")).map(Integer::parseInt).collect(Collectors.toList());
+		String[] command = scan.nextLine().split(" ");
+		while(!command[0].equals("end")) {
+			switch(command[0]) {
+			case "add" : nums.add(Integer.parseInt(command[1]));break;
+			case "remove" : if (Integer.parseInt(command[1]) >= nums.size()) {
+							System.out.println("Invalid index!");break;
+							} else {
+							nums.remove(Integer.parseInt(command[1]));break;}
+			case "insert" : if (Integer.parseInt(command[1]) >= nums.size()) {
+							System.out.println("Invalid index!");break;
+							} else {
+							nums.add(Integer.parseInt(command[2]), Integer.parseInt(command[1]));break;}
+			case "shift" : shift(nums, command[1], Integer.parseInt(command[2]));break;
+			}
+			command = scan.nextLine().split(" ");
+		}
+		for (int num : nums) {
+			System.out.print(num + " ");
+		}
+ 	}
+}
