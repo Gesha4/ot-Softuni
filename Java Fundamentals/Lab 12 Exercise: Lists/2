@@ -1,0 +1,34 @@
+
+//Write a program, which reads a list of integers from the console and receives commands, which manipulate the list.
+//Your program may receive the following commands:
+//Delete {element} - delete all elements in the array, which are equal to the given element
+//Insert {element} {position} - insert element at the given position
+//You should stop the program when you receive the command "end". Print all numbers in the array separated with
+//a single whitespace.
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> nums = Arrays.stream(scan.nextLine().split(" ")).map(Integer::parseInt).collect(Collectors.toList());
+		String input = scan.nextLine();
+		while (!input.equals("end")) {
+			String[] command = input.split(" ");
+			int element = Integer.parseInt(command[1]);
+			switch(command[0]) {
+			case "delete": while(nums.remove(Integer.valueOf(element)));break;
+			case "insert": nums.add(Integer.parseInt(command[2]), element);break;
+			}
+			input = scan.nextLine();
+		}
+		for (int num : nums) {
+			System.out.print(num + " ");
+		}
+	}
+}
