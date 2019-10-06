@@ -19,14 +19,11 @@ public class zadachi {
 				} else {
 					j = i + 1;
 				}
-				while (!line[j].equals("|")) {
+				while (j < line.length && !line[j].equals("|")) {
 					if (!line[j].equals(" ")) {
 						System.out.print(line[j] + " ");
 					}
 					j++;
-					if (j == line.length) {
-						break;
-					}
 				}
 			}
 		}
