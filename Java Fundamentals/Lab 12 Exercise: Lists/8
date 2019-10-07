@@ -1,0 +1,96 @@
+
+//You will receive a single input line containing STRINGS separated by spaces.
+//The strings may contain any ASCII character except whitespace.
+//You will then begin receiving commands in one of the following formats:
+//merge {startIndex} {endIndex}
+//divide {index} {partitions}
+//Every time you receive the merge command, you must merge all elements from the startIndex
+//till the endIndex. In other words, you should concatenate them. Example: {abc, def, ghi}
+//-> merge 0 1 -> {abcdef, ghi}. If any of the given indexes is out of the array, you must
+//take ONLY the range that is INSIDE the array and merge it. Every time you receive the divide
+//command, you must DIVIDE the element at the given index into several small substrings with 
+//equal length. The count of the substrings should be equal to the given partitions. Example:
+//{abcdef, ghi, jkl} -> divide 0 3 -> {ab, cd, ef, ghi, jkl}. If the string CANNOT be exactly
+//divided into the given partitions, make all partitions except the LAST with EQUAL LENGTHS, 
+//and make the LAST one – the LONGEST.Example: {abcd, efgh, ijkl} -> divide 0 3 -> {a, b, cd, efgh, ijkl}
+//The input ends when you receive the command "3:1". At that point you must print the resulting elements,
+//joined by a space.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.lang.Math;
+
+public class zadachi {
+	
+	public static void merge (List<String> arg1, int arg2, int arg3) {
+		String temp = "";
+		int start = Math.min(arg2, arg3);
+		int end = Math.max(arg2, arg3);
+		if (start < 0) {
+			start = 0;
+		}
+		if (end > arg1.size()) {
+			end = arg1.size();
+		}
+		for (int i = start; i < end; i++) {
+			temp += arg1.get(i);
+		}
+		for (int i = end - 1; i >= start; i--) {
+			arg1.remove(i);
+		}
+		if (start >= arg1.size()) {
+			arg1.add(temp);
+		} else {
+		arg1.add(start, temp);
+		}
+	}
+	
+	public static void divide (List<String> arg1, int arg2, int arg3) {
+		if (arg2 < 0 || arg2 > arg1.size() - 1) {
+			return;
+		} else {
+			String temp = arg1.get(arg2);
+			arg1.remove(arg2);
+			String str = "";
+			int times = 0;
+			int position = 0;
+			int index = arg2;
+			while (times < arg3 - 1) {
+				for (int i = 0; i < temp.length() / arg3; i++) {
+					str += temp.charAt(position);
+					position++;
+				}
+				arg1.add(index, str);
+				str = "";
+				times++;
+				index++;
+			}
+			while (position < temp.length()) {
+				str += temp.charAt(position);
+				position++;
+			}
+			arg1.add(index, str);
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] line = scan.nextLine().split(" ");
+		List<String> words = new ArrayList<>();
+		for (int i = 0; i < line.length; i++) {
+			words.add(line[i]);
+		}
+		String[] command = scan.nextLine().split(" ");
+		while (!command[0].equals("3:1")) {
+			switch (command[0]) {
+			case "merge": merge(words, Integer.parseInt(command[1]), Integer.parseInt(command[2]));break;
+			case "divide": divide(words, Integer.parseInt(command[1]), Integer.parseInt(command[2]));break;
+			}
+			command = scan.nextLine().split(" ");
+		}
+		for (int i = 0; i < words.size(); i++) {
+			System.out.print(words.get(i) + " ");
+		}
+	}
+}
