@@ -1,0 +1,16 @@
+
+//Write a program that sets the bit at position p to 0. Print the resulting number.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int num = scan.nextInt();
+		int position = scan.nextInt();
+		int mask = ~(1 << position);
+		int newNum = num & mask;
+		System.out.print(newNum);
+	}
+}
