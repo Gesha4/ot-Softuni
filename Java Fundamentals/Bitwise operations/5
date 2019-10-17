@@ -1,0 +1,30 @@
+
+//Given an array of positive integers in a single line joined by space (" "). All numbers 
+//occur even number of times except one number which occurs odd number of times. 
+//Find the number.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] line = scan.nextLine().split(" ");
+		int[] nums = new int[line.length];
+		for (int i = 0; i < line.length; i++) {
+			nums[i] = Integer.parseInt(line[i]);
+		}
+		int count = 0; 
+		for (int i = 0; i < nums.length; i++) {
+			for (int j = 0; j < nums.length; j++) {
+				if (nums[i] == nums[j]) {
+					count++;
+				}
+			}
+			if (count % 2 != 0) {
+				System.out.print(nums[i]);
+				break;
+			}
+		}
+	}
+}
