@@ -1,0 +1,18 @@
+
+//Write a program that prints the bit at position 1 of a number.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int n = scan.nextInt();
+		int k = n >> 1;
+		if ((k & 1) == 1) {
+			System.out.print("1");
+		} else {
+		System.out.print("0");
+		}
+	}
+}
