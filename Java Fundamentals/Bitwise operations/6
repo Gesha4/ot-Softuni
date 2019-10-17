@@ -1,0 +1,17 @@
+
+//Write a program that inverts the 3 bits from position p to the left with their opposites 
+//(e.g. 111 -> 000, 101 -> 010) in 32-bit number. Print the resulting number on the console.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int num = scan.nextInt();
+		int position = scan.nextInt();
+		int mask = 7 << position;
+		int newNum = num ^ mask;
+		System.out.print(newNum);
+	}
+}
