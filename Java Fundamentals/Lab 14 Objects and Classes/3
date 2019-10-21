@@ -1,0 +1,18 @@
+
+//You will receive N - number in range [0 - 1000]. Calculate Factorial of N and print the result.
+
+import java.math.BigInteger;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int n = scan.nextInt();
+		BigInteger k = new BigInteger(String.valueOf(1));
+		for (int i = 1; i <= n; i++) {
+			k = k.multiply(BigInteger.valueOf(Integer.parseInt(String.valueOf(i))));
+		}
+		System.out.print(k);
+	}
+}
