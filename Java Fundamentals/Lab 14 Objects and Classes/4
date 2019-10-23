@@ -1,0 +1,68 @@
+//Define a class Song, which holds the following information about songs: Type List, Name and Time.
+//On the first line you will receive the number of songs - N. 
+//On the next N-lines you will be receiving data in the following format: "{typeList}_{name}_{time}".
+//On the last line you will receive "Type List" / "all". Print only the Names of the songs which are from that Type List / All songs. 
+
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static class Song {
+		private String type;
+		private String name;
+		private String time;
+		
+		public String getType() {
+			return type;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public void setType(String type) {
+			this.type = type;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public void setTime(String time) {
+			this.time = time;
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int numSongs = scan.nextInt();
+		scan.nextLine();
+		List<Song> mySongs = new ArrayList<>();
+		for (int i = 0; i < numSongs; i++) {
+			String[] line = scan.nextLine().split("_");
+			String type = line[0];
+			String name = line[1];
+			String time = line[2];
+			Song song = new Song ();
+			song.setType(type);
+			song.setName(name);
+			song.setTime(time);
+			mySongs.add(song);
+		}
+		String typeList = scan.nextLine();
+		if (typeList.equals("all")) {
+			for (Song song : mySongs) {
+				System.out.println(song.getName());
+			}
+		} else {
+			for (Song song : mySongs) {
+				if (song.getType().equals(typeList)) {
+					System.out.println(song.getName());
+				}
+			}
+		}
+	}
+}
