@@ -1,0 +1,53 @@
+
+//Change the program from the second problem, so you can store a list of articles. You will not
+//need the methods anymore (except the ToString method). On the first line, you will get a number n.
+//On the next n lines, you will get some articles in the same format as the previous task 
+//("{title}, {content}, {author}:. Finally, you will get one of the three inputs: "title", 
+//"content", "author". You need to order the articles alphabetically based on the command and
+//print them sorted by the given criteria.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+
+	static class Article {
+		private static String title;
+		private static String content;
+		private static String author;
+
+		public Article(String title, String content, String author) {
+			this.title = title;
+			this.content = content;
+			this.author = author;
+		}
+		@Override
+		public String toString() {
+			return String.format("%s - %s:%s%n", this.title, this.content, this.author);
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int n = scan.nextInt();
+		scan.nextLine();
+		List<Article> allArticles = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			String[] line = scan.nextLine().split(", ");
+			Article article = new Article(line[0], line[1], line[2]);
+			allArticles.add(article);
+		}
+		String criteria = scan.nextLine();
+		if (criteria.equals("title")) {
+			allArticles.sort((f,s) -> f.title.compareTo(s.title));
+		} else if (criteria.equals("content")) {
+			allArticles.sort((f,s) -> f.content.compareTo(s.content));
+		} else if (criteria.equals("author")) {
+			allArticles.sort((f,s) -> f.author.compareTo(s.author));
+		}
+		for (Article article : allArticles) {
+			System.out.println(article.toString());
+		}
+	}
+}
