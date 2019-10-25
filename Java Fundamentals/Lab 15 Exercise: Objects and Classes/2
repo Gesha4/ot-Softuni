@@ -40,8 +40,9 @@ public class zadachi {
 		public void rename(String title) {
 			this.title = title;
 		}
-		public void to() {
-			System.out.printf("%s-%s:%s", title,content, author);
+		@Override
+		public String toString() {
+			return String.format("%s - %s:%s", this.title, this.content, this.author);
 		}
 	}
 
@@ -61,6 +62,6 @@ public class zadachi {
 				article.rename(line[1]);
 			}
 		}
-		article.to();
+		System.out.print(article);
 	}
 }
