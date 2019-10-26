@@ -1,0 +1,84 @@
+
+//You have to make a catalogue for vehicles. You will receive two types of vehicle - car or truck.
+//Until you receive the command "End" you will receive lines of input in the format:
+//{typeOfVehicle} {model} {color} {horsepower} After the "End" command, you will start receiving
+//models of vehicles. Print for every received vehicle its data in the format:
+//Type: {typeOfVehicle}
+//Model: {modelOfVehicle}
+//Color: {colorOfVehicle}
+//Horsepower: {horsepowerOfVehicle}
+//When you receive the command "Close the Catalogue", stop receiving input and print the average
+//horsepower for the cars and for the trucks in the format:
+//"{typeOfVehicles} have average horsepower of {averageHorsepower}." Format the answer to the 2 nd decimal point.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+
+	static class Vehicle {
+		private static String type;
+		private static String model;
+		private static String color;
+		private static int horsepower;
+
+		public Vehicle(String type, String model, String color, int horsepower) {
+			this.type = type;
+			this.model = model;
+			this.color = color;
+			this.horsepower = horsepower;
+		}
+		public String getType () {
+			return this.type;
+		}
+		public String getModel () {
+			return this.model;
+		}
+		public String getColor () {
+			return this.color;
+		}
+		public int getHorsepower() {
+			return this.horsepower;
+		}
+	}
+	
+	public static float avg(List<Vehicle> vehicles, String type) {
+		int count = 0;
+		int sum = 0;
+		float avg = 0;
+		for(Vehicle vehicle : vehicles) {
+			if (vehicle.getType().equals(type)) {
+				count++;
+				sum += vehicle.getHorsepower();
+			}
+		}
+		avg = sum / count;
+		return avg;
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Vehicle> vehicles = new ArrayList<>();
+		String[] data = scan.nextLine().split(" ");
+		while (!data[0].equals("end")) {
+			Vehicle vehicle = new Vehicle(data[0], data[1], data[2], Integer.parseInt(data[3]));
+			vehicles.add(vehicle);
+			data = scan.nextLine().split(" ");
+		}
+		String search = scan.nextLine();
+		while(!search.equals("Close the Catalogue")) {
+			for(Vehicle vehicle : vehicles) {
+				if(vehicle.getModel().equals(search)) {
+					System.out.println(vehicle.getType());
+					System.out.println(vehicle.getModel());
+					System.out.println(vehicle.getColor());
+					System.out.println(vehicle.getHorsepower());
+				}
+			}
+			search = scan.nextLine();
+		}
+		System.out.printf("Cars have average horsepower of %0.2f.%n", avg(vehicles,"car"));
+		System.out.printf("Trucks have average horsepower of %0.2f.%n", avg(vehicles,"truck"));
+	}
+}
