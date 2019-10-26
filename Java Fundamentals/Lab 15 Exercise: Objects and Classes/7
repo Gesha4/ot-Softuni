@@ -1,0 +1,51 @@
+
+//You will receive an unknown number of lines. On each line, you will receive an array with 3
+//elements. The first element will be string and represents the name of the person. The second
+//element will be a string and will represent the ID of the person. The last element will be an
+//integer which represents the age of the person. When you receive the command "End", stop taking
+//input and print all the people, ordered by age.
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+
+	static class Person {
+		private static String name;
+		private static String id;
+		private static int age;
+
+		public Person(String name, String id, int age) {
+			this.name = name;
+			this.id = id;
+			this.age = age;
+		}
+		public String getName () {
+			return this.name;
+		}
+		public String getId () {
+			return this.id;
+		}
+		public int getAge() {
+			return this.age;
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Person> persons = new ArrayList<>();
+		String[] line = scan.nextLine().split(" ");
+		while (!line[0].equals("end")) {
+			Person person = new Person(line[0],line[1], Integer.parseInt(line[2]));
+			persons.add(person);
+			line = scan.nextLine().split(" ");
+		}
+		List<Person> sorted = persons.stream().sorted(Comparator.comparing(Person::getAge).reversed()).collect(Collectors.toList());
+		for(Person person : sorted) {
+			System.out.printf("%s with ID: %s is %d years old.%n", person.getName(), person.getId(), person.getAge());
+		}
+	}
+}
