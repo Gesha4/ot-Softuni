@@ -13,9 +13,9 @@ import java.util.Scanner;
 public class zadachi {
 
 	static class Article {
-		private static String title;
-		private static String content;
-		private static String author;
+		private String title;
+		private String content;
+		private String author;
 
 		public Article(String title, String content, String author) {
 			this.title = title;
@@ -24,7 +24,7 @@ public class zadachi {
 		}
 		@Override
 		public String toString() {
-			return String.format("%s - %s:%s%n", this.title, this.content, this.author);
+			return String.format("%s - %s: %s%n", this.title, this.content, this.author);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class zadachi {
 			allArticles.sort((f,s) -> f.author.compareTo(s.author));
 		}
 		for (Article article : allArticles) {
-			System.out.println(article.toString());
+			System.out.print(article.toString());
 		}
 	}
 }
