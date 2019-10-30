@@ -19,9 +19,9 @@ import java.util.Scanner;
 public class zadachi {
 
 	static class Article {
-		private static String title;
-		private static String content;
-		private static String author;
+		private String title;
+		private String content;
+		private String author;
 
 		public Article(String title, String content, String author) {
 			this.title = title;
@@ -48,12 +48,12 @@ public class zadachi {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		String[] line = scan.nextLine().split(",");
+		String[] line = scan.nextLine().split(", ");
 		Article article = new Article(line[0], line[1], line[2]);
 		int n = scan.nextInt();
 		scan.nextLine();
 		for (int i = 0; i < n; i++) {
-			line = scan.nextLine().split(":");
+			line = scan.nextLine().split(": ");
 			if (line[0].equals("Edit")) {
 				article.edit(line[1]);
 			} else if (line[0].equals("ChangeAuthor")) {
