@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 public class zadachi {
 
 	static class Student {
-		private static String firstName;
-		private static String lastName;
-		private static float grade;
+		private String firstName;
+		private String lastName;
+		private float grade;
 
 		public Student(String firstName, String lastName, float grade) {
 			this.firstName = firstName;
@@ -41,7 +41,8 @@ public class zadachi {
 			Student student = new Student(line[0],line[1], Float.parseFloat(line[2]));
 			students.add(student);
 		}
-		List<Student> sorted = students.stream().sorted(Comparator.comparing(Student::getGrade)).collect(Collectors.toList());
+		List<Student> sorted = students.stream().sorted(Comparator.comparing(Student::getGrade).reversed())
+				.collect(Collectors.toList());
 		for(Student student : sorted) {
 			System.out.printf("%s %s: %.2f%n", student.getFirstName(), student.getLastName(), student.getGrade());
 		}
