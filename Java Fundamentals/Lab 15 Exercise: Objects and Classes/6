@@ -18,10 +18,10 @@ import java.util.Scanner;
 public class zadachi {
 
 	static class Vehicle {
-		private static String type;
-		private static String model;
-		private static String color;
-		private static int horsepower;
+		private String type;
+		private String model;
+		private String color;
+		private int horsepower;
 
 		public Vehicle(String type, String model, String color, int horsepower) {
 			this.type = type;
@@ -45,7 +45,7 @@ public class zadachi {
 	
 	public static float avg(List<Vehicle> vehicles, String type) {
 		int count = 0;
-		int sum = 0;
+		float sum = 0;
 		float avg = 0;
 		for(Vehicle vehicle : vehicles) {
 			if (vehicle.getType().equals(type)) {
@@ -61,7 +61,7 @@ public class zadachi {
 		Scanner scan = new Scanner(System.in);
 		List<Vehicle> vehicles = new ArrayList<>();
 		String[] data = scan.nextLine().split(" ");
-		while (!data[0].equals("end")) {
+		while (!data[0].equals("End")) {
 			Vehicle vehicle = new Vehicle(data[0], data[1], data[2], Integer.parseInt(data[3]));
 			vehicles.add(vehicle);
 			data = scan.nextLine().split(" ");
@@ -70,15 +70,16 @@ public class zadachi {
 		while(!search.equals("Close the Catalogue")) {
 			for(Vehicle vehicle : vehicles) {
 				if(vehicle.getModel().equals(search)) {
-					System.out.println(vehicle.getType());
-					System.out.println(vehicle.getModel());
-					System.out.println(vehicle.getColor());
-					System.out.println(vehicle.getHorsepower());
+					System.out.printf("Type: %s%n",vehicle.getType());
+					System.out.printf("Model: %s%n",vehicle.getModel());
+					System.out.printf("Color: %s%n",vehicle.getColor());
+					System.out.printf("Horsepower: %s%n",vehicle.getHorsepower());
 				}
 			}
 			search = scan.nextLine();
 		}
-		System.out.printf("Cars have average horsepower of %0.2f.%n", avg(vehicles,"car"));
-		System.out.printf("Trucks have average horsepower of %0.2f.%n", avg(vehicles,"truck"));
+		String[] searchedType = {"car", "truck"};
+		System.out.printf("Cars have average horsepower of %.2f.%n", avg(vehicles, searchedType[0]));
+		System.out.printf("Trucks have average horsepower of %.2f.%n", avg(vehicles, searchedType[1]));
 	}
 }
