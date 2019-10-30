@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 public class zadachi {
 
 	static class Person {
-		private static String name;
-		private static String id;
-		private static int age;
+		private String name;
+		private String id;
+		private int age;
 
 		public Person(String name, String id, int age) {
 			this.name = name;
@@ -38,14 +38,16 @@ public class zadachi {
 		Scanner scan = new Scanner(System.in);
 		List<Person> persons = new ArrayList<>();
 		String[] line = scan.nextLine().split(" ");
-		while (!line[0].equals("end")) {
+		while (!line[0].equals("End")) {
 			Person person = new Person(line[0],line[1], Integer.parseInt(line[2]));
 			persons.add(person);
 			line = scan.nextLine().split(" ");
 		}
-		List<Person> sorted = persons.stream().sorted(Comparator.comparing(Person::getAge).reversed()).collect(Collectors.toList());
+		List<Person> sorted = persons.stream().sorted(Comparator.comparing(Person::getAge))
+		.collect(Collectors.toList());
 		for(Person person : sorted) {
-			System.out.printf("%s with ID: %s is %d years old.%n", person.getName(), person.getId(), person.getAge());
+			System.out.printf("%s with ID: %s is %d years old.%n", person.getName(), 
+			person.getId(), person.getAge());
 		}
 	}
 }
