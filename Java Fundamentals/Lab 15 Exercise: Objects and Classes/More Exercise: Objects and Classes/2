@@ -1,0 +1,196 @@
+
+//You are the owner of a courier company and want to make a system for tracking your cars and their cargo. Define a
+//class Car that holds information about model, engine, cargo and a collection of exactly 4 tires. The engine, cargo
+//and tire should be separate classes, create a constructor that receives all information about the Car and creates and
+//initializes its inner components (engine, cargo and tires). On the first line of input you will receive a number N - 
+//the number of cars you have, on each of the next N lines you will receive information about a car in the format “<Model>
+//<EngineSpeed><EnginePower><CargoWeight><CargoType><Tire1Pressure><Tire1Age><Tire2Pressure><Tire2Age><Tire3Pressure>
+//<Tire3Age><Tire4Pressure><Tire4Age>” where the speed, power, weight and tire age are integers, tire pressure is a double.
+//After the N lines you will receive a single line with one of 2 commands “fragile” or “flamable” , if the command is
+//“fragile” print all cars whose Cargo Type is “fragile” with a tire whose pressure is &lt; 1, if the command is “flamable”
+//print all cars whose Cargo Type is “flamable” and have Engine Power &gt; 250. The cars should be printed in order of
+//appearing in the input.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	static class Engine {
+		private static int engineSpeed;
+		private static int enginePower;
+		public Engine (int engineSpeed, int enginePower) {
+			this.engineSpeed = engineSpeed;
+			this.enginePower = enginePower;
+		}
+		public int getEngineSpeed() {
+			return this.engineSpeed;
+		}
+		public int getEnginePower() {
+			return this.enginePower;
+		}
+	}
+	
+	static class Cargo {
+		private static int cargoWeight;
+		private static String cargoType;
+		public Cargo (int cargoWeight, String cargoType) {
+			this.cargoWeight = cargoWeight;
+			this.cargoType = cargoType;
+		}
+		public int getCargoWeight () {
+			return this.cargoWeight;
+		}
+		public String getCargoType () {
+			return this.cargoType;
+		}
+	}
+	
+	static class Tire {
+		private static double tire1Pressure;
+		private static int tire1Age;
+		private static double tire2Pressure;
+		private static int tire2Age;
+		private static double tire3Pressure;
+		private static int tire3Age;
+		private static double tire4Pressure;
+		private static int tire4Age;
+		public Tire (double tire1Pressure, int tire1Age, double tire2Pressure,int tire2Age,
+				double tire3Pressure, int tire3Age, double tire4Pressure, int tire4Age) {
+			this.tire1Pressure = tire1Pressure;
+			this.tire1Age = tire1Age;
+			this.tire2Pressure = tire2Pressure;
+			this.tire2Age = tire2Age;
+			this.tire3Pressure = tire3Pressure;
+			this.tire3Age = tire3Age;
+			this.tire4Pressure = tire4Pressure;
+			this.tire4Age = tire4Age;
+		}
+		public double getTire1Pressure() {
+			return this.tire1Pressure;
+		}
+		public int getTire1Age() {
+			return this.tire1Age;
+		}
+		public double getTire2Pressure() {
+			return this.tire2Pressure;
+		}
+		public int getTire2Age() {
+			return this.tire2Age;
+		}
+		public double getTire3Pressure() {
+			return this.tire3Pressure;
+		}
+		public int getTire3Age() {
+			return this.tire3Age;
+		}
+		public double getTire4Pressure() {
+			return this.tire4Pressure;
+		}
+		public int getTire4Age() {
+			return this.tire4Age;
+		}
+	}
+
+	static class Car {
+		private static String model;
+		static class Engine;
+		private static String position;
+		private static String department;
+		private static String email;
+
+		public Employee (String name, float salary, String position, String department) {
+			this.name = name;
+			this.salary = salary;
+			this.position = position;
+			this.department = department;
+		}
+		
+		public String getName () {
+			return this.name;
+		}
+		public float getSalary () {
+			return this.salary;
+		}
+		public String getPosition () {
+			return this.position;
+		}
+		public String getDepartment () {
+			return this.department;
+		}
+		public String getEmail () {
+			return this.email;
+		}
+		public int getAge() {
+			return this.age;
+		}
+		public void setEmail(String email) {
+			this.email = email;
+		}
+		public void setAge (int age) {
+			this.age = age;
+		}
+	}
+	
+	public static String departments (List<Employee> employees) {
+		List<String> department = new ArrayList<>();
+		List<Float> salaryes = new ArrayList<>();
+		for (Employee employee : employees) {
+			if (!department.contains(employee.getDepartment())) {
+				department.add(employee.getDepartment());
+			}
+		}
+		int count = 0;
+		float sum = 0;
+		for (int i = 0; i < department.size(); i++) {
+			for (Employee employee : employees) {
+				if (department.get(i).equals(employee.getDepartment())) {
+					count++;
+					sum += employee.getSalary();
+				}
+			}
+			salaryes.add(sum/count);
+		}
+		int index = 0;
+		for (int i = 1; i < salaryes.size(); i++) {
+			if (salaryes.get(i) > salaryes.get(i - 1)) {
+				index = i;
+			}
+		}
+		return department.get(index);
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int n = scan.nextInt();
+		List<Employee> employees = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			String[] data = scan.nextLine().split(" ");
+			Employee employee = new Employee(data[0],Float.parseFloat(data[1]), data[2], data[3]);
+			if (data.length == 6) {
+				employee.setEmail(data[4]);
+				employee.setAge(Integer.parseInt(data[5]));
+			} else if (data.length == 5) {
+				data[4].toCharArray();
+				for (int j = 0; j < data[4].length(); j++) {
+					if (data[4].charAt(j) == '@') {
+						employee.setEmail(data[4]);
+					}
+				}
+				if (employee.getEmail() == "n/a") {
+					employee.setAge(Integer.parseInt(data[4]));
+				}
+			}
+		}
+		employees.sort(Comparator.comparing(Employee::getSalary));
+		String maxAvgSalaryDepartment = departments(employees);
+		System.out.printf("Highest Average Salary: %s.%n", maxAvgSalaryDepartment);
+		for (Employee employee : employees) {
+			if (maxAvgSalaryDepartment.equals(employee.getDepartment())) {
+				System.out.printf("%s %.2f %s %d%n", employee.getName(), employee.getSalary(),
+						employee.getEmail(), employee.getAge());
+			}
+		}
+	}
+}
