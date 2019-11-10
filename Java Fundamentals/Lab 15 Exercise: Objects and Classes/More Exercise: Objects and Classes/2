@@ -7,7 +7,7 @@
 //<EngineSpeed><EnginePower><CargoWeight><CargoType><Tire1Pressure><Tire1Age><Tire2Pressure><Tire2Age><Tire3Pressure>
 //<Tire3Age><Tire4Pressure><Tire4Age>” where the speed, power, weight and tire age are integers, tire pressure is a double.
 //After the N lines you will receive a single line with one of 2 commands “fragile” or “flamable” , if the command is
-//“fragile” print all cars whose Cargo Type is “fragile” with a tire whose pressure is &lt; 1, if the command is “flamable”
+//“fragile” print all cars whose Cargo Type is “fragile” with a tire whose pressure is < 1, if the command is “flamable”
 //print all cars whose Cargo Type is “flamable” and have Engine Power &gt; 250. The cars should be printed in order of
 //appearing in the input.
 
@@ -18,8 +18,8 @@ import java.util.Scanner;
 public class zadachi {
 	
 	static class Engine {
-		private static int engineSpeed;
-		private static int enginePower;
+		private int engineSpeed;
+		private int enginePower;
 		public Engine (int engineSpeed, int enginePower) {
 			this.engineSpeed = engineSpeed;
 			this.enginePower = enginePower;
@@ -33,8 +33,8 @@ public class zadachi {
 	}
 	
 	static class Cargo {
-		private static int cargoWeight;
-		private static String cargoType;
+		private int cargoWeight;
+		private String cargoType;
 		public Cargo (int cargoWeight, String cargoType) {
 			this.cargoWeight = cargoWeight;
 			this.cargoType = cargoType;
@@ -48,14 +48,14 @@ public class zadachi {
 	}
 	
 	static class Tire {
-		private static double tire1Pressure;
-		private static int tire1Age;
-		private static double tire2Pressure;
-		private static int tire2Age;
-		private static double tire3Pressure;
-		private static int tire3Age;
-		private static double tire4Pressure;
-		private static int tire4Age;
+		private double tire1Pressure;
+		private int tire1Age;
+		private double tire2Pressure;
+		private int tire2Age;
+		private double tire3Pressure;
+		private int tire3Age;
+		private double tire4Pressure;
+		private int tire4Age;
 		public Tire (double tire1Pressure, int tire1Age, double tire2Pressure,int tire2Age,
 				double tire3Pressure, int tire3Age, double tire4Pressure, int tire4Age) {
 			this.tire1Pressure = tire1Pressure;
@@ -94,102 +94,52 @@ public class zadachi {
 	}
 
 	static class Car {
-		private static String model;
-		static class Engine;
-		private static String position;
-		private static String department;
-		private static String email;
+		private String model;
+		private Engine engine;
+		private Cargo cargo;
+		private Tire tire;
 
-		public Employee (String name, float salary, String position, String department) {
-			this.name = name;
-			this.salary = salary;
-			this.position = position;
-			this.department = department;
+		public Car (String model, int engineSpeed, int enginePower, int cargoWeight, String cargoType,
+				double tire1Pressure, int tire1Age, double tire2Pressure, int tire2Age, 
+				double tire3Pressure, int tire3Age, double tire4Pressure, int tire4Age) {
+			this.model = model;
+			engine = new Engine(engineSpeed, enginePower);
+			cargo = new Cargo(cargoWeight, cargoType);
+			tire = new Tire(tire1Pressure, tire1Age, tire2Pressure, tire2Age, tire3Pressure, tire3Age,
+					tire4Pressure, tire4Age);
 		}
 		
-		public String getName () {
-			return this.name;
-		}
-		public float getSalary () {
-			return this.salary;
-		}
-		public String getPosition () {
-			return this.position;
-		}
-		public String getDepartment () {
-			return this.department;
-		}
-		public String getEmail () {
-			return this.email;
-		}
-		public int getAge() {
-			return this.age;
-		}
-		public void setEmail(String email) {
-			this.email = email;
-		}
-		public void setAge (int age) {
-			this.age = age;
+		public String getModel () {
+			return this.model;
 		}
 	}
 	
-	public static String departments (List<Employee> employees) {
-		List<String> department = new ArrayList<>();
-		List<Float> salaryes = new ArrayList<>();
-		for (Employee employee : employees) {
-			if (!department.contains(employee.getDepartment())) {
-				department.add(employee.getDepartment());
-			}
-		}
-		int count = 0;
-		float sum = 0;
-		for (int i = 0; i < department.size(); i++) {
-			for (Employee employee : employees) {
-				if (department.get(i).equals(employee.getDepartment())) {
-					count++;
-					sum += employee.getSalary();
-				}
-			}
-			salaryes.add(sum/count);
-		}
-		int index = 0;
-		for (int i = 1; i < salaryes.size(); i++) {
-			if (salaryes.get(i) > salaryes.get(i - 1)) {
-				index = i;
-			}
-		}
-		return department.get(index);
-	}
-
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
 		int n = scan.nextInt();
-		List<Employee> employees = new ArrayList<>();
+		scan.nextLine();
+		List<Car> cars = new ArrayList<>();
 		for (int i = 0; i < n; i++) {
-			String[] data = scan.nextLine().split(" ");
-			Employee employee = new Employee(data[0],Float.parseFloat(data[1]), data[2], data[3]);
-			if (data.length == 6) {
-				employee.setEmail(data[4]);
-				employee.setAge(Integer.parseInt(data[5]));
-			} else if (data.length == 5) {
-				data[4].toCharArray();
-				for (int j = 0; j < data[4].length(); j++) {
-					if (data[4].charAt(j) == '@') {
-						employee.setEmail(data[4]);
-					}
-				}
-				if (employee.getEmail() == "n/a") {
-					employee.setAge(Integer.parseInt(data[4]));
+			String[] input = scan.nextLine().split(" ");
+			Car car = new Car(input[0], Integer.parseInt(input[1]), Integer.parseInt(input[2]),
+					Integer.parseInt(input[3]), input[4], Double.parseDouble(input[5]), Integer.parseInt(input[6]),
+					Double.parseDouble(input[7]), Integer.parseInt(input[8]), Double.parseDouble(input[9]),
+					Integer.parseInt(input[10]), Double.parseDouble(input[11]), Integer.parseInt(input[12]));
+			cars.add(car);
+		}
+		String wanted = scan.nextLine();
+		if (wanted.equals("fragile")) {
+			for (Car car : cars) {
+				if (car.cargo.getCargoType().equals(wanted) && (car.tire.tire1Pressure < 1 ||
+						car.tire.tire2Pressure < 1 || car.tire.tire3Pressure < 1 || car.tire.tire4Pressure < 1)) {
+					System.out.println(car.getModel());
 				}
 			}
-		}
-		employees.sort(Comparator.comparing(Employee::getSalary));
-		String maxAvgSalaryDepartment = departments(employees);
-		System.out.printf("Highest Average Salary: %s.%n", maxAvgSalaryDepartment);
-		for (Employee employee : employees) {
-			if (maxAvgSalaryDepartment.equals(employee.getDepartment())) {
-				System.out.printf("%s %.2f %s %d%n", employee.getName(), employee.getSalary(),
-						employee.getEmail(), employee.getAge());
+		} else {
+			for (Car car : cars) {
+				if (car.cargo.getCargoType().equals("flamable") && car.engine.getEnginePower() > 250) {
+					System.out.println(car.getModel());
+				}
 			}
 		}
 	}
