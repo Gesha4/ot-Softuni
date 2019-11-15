@@ -1,0 +1,108 @@
+4import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static class User {
+		private String name;
+		private String rank;
+		
+		public String getName() {
+			return this.name;
+		}
+		
+		public String getRank() {
+			return this.rank;
+		}
+		
+		public User(String name, String rank) {
+			this.name = name;
+			this.rank = rank;
+		}
+	}
+	
+	public static class Team {
+		private String name;
+		private List<User> users;
+		
+		public Team (String name, User user) {
+			this.name = name;
+			this.users.add(user);
+		}
+		
+		public User getUser(int index) {
+			return users.get(index);
+		}
+		
+		public String getName() {
+			return this.name;
+		}
+		
+		public int getUsersSize() {
+			return users.size();
+		}
+		
+		public void addUser(User user) {
+			this.users.add(user);
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int numTeams = scan.nextInt();
+		scan.nextLine();
+		List<User> users = new ArrayList<>();
+		List<Team> teams = new ArrayList<>();
+		for (int i = 0; i < numTeams; i++) {
+			String[] dataTeams = scan.nextLine().split("-");
+			boolean newIn = true;
+			for(User user : users) {
+				if (user.getName().equals(dataTeams[0])) {
+					System.out.printf("%s cannot create another team!%n", dataTeams[0]);
+					newIn = false;
+				}
+			}
+			for (Team team : teams) {
+				if (team.getName().equals(dataTeams[1])) {
+					System.out.printf("Team %s was already created!%n", dataTeams[1]);
+					newIn = false;
+				}
+			}
+			if(newIn) {
+				User user = new User(dataTeams[0], "creator");
+				users.add(user);
+				Team team = new Team(dataTeams[1], user);
+				teams.add(team);
+			}
+		}
+		String[] members = scan.nextLine().split("->");
+		while(!members.equals("end of assignment")) {
+			boolean newMember = true;
+			for (User user : users) {
+				if (user.getName().equals(members[0])) {
+					System.out.printf("Member %s cannot join team %s!%n",members[0], members[1]);
+					newMember = false;
+				}
+			}
+			if (newMember) {
+				boolean newMemberInTeam = false;
+				for (Team team : teams) {
+					if (team.getName().equals(members[1])) {
+						User user = new User (members[0], "member");
+						team.addUser(user);
+						newMemberInTeam = true;
+					}
+				}
+				if (newMemberInTeam) {
+					System.out.printf("Team %s does not exist!%n", members[1]);
+				}
+			}
+		}
+		for (Team team : teams) {
+			if (team.getUsersSize() > 1) {
+				
+			}
+		}
+	}
+}
