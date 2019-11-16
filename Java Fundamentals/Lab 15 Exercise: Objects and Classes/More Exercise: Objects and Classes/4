@@ -1,4 +1,29 @@
-4import java.util.ArrayList;
+
+//First you will receive an integer - the count of the teams you will have to register. You will be
+//given a user and a team (separated with “-”).  The user is the creator of that team.
+//For every newly created team you should print a message: 
+//"Team {team Name} has been created by {user}!".
+//Next you will receive user with team (separated with "->") which means that the user wants to join
+//that team. Upon receiving the command: “end of assignment”, you should print every team, ordered by
+//the count of its members (descending) and then by name (ascending). For each team (disband teams as
+//well), you have to print its members sorted by name (ascending). However, there are several rules:
+//•	If user tries to create a team more than once a message should be displayed: 
+//-	"Team {teamName} was already created!"
+//•	Creator of a team cannot create another team - message should be thrown: 
+//-	"{user} cannot create another team!"
+//•	If user tries to join currently non-existing team a message should be displayed: 
+//-	"Team {teamName} does not exist!"
+//•	Member of a team cannot join another team - message should be thrown:
+//-	"Member {user} cannot join team {team Name}!"
+//•	In the end (after teams' report) teams with zero members (with only a creator) should disband 
+//ordered by name in ascending other. 
+//•	 Every valid team should be printed ordered by name (ascending) in this format:
+//"{teamName}:
+//- {creator}
+//-- {member}…"
+
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,7 +49,7 @@ public class zadachi {
 	
 	public static class Team {
 		private String name;
-		private List<User> users;
+		private List<User> users = new ArrayList<>();
 		
 		public Team (String name, User user) {
 			this.name = name;
@@ -45,7 +70,7 @@ public class zadachi {
 		
 		public void addUser(User user) {
 			this.users.add(user);
-		}
+		}		
 	}
 	
 	public static void main(String[] args) {
@@ -74,10 +99,11 @@ public class zadachi {
 				users.add(user);
 				Team team = new Team(dataTeams[1], user);
 				teams.add(team);
+				System.out.printf("Team %s has been created by %s!%n",dataTeams[1], dataTeams[0]);
 			}
 		}
 		String[] members = scan.nextLine().split("->");
-		while(!members.equals("end of assignment")) {
+		while(!members[0].equals("end of assignment")) {
 			boolean newMember = true;
 			for (User user : users) {
 				if (user.getName().equals(members[0])) {
@@ -86,22 +112,34 @@ public class zadachi {
 				}
 			}
 			if (newMember) {
-				boolean newMemberInTeam = false;
+				boolean newMemberInTeam = true;
 				for (Team team : teams) {
 					if (team.getName().equals(members[1])) {
 						User user = new User (members[0], "member");
 						team.addUser(user);
-						newMemberInTeam = true;
+						newMemberInTeam = false;
 					}
 				}
 				if (newMemberInTeam) {
 					System.out.printf("Team %s does not exist!%n", members[1]);
 				}
 			}
+			members = scan.nextLine().split("->");
 		}
+		teams.sort(Comparator.comparing(Team::getName));
 		for (Team team : teams) {
 			if (team.getUsersSize() > 1) {
-				
+				System.out.println(team.getName());
+				System.out.println("-"+team.getUser(0).getName());
+				for (int i = 1; i < team.getUsersSize(); i++) {
+					System.out.println("--"+team.getUser(i).getName());
+				}
+			}
+		}
+		System.out.println("Teams to disband:");
+		for (Team team : teams) {
+			if (team.getUsersSize() == 1) {
+				System.out.println(team.getName());
 			}
 		}
 	}
