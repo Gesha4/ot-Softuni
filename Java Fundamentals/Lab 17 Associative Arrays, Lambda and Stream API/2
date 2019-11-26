@@ -1,0 +1,36 @@
+
+//Write a program which keeps a map with synonyms. The key of the map will be the word. The value will 
+//be a list of all the synonyms of that word. You will be given a number n. On the next 2 * n lines you
+//will be given a word and a synonym each on a separate line like this:
+//•	{word}
+//•	{synonym}
+//If you get the same word for second time, just add the new synonym to the list. Print the words in the
+//following format: {word} - {synonym1, synonym2… synonymN}
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int times = scan.nextInt();
+		scan.nextLine();
+		LinkedHashMap<String, ArrayList<String>> words = new LinkedHashMap<>();
+		for (int i = 0; i < times; i++) {
+			String word = scan.nextLine();
+			String synonym = scan.nextLine();
+			words.putIfAbsent(word, new ArrayList<String>());
+			words.get(word).add(synonym);
+		}
+		for (Map.Entry<String, ArrayList<String>> entry : words.entrySet()) {
+			System.out.printf("%s - ", entry.getKey());
+			for(String word : entry.getValue()) {
+				System.out.print(word + ", ");
+			}
+			System.out.println();
+		}
+	}
+}
