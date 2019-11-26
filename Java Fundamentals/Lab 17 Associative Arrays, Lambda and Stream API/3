@@ -1,0 +1,38 @@
+
+//Write a program that extracts from a given sequence of words all elements that are present in it an 
+//odd number of times (case-insensitive).
+//•	Words are given in a single line, space separated
+//•	Print the result elements in lowercase in their order of appearance
+
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] line = scan.nextLine().split(" ");
+		LinkedHashMap<String, Integer> counts = new LinkedHashMap<>();
+		for (String words : line) {
+			if (!counts.containsKey(words.toLowerCase())) {
+				counts.put(words.toLowerCase(), 1);
+			} else {
+				counts.put(words.toLowerCase(), counts.get(words.toLowerCase()) + 1);
+			}
+		}
+		ArrayList<String> odd = new ArrayList<>();
+		for(var entry : counts.entrySet()) {
+			if (entry.getValue() % 2 == 1) {
+				odd.add(entry.getKey());
+			}
+		}
+		for (int i = 0; i < odd.size(); i++) {
+			System.out.print(odd.get(i));
+			if(i < odd.size() - 1) {
+				System.out.print(", ");
+			}
+		}
+	}
+}
