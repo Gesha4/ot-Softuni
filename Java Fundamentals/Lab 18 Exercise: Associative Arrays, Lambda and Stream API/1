@@ -1,0 +1,28 @@
+//Write a program, which counts all characters in a string except space (' ').
+//Print all occurrences in the following format:
+//{char} -> {occurrences}
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String text = scan.nextLine();
+		LinkedHashMap<Character, Integer> table = new LinkedHashMap<>();
+		for (char symbol : text.toCharArray()) {
+			if (symbol != ' ') {
+				if (!table.containsKey(symbol)){
+					table.put(symbol, 1);
+				} else {
+					table.put(symbol, table.get(symbol) + 1);
+				}
+			}
+		}
+		for (Map.Entry<Character, Integer> c : table.entrySet()) {
+			System.out.println(c.getKey() + " -> " + c.getValue());
+		}
+	}
+}
