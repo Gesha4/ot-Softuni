@@ -1,0 +1,54 @@
+//Write a program, which keeps information about courses. Each course has a name and registered students.
+//You will receive course name and student name, until you receive the command "end". Check if such course
+//already exists, and if not - add the course. Register the user into the course. When you do receive the
+//command "end", print the courses with their names and total registered users, ordered by the count of 
+//registered users in descending order. For each contest print registered users ordered by name in 
+//ascending order.
+//Input
+//•	Until you receive "end", the input come in the format: "{courseName} : {studentName}"
+//•	The product data is always delimited by " : "
+//Output
+//•	Print information about each course, following the format: 
+//"{courseName}: {registeredStudents}"
+//•	Print information about each student, following the format:
+//"-- {studentName}"
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, List<String>> courses = new TreeMap<>();
+		String[] line = scan.nextLine().split(":");
+		while(!line[0].equals("end")) {
+			if (courses.containsKey(line[0])) {
+				courses.get(line[0]).add(line[1]);
+			} else {
+				courses.put(line[0], new ArrayList<String>());
+				courses.get(line[0]).add(line[1]);
+			}
+			line = scan.nextLine().split(":");
+		}
+		List<String[]> sort = new ArrayList<>();
+		for (Map.Entry<String, List<String>> course : courses.entrySet()) {
+			String[] element = new String[2];
+			element[0] = course.getKey();
+			int size = course.getValue().size();
+			element[1] = String.valueOf(size);
+			sort.add(element);
+		}
+		sort.sort((e1, e2) -> e2[1].compareTo(e1[1]));
+		for (String[] e : sort) {
+			System.out.println(e[0] + ": " + e[1]);
+			courses.get(e[0]).sort((c1, c2) -> c1.compareTo(c2));
+			for (String student : courses.get(e[0])) {
+				System.out.println("--" + student);
+			}
+		}
+	}
+}
