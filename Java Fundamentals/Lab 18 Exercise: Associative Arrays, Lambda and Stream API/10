@@ -1,0 +1,88 @@
+//You will be receiving lines in the following format: "{username}-{language}-{points}" until you receive
+//"exam finished". You should store each username and his submissions and points. You can receive a command
+//to ban a user for cheating in the following format: "{username}-banned". In that case, you should remove
+//the user from the contest, but preserve his submissions in the total count of submissions for each language.
+//After receiving "exam finished", print each of the participants, ordered descending by their max points,
+//then by username, in the following format:
+//Results:
+//{username} | {points}
+//After that print each language, used in the exam, ordered descending by total submission count and then
+//by language name, in the following format:
+//Submissions:
+//{language} - {submissionsCount}
+//Input / Constraints
+//Until you receive "exam finished", you will be receiving participant submissions in the following format:
+//"{username}-{language}-{points}"
+//You can receive a ban command -> "{username}-banned"
+//The points of the participant will always be a valid integer in the range [0-100]
+//Output
+//•	Print the exam results for each participant, ordered descending by max points and then by username, in the following format:
+//Results:
+//{username} | {points}
+//•	After that print each language, ordered descending by total submissions and then by language name, in the following format:
+//Submissions:
+//{language} - {submissionsCount}
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void addLang(Map<String, Integer> languages, String name) {
+		if(!languages.containsKey(name)) {
+			languages.put(name, 1);
+		} else {
+			languages.put(name, languages.get(name) + 1);
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Short> submissions = new TreeMap<>();
+		Map<String, Integer> languages = new TreeMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("exam finished")) {
+			String[] command = input.split("-");
+			if(command[1].equals("banned")) {
+				if(submissions.containsKey(command[0])) {
+					submissions.remove(command[0]);
+				}
+			} else {
+				if(!submissions.containsKey(command[0])) {
+					submissions.put(command[0], Short.parseShort(command[2]));
+					addLang(languages, command[1]);
+				} else {
+					short points = submissions.get(command[0]);
+					if(points < Short.parseShort(command[2])) {
+						submissions.put(command[0], Short.parseShort(command[2]));
+					}
+					addLang(languages, command[1]);
+				}
+			}
+			input = scan.nextLine();
+		}
+		System.out.println("Results:");
+		List<String[]> subs = new ArrayList<>();
+		for(Map.Entry<String, Short> sub : submissions.entrySet()) {
+			String[] newSub = {sub.getKey(), sub.getValue().toString()};
+			subs.add(newSub);
+		}
+		subs.sort((a, b) -> b[1].compareTo(a[1]));
+		for(String[] sub : subs) {
+			System.out.println(sub[0] + " | " + sub[1]);
+		}
+		System.out.println("Sybmissions:");
+		List<String[]> langs = new ArrayList<>();
+		for(Map.Entry<String, Integer> lang : languages.entrySet()) {
+			String[] newLang = {lang.getKey(), lang.getValue().toString()};
+			langs.add(newLang);
+		}
+		langs.sort((a, b) -> b[1].compareTo(a[1]));
+		for(String[] lang : langs) {
+			System.out.println(lang[0] + " - " + lang[1]);
+		}
+	}
+}
