@@ -65,24 +65,23 @@ public class zadachi {
 			input = scan.nextLine();
 		}
 		System.out.println("Results:");
-		List<String[]> subs = new ArrayList<>();
-		for(Map.Entry<String, Short> sub : submissions.entrySet()) {
-			String[] newSub = {sub.getKey(), sub.getValue().toString()};
-			subs.add(newSub);
-		}
-		subs.sort((a, b) -> b[1].compareTo(a[1]));
-		for(String[] sub : subs) {
-			System.out.println(sub[0] + " | " + sub[1]);
-		}
-		System.out.println("Sybmissions:");
-		List<String[]> langs = new ArrayList<>();
-		for(Map.Entry<String, Integer> lang : languages.entrySet()) {
-			String[] newLang = {lang.getKey(), lang.getValue().toString()};
-			langs.add(newLang);
-		}
-		langs.sort((a, b) -> b[1].compareTo(a[1]));
-		for(String[] lang : langs) {
-			System.out.println(lang[0] + " - " + lang[1]);
-		}
+		submissions.entrySet().stream().sorted((first, second) -> {
+			int result = second.getValue().compareTo(first.getValue());
+			if(result == 0) {
+				result = first.getKey().compareTo(second.getKey());
+			}
+			return result;
+		}).forEach(entry -> {
+			System.out.println(entry.getKey() + " | " + entry.getValue());
+		});
+		System.out.println("Submissions:");
+		languages.entrySet().stream().sorted((first, second) -> {
+			int result = second.getValue().compareTo(first.getValue());
+			if(result == 0) {
+				result = first.getKey().compareTo(second.getKey());
+			} return result;
+		}).forEach(entry -> {
+			System.out.println(entry.getKey() + " - " + entry.getValue());
+		});
 	}
 }
