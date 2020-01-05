@@ -1,0 +1,92 @@
+//You will receive several input lines in the following format:
+//{username} -> {contest} -> {points}
+//The constestName and username are strings, the given points will be an integer number. You need to keep track of every contest
+//and individual statistics of every user. You should check if such contest already exists, and if not, add it, otherwise check 
+//if the current user is participating in the contest, if he is participating take the higher score, otherwise just add it.
+//Also you need to keep individual statistics for each user - the total points of all constests.
+//You should end your program when you receive the command "no more time". At that point you should print each contest in order
+//of input, for each contest print the participants ordered by points in desecending order, than ordered by name in ascending order. After that, you should print individual statistics for every participant ordered by total points in desecnding order, and then by alphabetical order.
+//Input / Constraints
+//•	The input comes in the form of commands in the format specified above
+//•	Username and contest name always will be one word
+//•	Points will be an integer in range [0, 1000]
+//•	There will be no invalid input lines
+//•	If all sorting criteria fail, the order should be by order of input
+//•	The input ends when you receive the command "no more time"
+//Output
+//•	The output format for the contests is:
+//{constestName}: {participants.Count} participants
+//{position}. {username} <::> {points}
+//•	After you print all contests, print the individual statistics for every participant
+//•	The output format is:
+//Individual standings:
+//{position}. {username} -> {totalPoints}
+
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void checkUser(Map<String, Integer> users, String name, int points) {
+		if(!users.containsKey(name)) {
+			users.put(name, points);
+		} else {
+			users.put(name, users.get(name) + points);
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, Integer>> contests = new LinkedHashMap<>();
+		Map<String, Integer> users = new HashMap<>();
+		String[] input = scan.nextLine().split(" -> ");
+		while(!input[0].equals("no more time")) {
+			String userName = input[0];
+			String contest = input[1];
+			int points = Integer.parseInt(input[2]);
+			if(!contests.containsKey(contest)) {
+				contests.put(contest, new HashMap<>());
+				contests.get(contest).put(userName, points);
+				checkUser(users, userName, points);
+			} else {
+				if(!contests.get(contest).containsKey(userName)) {
+					contests.get(contest).put(userName, points);
+					checkUser(users, userName, points);
+				} else {
+					if(contests.get(contest).get(userName) < points) {
+						int diffrence = points - contests.get(contest).get(userName);
+						checkUser(users, userName, diffrence);
+						contests.get(contest).put(userName, points);
+					}
+				}
+			}
+			input = scan.nextLine().split(" -> ");
+		}
+		for(Map.Entry<String, Map<String, Integer>> contest : contests.entrySet()) {
+			System.out.println(contest.getKey() + ": " + contest.getValue().size() + " participants");
+			List<Entry<String,Integer>> sortedContest = contest.getValue().entrySet().stream().sorted((f, s) -> {
+				int result = s.getValue().compareTo(f.getValue());
+				return result;
+			}).collect(Collectors.toList());
+			int number = 1;
+			for(int i = 0; i < sortedContest.size(); i++) {
+				System.out.println(number + ". " + sortedContest.get(i).getKey() + " <::> " + sortedContest.get(i).getValue());
+				number++;
+			}
+		}
+		System.out.println("Individual standings:");
+		List<Entry<String, Integer>> sortedUsers = users.entrySet().stream().sorted((f, s) -> 
+		s.getValue().compareTo(f.getValue())).collect(Collectors.toList());
+		int number = 1;
+		for(int i = 0; i < sortedUsers.size(); i++) {
+			System.out.println(number + ". " + sortedUsers.get(i).getKey() + " -> " + sortedUsers.get(i).getValue());
+			number++;
+		}
+	}
+}
