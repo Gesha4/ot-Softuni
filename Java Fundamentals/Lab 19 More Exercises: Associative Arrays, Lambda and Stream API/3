@@ -1,0 +1,101 @@
+//You will receive several input lines in one of the following formats:
+//"{player} -> {position} -> {skill}"
+//"{player} vs {player}"
+//The player and position are strings, the given skill will be an integer number. You need to keep 
+//track of every player.When you receive a player and his position and skill, add him to the player
+//pool, if he isn't present, else add his position and skill or update his skill, only if the current
+//position skill is lower than the new value. If you receive "{player} vs {player}" and both players
+//exist in the tier, they duel with the following rules:
+//Compare their positions, if they got at least one in common, the player with better total skill 
+//points wins and the other is demoted from the tier -> remove him. If they have same total skill 
+//points, the duel is tie and they both continue in the Season. If they don't have positions in common,
+//the duel isn't happening and both continue in the Season. You should end your program when you 
+//receive the command "Season end". At that point you should print the players, ordered by total skill
+//in desecending order, then ordered by player name in ascending order. Foreach player print their 
+//position and skill, ordered desecending by skill, then ordered by position name in ascending order.
+//Input / Constraints
+//•	The input comes in the form of commands in one of the formats specified above
+//•	Player and position will always be one word string, containing no whitespaces
+//•	Skill will be an integer in the range [0, 1000]
+//•	There will be no invalid input lines
+//•	The program ends when you receive the command "Season end"
+//Output
+//•	The output format for each player is:
+//"{player}: {totalSkill} skill"
+//"- {position} <::> {skill}"
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, Integer>> players = new HashMap<>();
+		Map<String, Integer> playersAllPoints = new TreeMap<>();
+		String line = scan.nextLine();
+		while(!line.equals("Season end")) {
+			if(line.contains("->")) {
+				String[] input = line.split(" -> ");
+				String name = input[0];
+				String position = input[1];
+				int points = Integer.parseInt(input[2]);
+				if(!players.containsKey(name)) {
+					players.put(name, new HashMap<>());
+					players.get(name).put(position, points);
+					playersAllPoints.put(name, points);
+				} else {
+					if(!players.get(name).containsKey(position)) {
+						players.get(name).put(position, points);
+						playersAllPoints.put(name, playersAllPoints.get(name) + points);
+					} else {
+						if(players.get(name).get(position) < points) {
+							players.get(name).put(position, points);
+							int diffrence = points - players.get(name).get(position);
+							playersAllPoints.put(name, playersAllPoints.get(name) + diffrence);
+						}
+					}
+				}
+			} else {
+				String[] input = line.split(" vs ");
+				String name1 = input[0];
+				String name2 = input[1];
+				if(players.containsKey(name1) && players.containsKey(name2)) {
+					for(Map.Entry<String, Integer> player : players.get(name1).entrySet()) {
+						if(players.get(name2).containsKey(player.getKey())) {
+							if(playersAllPoints.get(name1) > playersAllPoints.get(name2)) {
+								players.remove(name2);
+								playersAllPoints.remove(name2);
+							} else if (playersAllPoints.get(name1) < playersAllPoints.get(name2)){
+								players.remove(name1);
+								playersAllPoints.remove(name1);
+							}break;
+						}
+					}
+				}
+			}
+			line = scan.nextLine();
+		}
+		List<Entry<String, Integer>> playerAll = playersAllPoints.entrySet().stream().sorted((f, s) -> 
+		s.getValue().compareTo(f.getValue())).collect(Collectors.toList());
+		for(Map.Entry<String, Integer> player : playerAll) {
+			System.out.println(player.getKey() + ": " + player.getValue() + " skill");
+			players.get(player.getKey()).entrySet().stream().sorted((f, s) -> {
+				int result = s.getValue().compareTo(f.getValue());
+				if(result == 0) {
+					result = f.getKey().compareTo(s.getKey());
+					return result;
+				} else {
+					return result;
+				}
+			}).forEach(entry -> {
+				System.out.println("- " + entry.getKey() + " <::> " + entry.getValue());
+			});
+		}
+	}
+}
