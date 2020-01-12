@@ -1,0 +1,29 @@
+//Write a program that receives a single string and on the first line prints all the digits, on the second
+//– all the letters, and on the third – all the other characters. There will always be at least one digit,
+//one letter and one other characters.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String line = scan.nextLine();
+		StringBuilder digits = new StringBuilder();
+		StringBuilder letters = new StringBuilder();
+		StringBuilder others = new StringBuilder();
+		for(int i = 0; i < line.length(); i++) {
+			if(Character.isDigit(line.charAt(i))) {
+				digits.append(line.charAt(i));
+			} else if(Character.isAlphabetic(line.charAt(i))) {
+				letters.append(line.charAt(i));
+			} else {
+				others.append(line.charAt(i));
+			}
+		}
+		System.out.println(digits);
+		System.out.println(letters);
+		System.out.println(others);
+	}
+}
