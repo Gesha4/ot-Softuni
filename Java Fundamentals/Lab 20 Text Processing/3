@@ -1,0 +1,23 @@
+//On the first line you will receive a string. On the second line you will receive a second string. Write
+//a program that removes all of the occurrences of the first string in the second until there is no match.
+//At the end print the remaining string.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String toremove = scan.nextLine();
+		String removefrom = scan.nextLine();
+		StringBuilder result = new StringBuilder();
+		result.append(removefrom);
+		int index = result.indexOf(toremove);
+		while(index != -1) {
+			result.replace(index, index + toremove.length(), "");
+			index = result.indexOf(toremove);
+		}
+		System.out.println(result);
+	}
+}
