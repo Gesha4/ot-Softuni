@@ -1,0 +1,31 @@
+//Write a program that reads user names on a single line (joined by ", ") and prints all valid usernames.
+//A valid username is:
+//Has length between 3 and 16 characters
+//Contains only letters, numbers, hyphens and underscores
+//Has no redundant symbols before, after or in between.
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] names = scan.nextLine().split(", ");
+		for(String name : names) {
+			if(name.length() >= 3 && name.length() <= 16) {
+				boolean rightChars = true;
+				for(int i = 0; i < name.length(); i++) {
+					if(!Character.isAlphabetic(name.charAt(i)) && !Character.isDigit(name.charAt(i)) &&
+							name.charAt(i) != '-' && name.charAt(i) != '_'){
+								rightChars = false;
+								break;
+							}
+				}
+				if(rightChars) {
+					System.out.println(name);
+				}
+			}
+		}
+	}
+}
