@@ -1,0 +1,39 @@
+//Create a method that takes two strings as arguments and returns the sum of their character codes 
+//multiplied (multiply str1[0] with str2[0] and add to the total sum). Then continue with the next 
+//two characters. If one of the strings is longer than the other, add the remaining character codes 
+//to the total sum without multiplication.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] line = scan.nextLine().split(" ");
+		String word1 = "";
+		String word2 = "";
+		if (line[1].length() > line[0].length()) {
+			word1 = line[1];
+			word2 = line[0];
+		} else {
+			word1 = line[0];
+			word2 = line[1];
+		}
+		int sum = 0;
+		if (word1.length() == word2.length()) {
+			for (int i = 0; i < word1.length(); i++) {
+				sum += word1.charAt(i) * word2.charAt(i);
+			}
+		} else {
+			int index = 0;
+			for (int i = 0; i < word2.length(); i++) {
+				sum += word1.charAt(i) * word2.charAt(i);
+				index = i;
+			}
+			for (int j = index + 1; j < word1.length(); j++) {
+				sum += word1.charAt(j);
+			}
+		}
+		System.out.println(sum);
+	}
+}
