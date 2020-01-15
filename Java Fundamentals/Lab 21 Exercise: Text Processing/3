@@ -1,0 +1,15 @@
+//Write a program that reads the path to a file and subtracts the file name and its extension.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String line = scan.nextLine();
+		int lastDot = line.lastIndexOf(".");
+		int lastLine = line.lastIndexOf("\\");
+		System.out.println("File name: " + line.substring(lastLine + 1, lastDot));
+		System.out.println("File extension: " + line.substring(lastDot + 1));
+	}
+}
