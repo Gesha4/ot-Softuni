@@ -1,0 +1,21 @@
+//Write a program that reads a string from the console and replaces any sequence of the same letters
+//with a single corresponding letter.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String text = scan.nextLine();
+		StringBuilder newText = new StringBuilder();
+		newText.append(text);
+		for(int i = 0; i < newText.length() - 1; i++) {
+			if(newText.charAt(i) == newText.charAt(i + 1)) {
+				newText.replace(i, i + 1, "");
+				i = i - 1;
+			}
+		}
+		System.out.println(newText);
+	}
+}
