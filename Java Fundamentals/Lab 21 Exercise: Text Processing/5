@@ -1,0 +1,34 @@
+//You are given two lines – the first one can be a really big number (0 to 10 50 ). The second one will 
+//be a single digit number (0 to 9). You must display the product of these numbers.
+//Note: do not use the BigInteger class.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String bigNumber = scan.nextLine();
+		int smallNumber = Integer.parseInt(scan.nextLine());
+		int remeinder = 0;
+		int result = 0;
+		List<Integer> multiplication = new ArrayList<>();
+		for(int i = bigNumber.length() - 1; i >= 1; i--) {
+			result = (bigNumber.charAt(i) - 48) * smallNumber + remeinder;
+			if(result >= 10) {
+				remeinder = result / 10;
+				result = result % 10;
+			} else {
+				remeinder = 0;
+			}
+			multiplication.add(result);
+		}
+		result = (bigNumber.charAt(0) - 48) * smallNumber + remeinder;
+		multiplication.add(result);
+		for(int i = multiplication.size() - 1; i >= 0; i--) {
+			System.out.print(multiplication.get(i));
+		}
+	}
+}
