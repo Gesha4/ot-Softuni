@@ -1,0 +1,38 @@
+//Explosions are marked with ‘>’. Immediately after the mark, there will be an integer, which signifies
+//the strength of the explosion. You should remove x characters (where x is the strength of the explosion),
+//starting after the punch character (‘>’). If you find another explosion mark (‘>’) while you’re deleting
+//characters, you should add the strength to your previous explosion. When all characters are processed,
+//print the string without the deleted characters. You should not delete the explosion character – ‘>’, 
+//but you should delete the integers, which represent the strength.
+//Input
+//You will receive single line with the string.
+//Output
+//Print what is left from the string after explosions.
+//Constraints
+//•	You will always receive a strength for the punches
+//•	The path will consist only of letters from the Latin alphabet, integers and the char ‘>’
+//•	The strength of the punches will be in the interval [0…9]
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String text = scan.nextLine();
+		StringBuilder strB = new StringBuilder();
+		strB.append(text);
+		int startIndex = strB.indexOf(">");
+		int power = strB.charAt(startIndex + 1) - 48;
+		for(int i = startIndex + 1; i < strB.length(); i++) {
+			if(strB.charAt(i) != '>' && power > 0) {
+				strB.deleteCharAt(i);
+				power--;
+				i--;
+			} else if(strB.charAt(i) == '>'){
+				power += strB.charAt(i + 1) - 48;
+			}
+		}
+		System.out.println(strB);
+	}
+}
