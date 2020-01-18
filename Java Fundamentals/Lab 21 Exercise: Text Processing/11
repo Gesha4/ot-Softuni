@@ -1,0 +1,54 @@
+//Write a program that translates messages from Morse code to English (capital letters). The words will
+//be separated by a space (' '). There will be a '|' character which you should replace with ' ' (space).
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String morse = scan.nextLine();
+		String letter = "";
+		StringBuilder text = new StringBuilder();
+		int start = 0;
+		int end = 0;
+		while(end != morse.length()) {
+			end = morse.indexOf(" ", start);
+			if(end == -1) {
+				end = morse.length();
+			}
+			letter = morse.substring(start, end);
+			switch(letter) {
+				case "|" : text.append(" ");break;
+				case ".-" : text.append('A');break;
+				case "-..." : text.append('B');break;
+				case "-.-." : text.append('C');break;
+				case "-.." : text.append('D');break;
+				case "." : text.append('E');break;
+				case "..-." : text.append('F');break;
+				case "--." : text.append('G');break;
+				case "...." : text.append('H');break;
+				case ".." : text.append('I');break;
+				case ".---" : text.append('J');break;
+				case "-.-" : text.append('K');break;
+				case ".-.." :text.append('L');break;
+				case "--" : text.append('M');break;
+				case "-." : text.append('N');break;
+				case "---" : text.append('O');break;
+				case ".--." : text.append('P');break;
+				case "--.-" : text.append('Q');break;
+				case ".-." : text.append('R');break;
+				case "..." : text.append('S');break;
+				case "-" : text.append('T');break;
+				case "..-" : text.append('U');break;
+				case "...-" : text.append('V');break;
+				case ".--" : text.append('W');break;
+				case "-..-" : text.append('X');break;
+				case "-.--" : text.append('Y');break;
+				case "--.." : text.append('Z');break;
+			}
+			start = end + 1;
+		}
+		System.out.println(text);
+	}
+}
