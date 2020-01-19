@@ -22,8 +22,9 @@ public class zadachi {
 
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		String[] tickets = scan.nextLine().split(", ");
-		for(String ticket : tickets) {
+		String[] tickets = scan.nextLine().split(",+");
+		for(String ticketAll : tickets) {
+			String ticket = ticketAll.trim();
 			if(ticket.length() == 20) {
 				char symbol = '_';
 				int count = 0;
@@ -64,7 +65,7 @@ public class zadachi {
 				}
 				if(countLeft >= 6 && countRight >= 6) {
 					if(countLeft == 10 || countRight == 10) {
-						System.out.println("ticket \"" + ticket + "\" - 10" + symbol + " Jackpoint!");
+						System.out.println("ticket \"" + ticket + "\" - 10" + symbol + " Jackpot!");
 					} else {
 						System.out.println("ticket \"" + ticket + "\" - " + Math.max(countLeft, countRight) +
 								symbol);
