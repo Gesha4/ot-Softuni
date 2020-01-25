@@ -1,0 +1,58 @@
+//Write a program that processes information about a race. On the first line you will be given a list
+//of participants separated by ", ". On the next few lines until you receive a line "end of race" you 
+//will be given some info which will be some alphanumeric characters. In between them you could have 
+//some extra characters which you should ignore. For example: "G!32e%o7r#32g$235@!2e". The letters are 
+//the name of the person and the sum of the digits is the distance he ran. So here we have George who 
+//ran 29 km. Store the information about the person only if the list of racers contains the name of the
+//person. If you receive the same person more than once just add the distance to his old distance. At 
+//the end print the top 3 racers ordered by distance in descending in the format:
+//"1st place: {first racer}
+//2nd place: {second racer}
+//3rd place: {third racer}"
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String,Integer> runners = new HashMap<>();
+		String[] ppl = scan.nextLine().split(", ");
+		for(String runner : ppl) {
+			runners.put(runner, 0);
+		}
+		Pattern regexName = Pattern.compile("[A-Za-z]");
+		Pattern regexDistance = Pattern.compile("\\d");
+		String input = scan.nextLine();
+		while(!input.equals("end of race")) {
+			Matcher findName = regexName.matcher(input);
+			StringBuilder name = new StringBuilder();
+			while(findName.find()) {
+				name.append(findName.group());
+			}
+			String realName = name.toString();
+			if(runners.containsKey(realName)) {
+				Matcher findDistance = regexDistance.matcher(input);
+				int distance = 0;
+				while(findDistance.find()) {
+					distance += Integer.parseInt(findDistance.group());
+				}
+				runners.put(realName, runners.get(realName) + distance);
+			}
+			input = scan.nextLine();
+		}
+		List<Entry<String, Integer>> sorted = runners.entrySet().stream()
+				.sorted((f,s) -> s.getValue().compareTo(f.getValue()))
+				.collect(Collectors.toList());
+		System.out.println("1st place: " + sorted.get(0).getKey());
+		System.out.println("2nd place: " + sorted.get(1).getKey());
+		System.out.println("3rd place: " + sorted.get(2).getKey());
+	}
+}
