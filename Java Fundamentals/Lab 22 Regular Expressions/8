@@ -33,8 +33,28 @@ public class zadachi {
 	}
 	
 	private static double demageCalc(String demon) {
-		
-		return 0;
+		Pattern regex = Pattern.compile("\\d+\\.?\\d*");
+		Matcher nums = regex.matcher(demon);
+		double damage = 0;
+		while(nums.find()) {
+			double num = Double.parseDouble(nums.group());
+			if ((demon.charAt(demon.indexOf(nums.group()) - 1)) == '-') {
+				damage -= num;
+			} else {
+				damage += num;
+			}
+		}
+		Pattern multiplication = Pattern.compile("\\*");
+		Matcher multiplying = multiplication.matcher(demon);
+		while(multiplying.find()) {
+			damage *= 2;
+		}
+		Pattern division = Pattern.compile("\\/");
+		Matcher dividing = division.matcher(demon);
+		while(dividing.find()) {
+			damage /= 2;
+		}
+		return damage;
 	}
 	
 	public static void main(String[] args) {
@@ -44,11 +64,11 @@ public class zadachi {
 		for(String demon : input) {
 			demons.add(demon);
 		}
-		demons.sort((f,s) -> s.compareTo(f));
+		demons.sort((f,s) -> f.compareTo(s));
 		for(String demon : demons) {
 			int health = healthCalc(demon);
 			double demage = demageCalc(demon);
-			System.out.printf("%s - %d health, %.2f demage%n",demon, health, demage);
+			System.out.printf("%s - %d health, %.2f damage%n",demon, health, demage);
 		}
 	}
 }
