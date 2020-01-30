@@ -1,0 +1,49 @@
+//
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class zadachi {
+	
+	public static int numSymbols(String line) {
+		String messege = line.toLowerCase();
+		Pattern pattern = Pattern.compile("\\D");
+		Matcher matching = pattern.matcher(messege);
+		List<String> symbols = new ArrayList<>();
+		while(matching.find()) {
+			if(!symbols.contains(matching.group())) {
+				symbols.add(matching.group());
+			}
+		}
+		return symbols.size();
+	}
+	
+	public static void printRage(String line) {
+		String fullMessege = line.toUpperCase();
+		Pattern pattern = Pattern.compile("\\d");
+		Matcher matching = pattern.matcher(fullMessege);
+		StringBuilder rage = new StringBuilder();
+		int index = 0;
+		while(matching.find()) {
+			int times = Integer.parseInt(matching.group());
+			int where = fullMessege.indexOf(matching.group());
+			String messege = fullMessege.substring(index, where);
+			for(int i = 0; i < times; i++) {
+				rage.append(messege);
+			}
+			index = where + 1;
+		}
+		System.out.println(rage);
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String line = scan.nextLine();
+		int symbols = numSymbols(line);
+		System.out.println("Unique symbols used: " + symbols);
+		printRage(line);
+	}
+}
