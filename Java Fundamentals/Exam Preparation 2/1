@@ -1,0 +1,37 @@
+//
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		StringBuilder username = new StringBuilder(input);
+		while(!input.equals("Sing up")) {
+			String[] command = input.split(" ");
+			switch(command[0]) {
+			case "Case": if(command[1].equals("lower")) {
+						username.replace(0, username.length(), username.toString().toLowerCase());	
+						} else if(command[1].equals("upper")) {
+							username.replace(0, username.length(), username.toString().toUpperCase());
+						}
+						System.out.println(username);
+			case "Reverse" : int start = Integer.parseInt(command[1]);
+							int end = Integer.parseInt(command[2]);
+							StringBuilder reverse = new StringBuilder(username.substring(start, end));
+							reverse.reverse();
+							System.out.println(reverse);
+			case "Cut" : String substr = command[1];
+						if(username.indexOf(substr) != -1) {
+							int index = username.indexOf(substr);
+							username.delete(index, index + substr.length());
+							System.out.println(username);
+						} else {
+							System.out.println("The word " + username + " doesn`t contain " + substr);
+						}
+			}
+			input = scan.nextLine();
+		}
+	}
+}
