@@ -1,0 +1,83 @@
+//Mandy was hired to accept the group applications for the upcoming concert. She thought that it would be easy but now she is in 
+//trouble. She needs a programmer to make an application that will help her to safe the concert. She needs you.
+//You will read commands until you receive "start of concert" command.There are two types of commands:
+//•	"Add; {bandName}; {member 1}, {member 2}, {member 3}" - applies a band and a list of members to the concert. All members must
+//be unique so don't add duplicates. If you receive the same band twice add only those members that aren't present in the list.
+//•	"Play; {bandName}; {time}" – the band with the given name plays an amount of time on the stage.  If you receive a band that 
+//has already applied in the concert, just increase the band time. If in both commands the band does not exist, add it.
+//At the end you have to print the total time and the bands ordered by the time on stage in descending order, then by band name
+//in ascending order. Also the final input line will be "{bandName}" and you have to print all members for this band in insertion 
+//order.Input / Constraints
+//•	The time of the bands – integer in range [0 – 231 - 1] 
+//•	There will always be at least one member in the group
+//•	The bands will always have time on stage
+//•	The final input line will always contain an existing band name
+//•	Input will always be valid and in the range specified. You don’t need to check it
+//Output
+//Total time: {totalTime}
+//{firstBandName} -> {firstBandTime}
+//{secondBandName} -> {secondBandTime}
+//{thirdBandName} -> {thirdBandTime}
+//…
+//{bandName}
+//=> {firstMemberName}
+//=> {secondMemberName}
+//=> {thirdMemberName}
+//…
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] command = scan.nextLine().split("[;,] ");
+		int allTime = 0;
+		Map<String, Integer> bandsTime = new TreeMap<>();
+		Map<String, List<String>> bandMembers = new HashMap<>();
+		while(!command[0].equals("start of concert")) {
+			if(command[0].equals("Play")) {
+				int time = Integer.parseInt(command[2]);
+				if(!bandsTime.containsKey(command[1])) {
+					bandsTime.put(command[1], time);
+					allTime += time;
+				} else {
+					bandsTime.put(command[1], bandsTime.get(command[1]) + time);
+					allTime += time;
+				}
+			} else if(command[0].equals("Add")) {
+				if(!bandMembers.containsKey(command[1])) {
+					bandMembers.put(command[1], new ArrayList<String>());
+					for(int i = 2; i < command.length; i++) {
+						if(!bandMembers.get(command[1]).contains(command[i])) {
+							bandMembers.get(command[1]).add(command[i]);
+						}
+					}
+				} else {
+					for(int i = 2; i < command.length; i++) {
+						if(!bandMembers.get(command[1]).contains(command[i])) {
+							bandMembers.get(command[1]).add(command[i]);
+						}
+					}
+				}
+			}
+			command = scan.nextLine().split("[;,] ");
+		}
+		String band = scan.nextLine();
+		System.out.println("Total time: " + allTime);
+		bandsTime.entrySet().stream().sorted((f,s) -> s.getValue().compareTo(f.getValue()))
+		.forEach(entry -> {
+			System.out.println(entry.getKey() + " -> " + entry.getValue());
+		});
+		System.out.println(band);
+		bandMembers.get(band).sort((f,s) -> s.compareTo(s));
+		for(String name : bandMembers.get(band)) {
+			System.out.println("=> " + name);
+		}
+	}
+}
