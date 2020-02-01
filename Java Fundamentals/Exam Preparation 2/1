@@ -1,4 +1,16 @@
-//
+//Pesho has decided to finally make an account on social media. His problem is that too many people are
+//called Pesho too, so he needs a program that will help him generate an original username and he is 
+//asking you for help. First, you are going to receive the username that he wants to use in the first 
+//place, then commands. You will be receiving commands until the "Sign up" command. There are six possible commands:
+//•	"Case {lower/upper}" - Replace all letters with lower case or with upper case, then print the result.
+//•	"Reverse {startIndex} {endIndex}" - Reverse the substring from the startIndex until the endIndex, then print it.
+//Do NOT change it in the username. Note: Check if the indexes are valid. If they aren’t - skip the command. The 
+//indexes are inclusive.
+//•	"Cut {substring}" - Check if the string contains  the substring and if yes, cut it out and print the result.
+//If the string doesn’t contain the given substring, print: "The word {string} doesn't contain {substring}."
+//•	"Replace {char}" - Replace all occurences of char with astericks (*) and print the result.
+//•	"Check {char}" - In order for a username to be valid, it must contain the given char. If the password is 
+//valid, print "Valid". If it is not valid, print: "Your username must contain {char}."
 
 import java.util.Scanner;
 
@@ -8,7 +20,7 @@ public class zadachi {
 		Scanner scan = new Scanner(System.in);
 		String input = scan.nextLine();
 		StringBuilder username = new StringBuilder(input);
-		while(!input.equals("Sing up")) {
+		while(!input.equals("Sign up")) {
 			String[] command = input.split(" ");
 			switch(command[0]) {
 			case "Case": if(command[1].equals("lower")) {
@@ -16,20 +28,33 @@ public class zadachi {
 						} else if(command[1].equals("upper")) {
 							username.replace(0, username.length(), username.toString().toUpperCase());
 						}
-						System.out.println(username);
+						System.out.println(username);break;
 			case "Reverse" : int start = Integer.parseInt(command[1]);
 							int end = Integer.parseInt(command[2]);
-							StringBuilder reverse = new StringBuilder(username.substring(start, end));
+							StringBuilder reverse = new StringBuilder(username.substring(start, end + 1));
 							reverse.reverse();
-							System.out.println(reverse);
+							System.out.println(reverse);break;
 			case "Cut" : String substr = command[1];
 						if(username.indexOf(substr) != -1) {
 							int index = username.indexOf(substr);
 							username.delete(index, index + substr.length());
 							System.out.println(username);
 						} else {
-							System.out.println("The word " + username + " doesn`t contain " + substr);
-						}
+							System.out.println("The word " + username + " doesn't contain " + substr + ".");
+						}break;
+			case "Replace" : String toReplace = command[1];
+							int position = username.indexOf(toReplace);
+							while(position != -1) {
+								username.replace(position, position + 1, "*");
+								position = username.indexOf(toReplace);
+							}
+							System.out.println(username);break;
+			case "Check" : String check = command[1];
+							if(username.indexOf(check) != -1) {
+								System.out.println("Valid");
+							} else {
+								System.out.println("Your username must contain " + check + ".");
+							}break;
 			}
 			input = scan.nextLine();
 		}
