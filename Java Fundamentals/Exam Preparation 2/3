@@ -1,0 +1,75 @@
+//Now that Pesho has successfully created an account, he wants to connect with other users and gain as
+//many followers, likes and comments as possible. Create a program that keeps information about Pesho's
+//followers, likes and comments. Keep a record of the followers, each with the likes and comments Pesho
+//has received from them. You will be receiving lines with commands until you receive the "Log out" 
+//command.  There are four possible commands:
+//•	"New follower: {username}": Add the username, to your records (with 0 likes and 0 comments). 
+//If person with the given username already exists ignore the line.
+//•	"Like: {username}: {count}": If the username doesn't exist, add it to your records with the given 
+//count of likes. If the username exist, increase the count of likes with the given count.
+//•	"Comment: {username}": If the username doesn't exist, add it to your records with 1 comment.
+//If the username exists, increase the count of commens with 1.
+//•	"Blocked: {username}": Delete all records of the given username. If it doesn’t exist, print:
+ //"{Username} doesn't exist."
+//In the end, you have to print the count of followers, each follower with his/her likes and comments
+//(the sum of likes and comments) sorted in descending order by the likes and then by their username in
+//ascending order in the following format:  
+//{count} followers
+//{username}: {likes+comments}
+//{username}: {likes+comments}
+//...
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, Integer>> followers = new TreeMap<>();
+		String[] input = scan.nextLine().split(": ");
+		while(!input[0].equals("Log out")) {
+			switch(input[0]) {
+			case "New follower" : if(!followers.containsKey(input[1])) {
+									followers.put(input[1], new HashMap<>());
+									followers.get(input[1]).put("likes", 0);
+									followers.get(input[1]).put("comments", 0);
+								}break;
+			case "Like" : int moreLikes = Integer.parseInt(input[2]);
+						if(followers.containsKey(input[1])) {
+							followers.get(input[1]).put("likes", followers.get(input[1]).get("likes") + moreLikes);
+						} else {
+							followers.put(input[1], new HashMap<>());
+							followers.get(input[1]).put("likes", moreLikes);
+							followers.get(input[1]).put("comments", 0);
+						}break;
+			case "Comment" : if(followers.containsKey(input[1])) {
+							followers.get(input[1]).put("comments", followers.get(input[1]).get("comments") + 1);
+							} else {
+								followers.put(input[1], new HashMap<>());
+								followers.get(input[1]).put("likes", 0);
+								followers.get(input[1]).put("comments", 1);
+							}break;
+			case "Blocked" : if(followers.containsKey(input[1])) {
+							followers.remove(input[1]);
+							} else {
+								System.out.println(input[1] + " doesn't exist.");
+							}break;
+			}
+			input = scan.nextLine().split(": ");
+		}
+		int followersCount = 0;
+		for(Entry<String, Map<String, Integer>> follower : followers.entrySet()) {
+			followersCount++;
+		}
+		System.out.println(followersCount + " followers");
+		followers.entrySet().stream().sorted((f,s) -> s.getValue().get("likes").compareTo(f.getValue().get("likes")))
+			.forEach(entry -> {
+				int sum = entry.getValue().get("likes") + entry.getValue().get("comments");
+				System.out.println(entry.getKey() + ": " + sum);
+			});
+	}
+}
