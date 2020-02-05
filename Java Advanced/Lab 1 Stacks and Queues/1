@@ -1,0 +1,36 @@
+//Write a program which takes 2 types of browser instructions:
+//•	Normal navigation: a URL is set, given by a string
+//•	The string "back" that sets the current URL to the last set URL
+//After each instruction the program should print the current URL. If the back instruction can’t be 
+//executed, print "no previous URLs". The input ends with "Home" command, then simply you have to stop the program.
+
+import java.util.ArrayDeque;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		ArrayDeque<String> browser = new ArrayDeque<>();
+		String current = "";
+		String line = scanner.nextLine();
+		while (!line.equals("Home")) {
+			if (line.equals("back")) {
+				if (!browser.isEmpty()) {
+					current = browser.pop();
+				} else {
+					System.out.println("no previous URLs");
+					line = scanner.nextLine();
+					continue;
+				}
+			} else {
+				if (!current.equals("")) {
+					browser.push(current);
+				}
+				current = line;
+			}
+			System.out.println(current);
+			line = scanner.nextLine();
+		}
+	}
+}
