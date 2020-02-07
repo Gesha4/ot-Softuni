@@ -1,0 +1,44 @@
+//Rework the previous problem so that a child is removed only on a composite (not prime) cycle
+//(cycles start from 1) If a cycle is prime, just print the child`s name.
+//As before, print the name of the child that is left last.
+
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		ArrayDeque<String> queue = new ArrayDeque<>();
+		String input = scan.nextLine();
+		Collections.addAll(queue, input.split(" "));
+		int potato = Integer.parseInt(scan.nextLine());
+		int cycle = 1;
+		int timesGiven = 1;
+		int lenght = queue.size();
+		int index = 1;
+		while (queue.size() > 1) {
+			while(index <= lenght) {
+				String child = queue.poll();
+				if(timesGiven == potato) {
+					if (cycle % 2 == 0) {
+						System.out.println("Prime " + child);
+						queue.offer(child);
+					} else {
+						System.out.println("Removed " + child);
+						lenght--;
+					}
+					timesGiven = 0;
+				} else {
+					queue.offer(child);
+				}
+				timesGiven++;
+				index++;
+			}
+			cycle++;
+			index = 1;
+		}
+		System.out.println("Last is " + queue.poll());
+	}		
+}
