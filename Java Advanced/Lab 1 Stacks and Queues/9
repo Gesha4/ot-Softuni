@@ -1,0 +1,20 @@
+//Write a program that reads N integers from the console and reverses them using a stack. Use the 
+//ArrayDeque<Integer> class. Just put the input numbers in the stack and pop them. 
+
+import java.util.ArrayDeque;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		ArrayDeque<Integer> stack = new ArrayDeque<>();
+		String[] line = scan.nextLine().split(" ");
+		for(String num : line) {
+			stack.push(Integer.parseInt(num));
+		}
+		while(!stack.isEmpty()) {
+			System.out.print(stack.pop() + " ");
+		}
+	}
+}
