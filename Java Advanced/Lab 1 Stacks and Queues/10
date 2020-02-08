@@ -1,0 +1,50 @@
+//You will be given an integer N representing the number of elements to push onto the stack, an integer
+//S representing the number of elements to pop from the stack and finally an integer X, an element that
+//you should check whether is present in the stack. If it is, print true on the console. If it’s not, 
+//print the smallest element currently present in the stack.
+//Input
+//•	On the first line, you will be given N, S and X separated by a single space. 
+//•	On the next line, you will be given a line of numbers separated by one or more white spaces.
+//Output
+//•	On a single line print either true if X is present in the stack otherwise print the smallest element
+//in the stack.
+//•	If the stack is empty print 0.
+
+
+import java.util.ArrayDeque;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		ArrayDeque<Integer> stack = new ArrayDeque<>();
+		String[] line = scan.nextLine().split(" ");
+		int in = Integer.parseInt(line[0]);
+		int out = Integer.parseInt(line[1]);
+		int find = Integer.parseInt(line[2]);
+		String[] nums = scan.nextLine().split("\\s+");
+		for(int i = 0; i < in; i++) {
+			stack.push(Integer.parseInt(nums[i]));
+		}
+		for(int i = 0; i < out; i++) {
+			stack.pop();
+		}
+		if(stack.contains(find)) {
+			System.out.println("true");
+		} else {
+			if(stack.isEmpty()) {
+				System.out.println("0");
+			} else {
+				int smallest = Integer.MAX_VALUE;
+				while(!stack.isEmpty()) {
+					int checkNum = stack.pop();
+					if(smallest > checkNum) {
+						smallest = checkNum;
+					}
+				}
+				System.out.println(smallest);
+			}
+		}
+	}
+}
