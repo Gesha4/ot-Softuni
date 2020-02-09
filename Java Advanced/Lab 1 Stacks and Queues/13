@@ -1,0 +1,111 @@
+//Somewhere in the future, there is a robotics factory. The current project is assembly line robots.
+//Each robot has a processing time, the time it needs to process a product. When a robot is free it 
+//should take a product for processing and log his name, product and processing start time. Each robot
+//processes a product coming from the assembly line. A product is coming from the line each second (so
+//the first product should appear at [start time + 1 second]). If a product passes the line and there is
+//not a free robot to take it, it should be queued at the end of the line again. The robots are standing
+//on the line in the order of their appearance.
+//Input
+//•	On the first line, you will get the names of the robots and their processing times in format 
+//"robotName-processTime;robotName-processTime;robotName-processTime"
+//•	On the second line, you will get the starting time in format "hh:mm:ss"
+//•	Next, until the "End" command, you will get a product on each line.
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.Map.Entry;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		ArrayDeque<String> details = new ArrayDeque<>();
+		Map<String,List<String>> robots = new LinkedHashMap<>();
+		String[] line = scan.nextLine().split(";");
+		for(String token : line) {
+			String[] robot = token.split("-");
+			robots.put(robot[0], new ArrayList<>(2));
+			robots.get(robot[0]).add(robot[1]);
+		}
+		String[] time = scan.nextLine().split(":");
+		int starthh = Integer.parseInt(time[0]);
+		int startmm = Integer.parseInt(time[1]);
+		int startss = Integer.parseInt(time[2]);
+		String detail = scan.nextLine();
+		while(!detail.equals("End")) {
+			details.offer(detail);
+			detail = scan.nextLine();
+		}
+		for(Entry<String, List<String>> robot : robots.entrySet()) {
+			String workingDetail = details.poll();
+			int hh = starthh;
+			int mm = startmm;
+			int ss = startss;
+			ss += Integer.parseInt(robot.getValue().get(0));
+			if(ss >= 60) {
+				ss -= 60;
+				if(mm >= 60) {
+					mm -= 60;
+				}
+				if(hh >= 24) {
+					hh -= 24;
+				}
+			}
+			String strss = "" + ss;
+			if(ss >= 0 && ss <= 9) {
+				strss = "0" + ss;
+			}
+			String strmm = "" + mm;
+			if(mm >= 0 && mm <= 9) {
+				strmm = "0" + mm;
+			}
+			String strhh = "" + hh;
+			if(hh >= 0 && hh <= 9) {
+				strhh = "0" + hh;
+			}
+			System.out.println(robot.getKey() + " - " + workingDetail + " [" + strhh + ":" + strmm + ":" + strss + "]");
+			robot.getValue().add(strhh + ":" + strmm + ":" + strss);
+		}
+		while(!details.isEmpty()) {
+			List<Entry<String, List<String>>> readyRobots = robots.entrySet().stream().sorted((f,s) -> {
+				return f.getValue().get(1).compareTo(s.getValue().get(1));
+			}).collect(Collectors.toList());
+			String name = readyRobots.get(0).getKey();
+			String workingTime = readyRobots.get(0).getValue().get(0);
+			String[] timeReady = readyRobots.get(0).getValue().get(1).split(":");
+			String nextDetail = details.poll();
+			int hh = Integer.parseInt(timeReady[0]);
+			int mm = Integer.parseInt(timeReady[1]);
+			int ss = Integer.parseInt(timeReady[2]);
+			ss += Integer.parseInt(workingTime);
+			if(ss >= 60) {
+				ss -= 60;
+				if(mm >= 60) {
+					mm -= 60;
+				}
+				if(hh >= 24) {
+					hh -= 24;
+				}
+			}
+			String strss = "" + ss;
+			if(ss >= 0 && ss <= 9) {
+				strss = "0" + ss;
+			}
+			String strmm = "" + mm;
+			if(mm >= 0 && mm <= 9) {
+				strmm = "0" + mm;
+			}
+			String strhh = "" + hh;
+			if(hh >= 0 && hh <= 9) {
+				strhh = "0" + hh;
+			}
+			System.out.println(name + " - " + nextDetail + " [" + strhh + ":" + strmm + ":" + strss + "]");
+			robots.get(name).add(1, strhh + ":" + strmm + ":" + strss);
+		}
+	}
+}
