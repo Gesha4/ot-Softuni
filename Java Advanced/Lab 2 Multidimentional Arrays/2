@@ -1,0 +1,34 @@
+//Write a program that reads a matrix of integers from the console, then a number and prints all the positions at which that 
+//number appears in the matrix. The matrix definition on the console will contain a line with two positive integer numbers R and
+//C – the number of rows and columns in the matrix – followed by R lines, each containing C numbers (separated by spaces),
+//representing each row of the matrix. The number you will need to find the positions of will be entered on a single line, after
+//the matrix. You should print each position on a single line – first print the row, then the column at which the number appears.
+//If the number does not appear in the matrix, print not found
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int[] dimentions = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		int[][] matrix = new int[dimentions[0]][dimentions[1]];
+		for(int i = 0; i < dimentions[0]; i++) {
+			matrix[i] = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		}
+		int num = Integer.parseInt(scan.nextLine());
+		boolean find = true;
+		for(int i = 0; i < dimentions[0]; i++) {
+			for(int j = 0; j < dimentions[1]; j++) {
+				if(matrix[i][j] == num) {
+					find = false;
+					System.out.println(i + " " + j);
+				}
+			}
+		}
+		if(find) {
+			System.out.println("not found");
+		}
+	}
+}
