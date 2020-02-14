@@ -1,0 +1,35 @@
+//Write a program that reads a matrix from the console. Then find the biggest sum of a 2x2 submatrix. Print the submatrix and
+//its sum. On the first line you will get the dimensions of the matrix in format {rows, columns}. On the next lines you will get
+//the elements for each row separated with a coma.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] dimentions = scan.nextLine().split(", ");
+		int rows = Integer.parseInt(dimentions[0]);
+		int columns = Integer.parseInt(dimentions[1]);
+		int[][] matrix = new int[rows][columns];
+		for(int i = 0; i < rows; i++) {
+			matrix[i] = Arrays.stream(scan.nextLine().split(", ")).mapToInt(Integer::parseInt).toArray();
+		}
+		int[] index = {0, 0};
+		int sum = 0;
+		for(int i = 0; i < rows - 1; i++) {
+			for(int j = 0; j < columns - 1; j++) {
+				int submatsum = matrix[i][j] + matrix[i][j + 1] + matrix[i + 1][j] + matrix[i + 1][j + 1];
+				if(submatsum > sum) {
+					sum = submatsum;
+					index[0] = i;
+					index[1] = j;
+				}
+			}
+		}
+		System.out.println(matrix[index[0]][index[1]] + " " + matrix[index[0]][index[1] + 1]);
+		System.out.println(matrix[index[0] + 1][index[1]] + " " + matrix[index[0] + 1][index[1] + 1]);
+		System.out.println(sum);
+	}
+}
