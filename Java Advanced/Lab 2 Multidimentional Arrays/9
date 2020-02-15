@@ -1,0 +1,69 @@
+//Filling a matrix in the regular way (top to bottom and left to right) is boring. Write two methods that
+//fill a matrix of size N x N in two different patterns. Both patterns are described below:
+//Examples
+//Input
+//3, A
+//Output
+//1 4 7
+//2 5 8
+//3 6 9
+//Input
+//3, B
+//Output
+//1 6 7
+//2 5 8
+//3 4 9
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static int[][] patternA (int n) {
+		int[][] matrix = new int[n][n];
+		int num = 1;
+		for(int j = 0; j < n; j++) {
+			for(int i = 0; i < n; i++) {
+				matrix[i][j] = num;
+				num++;
+			}
+		}
+		return matrix;
+	}
+	
+	public static int[][] patternB (int n) {
+		int[][] matrix = new int[n][n];
+		int num = 1;
+		for(int j = 0; j < n; j++) {
+			if(j % 2 == 0) {
+				for(int i = 0; i < n; i++) {
+					matrix[i][j] = num++;
+				}
+			} else {
+				for(int i = n - 1; i >= 0; i--) {
+					matrix[i][j] = num++;
+				}
+			}
+		}
+		return matrix;
+	}
+	
+	public static void print(int[][] matrix) {
+		System.out.println();
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix.length; j++) {
+				System.out.print(matrix[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] input = scan.nextLine().split(", ");
+		if(input[1].equals("A")) {
+			print(patternA(Integer.parseInt(input[0])));
+		} else if(input[1].equals("B")) {
+			print(patternB(Integer.parseInt(input[0])));
+		}
+	}
+}
