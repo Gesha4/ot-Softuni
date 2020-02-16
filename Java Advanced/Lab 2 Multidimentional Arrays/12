@@ -1,0 +1,40 @@
+//Write a program that reads a rectangular integer matrix of size N x M and finds in it the square 3 x 3
+//that has maximal sum of its elements.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] dimentions = scan.nextLine().split(" ");
+		int rows = Integer.parseInt(dimentions[0]);
+		int columns = Integer.parseInt(dimentions[1]);
+		int[][] matrix = new int[rows][columns];
+		for(int i = 0; i < rows; i++) {
+			matrix[i] = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		}
+		int[] index = {0, 0};
+		int sum = 0;
+		for(int i = 0; i < rows - 2; i++) {
+			for(int j = 0; j < columns - 2; j++) {
+				int submatsum = matrix[i][j] + matrix[i][j + 1] + matrix[i][j + 2] + matrix[i + 1][j] 
+						+ matrix[i + 1][j + 1] + matrix[i + 1][j + 2] + matrix[i + 2][j] 
+								+ matrix[i + 2][j + 1] + matrix[i + 2][j + 2];
+				if(submatsum > sum) {
+					sum = submatsum;
+					index[0] = i;
+					index[1] = j;
+				}
+			}
+		}
+		System.out.println("Sum = " + sum);
+		System.out.printf("%d %d %d%n", matrix[index[0]][index[1]], matrix[index[0]][index[1] + 1], 
+				matrix[index[0]][index[1] + 2]);
+		System.out.printf("%d %d %d%n", matrix[index[0] + 1][index[1]], matrix[index[0] + 1][index[1] + 1], 
+				matrix[index[0] + 1][index[1] + 2]);
+		System.out.printf("%d %d %d%n", matrix[index[0] + 2][index[1]], matrix[index[0] + 2][index[1] + 1], 
+				matrix[index[0] + 2][index[1] + 2]);
+	}
+}
