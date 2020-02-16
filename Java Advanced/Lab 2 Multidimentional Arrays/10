@@ -1,0 +1,29 @@
+//Write a program to generate the following matrix of palindromes of 3 letters with r rows and c columns
+//like the one in the examples below.
+//Rows define the first and the last letter: row 0  ‘a’, row 1  ‘b’, row 2  ‘c’, …
+//Columns + rows define the middle letter:
+// column 0, row 0  ‘a’, column 1, row 0  ‘b’, column 2, row 0  ‘c’, …
+// column 0, row 1  ‘b’, column 1, row 1  ‘c’, column 2, row 1  ‘d’, …
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] input = scan.nextLine().split(" ");
+		int rows = Integer.parseInt(input[0]);
+		int columns = Integer.parseInt(input[1]);
+		StringBuilder word = new StringBuilder();
+		for(int i = 0; i < rows; i++) {
+			for(int j = i; j < i + columns; j++) {
+				word.append((char) (i + 97));
+				word.append((char) (j + 97));
+				word.append((char) (i + 97));
+				System.out.print(word + " ");
+				word.delete(0, 3);
+			}
+			System.out.println();
+		}
+	}
+}
