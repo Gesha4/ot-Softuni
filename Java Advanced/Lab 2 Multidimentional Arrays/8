@@ -1,0 +1,62 @@
+//You will be given the rows of a matrix. Then the matrix itself. Inside this matrix there are mistaken values which need to be
+//replaced you will receive the wrong value at the last line. Those values should be replaced with the sum of the nearest elements
+//in the four directions up, down, left and right, but only if they are valid values. At the end you have to print the fixed 
+//measurements.
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static int newValue(int[][]matrix, int i, int j, int mistake) {
+		int value = 0;
+		if(i > 0 && matrix[i - 1][j] != mistake) {
+			value += matrix[i - 1][j];
+		}
+		if(i < matrix.length - 1 && matrix[i + 1][j] != mistake) {
+			value += matrix[i + 1][j];
+		}
+		if(j > 0 && matrix[i][j - 1] != mistake) {
+			value += matrix[i][j - 1];
+		}
+		if(j < matrix.length - 1 && matrix[i][j + 1] != mistake) {
+			value += matrix[i][j + 1];
+		}
+		return value;
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int size = Integer.parseInt(scan.nextLine());
+		int[][]matrix = new int[size][];
+		for(int i = 0; i < size; i++) {
+			matrix[i] = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		}
+		int mistake = Integer.parseInt(scan.nextLine());
+		Map<Integer,Map<Integer,Integer>> replace = new HashMap<>();
+		for(int i = 0; i < size; i++) {
+			for(int j = 0; j < matrix[i].length; j++) {
+				if(matrix[i][j] == mistake) {
+					int value = newValue(matrix, i, j, mistake);
+					if(!replace.containsKey(i)) {
+						replace.put(i, new HashMap<Integer, Integer>());
+						replace.get(i).put(j, value);
+					} else {
+						replace.get(i).put(j, value);
+					}
+				}
+			}
+		}
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix[i].length; j++) {
+				if(replace.containsKey(i) && replace.get(i).containsKey(j)) {
+					matrix[i][j] = replace.get(i).get(j);
+				}
+				System.out.print(matrix[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+}
