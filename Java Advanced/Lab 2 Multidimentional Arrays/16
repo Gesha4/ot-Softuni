@@ -1,0 +1,144 @@
+//At last, level 80. And what do level eighties do? Go raiding. This is where you are now – trying not
+//to be wiped by the famous dance boss, Heigan the Unclean. The fight is pretty straightforward - dance
+//around the Plague Clouds and Eruptions, and you’ll be just fine. Heigan’s chamber is a 15-by-15 two-
+//dimensional array. The player always starts at the exact center. For each turn, Heigan uses a spell 
+//that hits a certain cell and the neighboring rows/columns. For example, if he hits (1,1), he also
+//hits (0,0, 0,1, 0,2, 1,0 … 2,2). If the player’s current position is within the area of damage, the 
+//player tries to move. First, he tries to move up, if there’s damage/wall, he tries to move right, then
+//down, then left. If he cannot move in any direction, because the cell is damaged or there is a wall, 
+//the player stays in place and takes the damage. Plague cloud does 3500 damage when it hits, and 3500 
+//damage the next turn. Then it expires. Eruption does 6000 damage when it hits. If a spell hits a player
+//that also has an active Plague Cloud from the previous turn, the cloud damage is applied first. Both 
+//Heigan and the player may die in the same turn. If Heigan is dead, the spell he would have casted is 
+//ignored. The player always starts at 18500 hit points; Heigan starts at 3,000,000 hit points. Each 
+//turn, the player does damage to Heigan. The fight is over either when the player is killed, or Heigan
+//is defeated.
+//Input
+//On the first line you receive a floating-point number D – the damage done to Heigan each turn
+//On the next several lines – you receive input in format {spell} {row} {col} – {spell} is either Cloud or Eruption
+//Output
+//On the first line
+//If Heigan is defeated: “Heigan: Defeated!”
+//Else: “Heigan: {remaining}”, where remaining is rounded to two digits after the decimal separator
+//On the second line:
+//If the player is killed: “Player: Killed by {spell}”
+//Else “Player: {remaining}”
+//On the third line: “Final position: {row, col}” -&gt; the last coordinates of the player
+
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void clear(int[][] matrix) {
+		for(int i = 0; i < matrix.length; i++) {
+			for(int j = 0; j < matrix.length; j++) {
+				matrix[i][j] = 0;
+			}
+		}
+	}
+	
+	public static void spellPlace(int[][] floor, int row, int col) {
+		int startRow = row - 1;
+		if(startRow < 0) {
+			startRow = 0;
+		}
+		int endRow = row + 1;
+		if(endRow >= floor.length) {
+			endRow = floor.length - 1;
+		}
+		int startCol = col - 1;
+		if(startCol < 0) {
+			startCol = 0;
+		}
+		int endCol = col + 1;
+		if(endCol >= floor.length) {
+			endCol = floor.length - 1;
+		}
+		for(int i = startRow; i <= endRow; i++) {
+			for(int j = startCol; j <= endCol; j++) {
+				floor[i][j] = 1;
+			}
+		}
+	}
+
+	public static int[] playerPosition(int[][] floor, int[] player) {
+		int[] position = new int[2];
+		if(floor[player[0]][player[1]] == 1) {
+			int row = player[0];
+			int col = player[1];
+			if(row - 1 > 0 && floor[row - 1][col] == 0) {
+				position[0] = row - 1;
+				position[1] = col;
+			} else if(col + 1 < floor.length && floor[row][col + 1] == 0) {
+				position[0] = row;
+				position[1] = col + 1;
+			} else if(row + 1 < floor.length && floor[row + 1][col] == 0) {
+				position[0] = row + 1;
+				position[1] = col;
+			} else if(col - 1 > 0 && floor[row][col - 1] == 0) {
+				position[0] = row;
+				position[1] = col - 1;
+			} else {
+				position = player;
+			}
+		} else {
+			position = player;
+		}
+		return position;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int[][] floor = new int[16][16];
+		clear(floor);
+		double heigan = 3000000;
+		int player = 18500;
+		int[] position = {7, 7};
+		double damage = Double.parseDouble(scan.nextLine());
+		boolean cloudHit = false;
+		while(heigan > 0 && player > 0) {
+			String[] spell = scan.nextLine().split(" ");
+			heigan -= damage;
+			if(heigan > 0) {
+				if(cloudHit) {
+					player -= 3500;
+				}
+				if(player > 0) {
+					spellPlace(floor, Integer.parseInt(spell[1]), Integer.parseInt(spell[2]));
+					position = playerPosition(floor,position);
+					if(floor[position[0]][position[1]] == 1) {
+						if(spell[0].equals("Cloud")) {
+							player -= 3500;
+							cloudHit = true;
+						} else {
+							player -= 6000;
+							cloudHit = false;
+						}
+					}
+					clear(floor);
+					if(player < 0) {
+						System.out.printf("Heigan: %.2f%n", heigan);
+						if(spell[0].equals("Cloud")) {
+							System.out.print("Player: Killed by Plague Cloud");
+						} else {
+							System.out.print("Player: Killed by Eruption");
+						}
+						System.out.printf("%nFinal position: %d, %d", position[0], position[1]);
+						break;
+					}
+				} else {
+					System.out.printf("Heigan: %.2f%n", heigan);
+					System.out.print("Player: Killed by Plague Cloud");
+					System.out.printf("%nFinal position: %d, %d", position[0], position[1]);
+					break;
+				}
+			} else {
+				System.out.println();
+				System.out.println("Heigan: Defeated!");
+				System.out.println("Player: " + player);
+				System.out.printf("Final position: %d, %d", position[0], position[1]);
+				break;
+			}
+		}
+	}
+}
