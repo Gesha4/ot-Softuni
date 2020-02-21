@@ -1,0 +1,51 @@
+//You are given a matrix (2D array) of integers. You have to print the matrix diagonal but in reversed order. Print each diagonal
+//on new line.
+//Input
+//On the first line, single integer the number R of rows in the matrix. On each of the next R lines, C numbers separated by 
+//single spaces. Note that R and C may have different values.
+//Output
+//The output should consist of R lines, each consisting of exactly C characters, separated by spaces, representing the matrix
+//diagonals reversed.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+		
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int[] dimentions = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		int[][] matrix = new int[dimentions[0]][dimentions[1]];
+		for(int i = 0; i < dimentions[0]; i++) {
+			matrix[i] = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		}
+		int cols = dimentions[1];
+		while(cols >= 0) {
+			int startCol = cols;
+			int startRow = dimentions[0] - 1;
+			for(int i = startCol; i < dimentions[1]; i++) {
+				System.out.print(matrix[startRow][i] + " ");
+				startRow--;
+				if(startRow < 0) {
+					break;
+				}
+			}
+			System.out.println();
+			cols--;
+		}
+		int rows = dimentions[0] - 2;
+		while(rows >= 0) {
+			int startRow = rows;
+			int startCol = 0;
+			for(int i = startRow; i >= 0; i--) {
+				System.out.print(matrix[i][startCol] + " ");
+				startCol++;
+				if(startCol == dimentions[1]) {
+					break;
+				}
+			}
+			System.out.println();
+			rows--;
+		}
+	}		
+}
