@@ -1,0 +1,82 @@
+//You are given a sequence of text lines. Assume these text lines form a matrix of characters (pad the 
+//missing positions with spaces to build a rectangular matrix). Write a program to rotate the matrix by
+//90, 180, 270, 360, … degrees. Print the result at the console as sequence of strings after receiving
+//the “END” command.
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void print(List<String> matrix) {
+		for(int i = 0; i < matrix.size(); i++) {
+			System.out.println(matrix.get(i));
+		}
+	}
+	
+	public static void print1(List<String> matrix, int rows, int columns) {
+		for(int i = 0; i < columns; i++) {
+			for(int j = rows - 1; j >= 0; j--) {
+				if(matrix.get(j).length() > i) {
+					System.out.print(matrix.get(j).charAt(i));
+				} else {
+					System.out.print(" ");
+				}
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void print2(List<String> matrix, int rows, int columns) {
+		for(int i = rows - 1; i >= 0; i--) {
+			for( int j = columns - 1; j >= 0; j--) {
+				if(matrix.get(i).length() > j) {
+					System.out.print(matrix.get(i).charAt(j));
+				} else {
+					System.out.print(" ");
+				}
+			}
+			System.out.println();
+		}
+	}
+	
+	public static void print3(List<String> matrix, int rows, int columns) {
+		for(int i = columns - 1; i >= 0; i--) {
+			for(int j = 0; j < rows; j++) {
+				if(matrix.get(j).length() > i) {
+					System.out.print(matrix.get(j).charAt(i));
+				} else {
+					System.out.print(" ");
+				}
+			}
+			System.out.println();
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String command = scan.nextLine();
+		int degrece = Integer.parseInt(command.substring(command.indexOf("(") + 1, command.indexOf(")")));
+		int rotate = (degrece / 90) % 4;
+		String input = scan.nextLine();
+		List<String> matrix = new ArrayList<>();
+		while(!input.equals("END")) {
+			matrix.add(input);
+			input = scan.nextLine();
+		}
+		int rows = matrix.size();
+		int columns = 0;
+		for(int i = 0; i < matrix.size(); i++) {
+			if(matrix.get(i).length() > columns) {
+				columns = matrix.get(i).length();
+			}
+		}
+		switch(rotate) {
+		case 0 : print(matrix);break;
+		case 1 : print1(matrix, rows, columns);break;
+		case 2 : print2(matrix, rows, columns);break;
+		case 3 : print3(matrix, rows, columns);break;
+		}
+	}
+}
