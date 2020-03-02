@@ -1,0 +1,30 @@
+//Write program that:
+//Record car number for every car that enter in parking lot
+//Remove car number when the car go out
+//Input will be string in format [direction, carNumber]
+//input end with string "END"
+//Print the output with all car numbers which are in parking lot
+
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		HashSet<String> cars = new HashSet<>();
+		String input = scan.nextLine();
+		while(!input.equals("END")) {
+			String[] command = input.split(", ");
+			switch(command[0]) {
+			case "IN" : cars.add(command[1]);break;
+			case "OUT" : cars.remove(command[1]);break;
+			}
+			input = scan.nextLine();
+		}
+		for(String car : cars) {
+			System.out.println(car);
+		}
+	}		
+}
