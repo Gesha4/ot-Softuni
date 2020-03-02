@@ -1,0 +1,42 @@
+//There is a party in SoftUni. Many guests are invited and they are two types: VIP and regular. When guest
+//come check if he/she exist in any of two reservation lists. All reservation numbers will be with 8 chars.
+//All VIP numbers start with digit. There will be 2 command lines. First is "PARTY" - party is on and guests
+//start coming. Second is "END" – then party is over and no more guest will come. Output shows all guests,
+//who didn't come to the party (VIP must be first).
+
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		HashSet<String> vip = new HashSet<>();
+		HashSet<String> regular = new HashSet<>();
+		String input = scan.nextLine();
+		while(!input.equals("PARTY")) {
+			if(Character.isDigit(input.charAt(0))) {
+				vip.add(input);
+			} else {
+				regular.add(input);
+			}
+			input = scan.nextLine();
+		}
+		while(!input.equals("END")) {
+			if(Character.isDigit(input.charAt(0))) {
+				vip.remove(input);
+			} else {
+				regular.remove(input);
+			}
+			input = scan.nextLine();
+		}
+		System.out.println(vip.size() + regular.size());
+		for(String guest : vip) {
+			System.out.println(guest);
+		}
+		for(String guest : regular) {
+			System.out.println(guest);
+		}
+	}		
+}
