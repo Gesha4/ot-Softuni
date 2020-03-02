@@ -24,7 +24,7 @@ public class zadachi {
 			input = scan.nextLine();
 		}
 		if(cars.isEmpty()) {
-			System.out.println("Parking lot is empthy");
+			System.out.println("Parking Lot is Empthy");
 		} else {
 			for(String car : cars) {
 				System.out.println(car);
