@@ -5,7 +5,7 @@
 //input end with string "END"
 //Print the output with all car numbers which are in parking lot
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 
 public class zadachi {
@@ -13,7 +13,7 @@ public class zadachi {
 	
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		HashSet<String> cars = new HashSet<>();
+		LinkedHashSet<String> cars = new LinkedHashSet<>();
 		String input = scan.nextLine();
 		while(!input.equals("END")) {
 			String[] command = input.split(", ");
@@ -23,8 +23,12 @@ public class zadachi {
 			}
 			input = scan.nextLine();
 		}
-		for(String car : cars) {
-			System.out.println(car);
+		if(cars.isEmpty()) {
+			System.out.println("Parking lot is empthy");
+		} else {
+			for(String car : cars) {
+				System.out.println(car);
+			}
 		}
 	}		
 }
