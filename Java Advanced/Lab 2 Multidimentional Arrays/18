@@ -1,0 +1,187 @@
+//Browsing through GitHub, you come across an old JS Basics teamwork game. It is about very nasty bunnies
+//that multiply extremely fast. There’s also a player that has to escape from their lair. You really like
+//the game so you decide to port it to Java because that’s your language of choice. The last thing that is
+//left is the algorithm that decides if the player will escape the lair or not. First, you will receive a
+//line holding integers N and M, which represent the rows and columns in the lair. Then you receive N 
+//strings that can only consist of “.”, “B”, “P”. The bunnies are marked with “B”, the player is marked 
+//with “P”, and everything else is free space, marked with a dot “.”. They represent the initial state of
+//the lair. There will be only one player. Then you will receive a string with commands such as LLRRUUDD 
+//– where each letter represents the next move of the player (Left, Right, Up, Down). After each step of 
+//the player, each of the bunnies spread to the up, down, left and right (neighboring cells marked as “.”
+//changes their value to B). If the player moves to a bunny cell or a bunny reaches the player, the player
+//has died. If the player goes out of the lair without encountering a bunny, the player has won. When the
+//player dies or wins, the game ends. All the activities for this turn continue (e.g. all the bunnies 
+//spread normally), but there are no more turns. There will be no stalemates where the moves of the player
+//end before he dies or escapes. Finally, print the final state of the lair with every row on a separate
+//line. On the last line, print either “dead: {row} {col}” or “won: {row} {col}”. Row and col are the 
+//coordinates of the cell where the player has died or the last cell he has been in before escaping the lair.
+
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void print(char[][] lair) {
+		for(int i = 0; i < lair.length; i++) {
+			for(int j = 0; j < lair[0].length; j++) {
+				System.out.print(lair[i][j]);
+			}
+			System.out.println();
+		}
+	}
+	
+	public static int[] findPlayer(char[][] lair) {
+		int[] position = new int[2];
+		for(int i = 0; i < lair.length; i++) {
+			for(int j = 0; j < lair[0].length; j++) {
+				if(lair[i][j] == 'P') {
+					position[0] = i;
+					position[1] = j;
+					break;
+				}
+			}
+		}
+		return position;
+	}
+	
+	public static int[] movingTo(int[] position, char direction) {
+		int[] place = new int[2];
+		switch(direction) {
+		case 'L': place[0] = position[0];
+				  place[1] = position[1] - 1;break;
+		case 'R': place[0] = position[0];
+				  place[1] = position[1] + 1;break;
+		case 'U': place[0] = position[0] - 1;
+				  place[1] = position[1];break;
+		case 'D': place[0] = position[0] + 1;
+				  place[1] = position[1];break;
+		}
+		return place;
+	}
+	
+	public static boolean out(char[][] liar, int[] position) {
+		if(position[0] < 0 || position[0] >= liar.length 
+				|| position[1] < 0 || position[1] > liar[0].length) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static boolean willSurvive(char[][] lair, int[] position) {
+		boolean willSurvive = true;
+		int i = position[0];
+		int j = position[1];
+		if(i == 0) {
+			if(lair[i + 1][j] == 'B') {
+				willSurvive = false;
+			}
+		} else if(i == lair.length - 1) {
+			if(lair[i - 1][j] == 'B') {
+				willSurvive = false;
+			}
+		} else {
+			if(lair[i - 1][j] == 'B' || lair[i + 1][j] == 'B') {
+				willSurvive = false;
+			}
+		}
+		if(j == 0) {
+			if(lair[i][j + 1] == 'B') {
+				willSurvive = false;
+			}
+		} else if(j == lair[i].length - 1) {
+			if(lair[i][j - 1] == 'B') {
+				willSurvive = false;
+			}
+		} else {
+			if(lair[i][j - 1] == 'B' || lair[i][j + 1] == 'B') {
+				willSurvive = false;
+			}
+		}
+		return willSurvive;
+	}
+	
+	public static void findBunnies(char[][]lair, List<int[]> bunnies) {
+		for(int i = 0; i < lair.length; i++) {
+			for(int j = 0; j < lair[i].length; j++) {
+				if(lair[i][j] == 'B') {
+					int[] bunnie = {i, j};
+					if(!bunnies.contains(bunnie)) {
+						bunnies.add(bunnie);
+					}
+				}
+			}
+		}
+	}
+		
+	public static void spreading(char[][]lair, List<int[]>bunnies) {
+		for(int[] bunnie : bunnies) {
+			int i = bunnie[0];
+			int j = bunnie[1];
+			if(i == 0) {
+				lair[i + 1][j] = 'B';
+			} else if(i == lair.length - 1) {
+				lair[i - 1][j] = 'B';
+			} else {
+				lair[i - 1][j] = 'B';
+				lair[i + 1][j] = 'B';
+			}
+			if(j == 0) {
+				lair[i][j + 1] = 'B';
+			} else if(j == lair[i].length - 1) {
+				lair[i][j - 1] = 'B';
+			} else {
+				lair[i][j - 1] = 'B';
+				lair[i][j + 1] = 'B';
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int[] dimentions = Arrays.stream(scan.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		char[][] lair = new char[dimentions[0]][dimentions[1]];
+		for(int i = 0; i < dimentions[0]; i++) {
+			lair[i] = scan.nextLine().toCharArray();
+		}
+		String movement = scan.nextLine();
+		List<int[]> bunnies = new ArrayList<>();
+		int[] position = findPlayer(lair);
+		boolean alive = true;
+		boolean out = false;
+		int moving = 0;
+		while(alive) {
+			if(movement.length() > moving) {
+				int[] newPlace = movingTo(position, movement.charAt(moving));
+				lair[position[0]][position[1]] = '.';
+				out = out(lair, newPlace);
+				if(!out) {
+					position = newPlace;
+					if(lair[position[0]][position[1]] == 'B') {
+						alive = false;
+					} else {
+						lair[position[0]][position[1]] = 'P';
+					}
+				}
+			}
+			if(alive && !out) {
+				alive = willSurvive(lair, position);
+			}
+			findBunnies(lair, bunnies);
+			spreading(lair, bunnies);
+			if(out) {
+				break;
+			}
+			moving++;
+		}
+		print(lair);
+		if(out) {
+			System.out.println("won: " + position[0] + " " + position[1]);
+		} else {
+			System.out.println("dead: " + position[0] + " " + position[1]);
+		}
+	}		
+}
