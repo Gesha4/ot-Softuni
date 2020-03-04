@@ -1,0 +1,30 @@
+//Write a program that counts the occurrence of real numbers. The input is a single line with real numbers separated by spaces.
+//Print the numbers in the order of appearance. All numbers must be formatted to one digit after the decimal point.
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class zadachi {
+
+	
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		double[] nums = Arrays.stream(scan.nextLine().split("\\s+"))
+				.mapToDouble(Double::parseDouble)
+				.toArray();
+		Map<Double, Integer> numsCount = new LinkedHashMap<>();
+		for(double num : nums) {
+			if(!numsCount.containsKey(num)) {
+				numsCount.put(num, 1);
+			} else {
+				numsCount.put(num, numsCount.get(num) + 1);
+			}
+		}
+		for(Double key : numsCount.keySet()) {
+			System.out.printf("%n%.1f -> %d", key, numsCount.get(key));
+		}
+	}
+}
