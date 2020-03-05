@@ -1,0 +1,36 @@
+//Write a program that:
+//Read from console number of students for a track
+//Read on pair of rows:
+//First line is the name of student
+//Second line is his score for different number of courses
+//Print on console “{name} is graduated with {average scores)”
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static double avg(String[] grades) {
+		double sum = 0;
+		for(int i = 0; i < grades.length; i++) {
+			sum += Double.parseDouble(grades[i]);
+		}
+		return sum / grades.length;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, String[]> students = new TreeMap<>();
+		int count = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < count; i++) {
+			String name = scan.nextLine();
+			String[] grades = scan.nextLine().split(" ");
+			students.put(name, grades);
+		}
+		for(Entry<String, String[]> student : students.entrySet()) {
+			System.out.println(student.getKey() + " is graduated with " + avg(student.getValue()));
+		}
+	}		
+}
