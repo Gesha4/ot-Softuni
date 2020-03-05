@@ -1,0 +1,42 @@
+//
+
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void adding(TreeMap<String, LinkedHashMap<String, Double>> shops, String input) {
+		String[] data = input.split(", ");
+		String shop = data[0];
+		String product = data[1];
+		double price = Double.parseDouble(data[2]);
+		if(!shops.containsKey(shop)) {
+			shops.put(shop, new LinkedHashMap<String, Double>());
+			shops.get(shop).put(product, price);
+		} else {
+			shops.get(shop).put(product, price);
+		}
+	}
+	
+	public static void print(LinkedHashMap<String, Double> products) {
+		for(Entry<String, Double> product : products.entrySet()) {
+			System.out.printf("Product: %s, Price: %.1f%n", product.getKey(), product.getValue());
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		TreeMap<String, LinkedHashMap<String, Double>> shops = new TreeMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("Revision")) {
+			adding(shops, input);
+			input = scan.nextLine();
+		}
+		for(Entry<String, LinkedHashMap<String, Double>> shop : shops.entrySet()) {
+			System.out.println(shop.getKey() + "->");
+			print(shop.getValue());
+		}
+	}
+}
