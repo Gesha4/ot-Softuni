@@ -1,0 +1,61 @@
+//You are given an input in the format: IP=(IP.Address) message=(A&sample&message) 
+//user=(username). Your task is to parse the IP and the username from the input and for every
+//user, you have to display every IP from which the corresponding user has sent a message and
+//the count of the messages sent with the corresponding IP. In the output, the usernames must
+//be sorted alphabetically while their IP addresses should be displayed in the order of their
+//first appearance. The output should be in the following format: 
+//username:
+//IP => count, IP => count.
+//For example, given the following input - IP=192.23.30.40 message='Hello&derps.' user=destroyer,
+//you have to get the username destroyer and the IP 192.23.30.40 and display it in the following
+//format:
+//destroyer:
+//192.23.30.40 => 1.
+//The username destroyer has sent a message from IP 192.23.30.40 once.
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void adding(Map<String, Map<String, Integer>> users, String input) {
+		String ip = input.substring(input.indexOf("=") + 1, input.indexOf(" "));
+		String name = input.substring(input.lastIndexOf("=") + 1);
+		if(!users.containsKey(name)) {
+			users.put(name, new LinkedHashMap<String, Integer>());
+			users.get(name).put(ip, 1);
+		} else {
+			if(!users.get(name).containsKey(ip)) {
+				users.get(name).put(ip, 1);
+			} else {
+				users.get(name).put(ip, users.get(name).get(ip) + 1);
+			}
+		}
+	}
+	
+	public static void print(Map<String, Map<String, Integer>> users) {
+		for(Entry<String, Map<String, Integer>> user : users.entrySet()) {
+			System.out.println(user.getKey() + ": ");
+			StringBuilder ips = new StringBuilder();
+			for(Entry<String, Integer> ip : user.getValue().entrySet()) {
+				ips.append(ip.getKey() + " => " + ip.getValue() + ", ");
+			}
+			ips.replace(ips.length() - 2, ips.length(), ".");
+			System.out.println(ips);
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, Integer>> users = new TreeMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("end")) {
+			adding(users, input);
+			input = scan.nextLine();
+		}
+		print(users);
+	}		
+}
