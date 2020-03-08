@@ -1,0 +1,65 @@
+//On each input line you’ll be given data in format: "city|country|population". There will be
+//no redundant whitespaces anywhere in the input. Aggregate the data by country and by city
+//and print it on the console. For each country, print its total population and on separate 
+//lines the data for each of its cities. Countries should be ordered by their total population
+//in descending order and within each country, the cities should be ordered by the same
+//criterion. If two countries/cities have the same population, keep them in the order in which
+//they were entered.
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void adding(Map<String, Map<String, Integer>> countries, String input) {
+		String[] data = input.split("\\|");
+		String city = data[0];
+		String country = data[1];
+		int population = Integer.parseInt(data[2]);
+		if(!countries.containsKey(country)) {
+			countries.put(country, new LinkedHashMap<>());
+			countries.get(country).put(city, population);
+		} else {
+			countries.get(country).put(city, population);
+		}
+	}
+	
+	public static void sumAllPopulation(Map<String, Map<String, Integer>> countries, 
+			Map<String, Integer> allPopulation) {
+		for(Entry<String, Map<String, Integer>> country : countries.entrySet()) {
+			int allPop = 0;
+			for(Entry<String, Integer> cities : country.getValue().entrySet()) {
+				allPop += cities.getValue();
+			}
+			allPopulation.put(country.getKey(), allPop);
+		}
+	}
+	
+	public static void printCities(Map<String, Integer> cities) {
+		cities.entrySet().stream()
+			.sorted((f,s) -> s.getValue().compareTo(f.getValue()))
+			.forEach(entry -> {
+				System.out.println("=>" + entry.getKey() + ": " + entry.getValue());
+			});
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, Integer>> countries = new LinkedHashMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("report")) {
+			adding(countries, input);
+			input = scan.nextLine();
+		}
+		Map<String, Integer> allPopulation = new LinkedHashMap<>();
+		sumAllPopulation(countries, allPopulation);
+		allPopulation.entrySet().stream()
+			.sorted((f,s) -> s.getValue().compareTo(f.getValue()))
+			.forEach(entry -> {
+				System.out.println(entry.getKey() + " (total population: " + entry.getValue() + ")");
+				printCities(countries.get(entry.getKey()));
+			});
+	}		
+}
