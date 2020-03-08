@@ -1,0 +1,71 @@
+//You are given a sequence of access logs in format <IP> <user> <duration>. For example:
+// 192.168.0.11 peter 33
+// 10.10.17.33 alex 12
+// 10.10.17.35 peter 30
+//10.10.17.34 peter 120
+// 10.10.17.34 peter 120
+// 212.50.118.81 alex 46
+// 212.50.118.81 alex 4
+//Write a program to aggregate the logs data and print for each user the total duration of his
+//sessions and a list of unique IP addresses in format "<user>: <duration> [<IP1>, <IP2>, …]".
+//Order the users alphabetically. Order the IPs alphabetically. In our example, the output 
+//should be the following:
+// alex: 62 [10.10.17.33, 212.50.118.81]
+// peter: 303 [10.10.17.34, 10.10.17.35, 192.168.0.11]
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void adding(Map<String, Map<String, Integer>> users, String input) {
+		String[] data = input.split(" ");
+		String ip = data[0];
+		String name = data[1];
+		int duration = Integer.parseInt(data[2]);
+		if(!users.containsKey(name)) {
+			users.put(name, new TreeMap<>());
+			users.get(name).put(ip, duration);
+		} else {
+			if(!users.get(name).containsKey(ip)) {
+				users.get(name).put(ip, duration);
+			} else {
+				users.get(name).put(ip, users.get(name).get(ip) + duration);
+			}
+		}
+	}
+	
+	public static int allDuration(Map<String, Integer> ips) {
+		int all = 0;
+		for(Entry<String, Integer> ip : ips.entrySet()) {
+			all += ip.getValue();
+		}
+		return all;
+	}
+	
+	public static StringBuilder printIps(Map<String, Integer> ips) {
+		StringBuilder allIps = new StringBuilder();
+		allIps.append("[");
+		for(Entry<String, Integer> ip : ips.entrySet()) {
+			allIps.append(ip.getKey() + ", ");
+		}
+		allIps.replace(allIps.length() - 2, allIps.length(), "]");
+		return allIps;
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, Integer>> users = new TreeMap<>();
+		int count = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < count; i++) {
+			String input = scan.nextLine();
+			adding(users, input);
+		}
+		for(Entry<String, Map<String, Integer>> user : users.entrySet()) {
+			System.out.println(user.getKey() + ": " + allDuration(user.getValue()) + " " +
+					printIps(user.getValue()));
+		}
+	}		
+}
