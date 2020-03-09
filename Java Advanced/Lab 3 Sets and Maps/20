@@ -1,0 +1,85 @@
+//You’ve beaten all the content and the last thing left to accomplish is own a legendary item. However, it’s a tedious process
+//and requires quite a bit of farming. Anyway, you are not too pretentious – any legendary will do. The possible items are:
+// Shadowmourne – requires 250 Shards; Valanyr – requires 250 Fragments; Dragonwrath – requires 250 Motes; Shards, Fragments 
+//and Motes are the key materials, all else is junk. You will be given lines of input, such as 2 motes 3 ores 15 stones. Keep
+//track of the key materials - the first that reaches the 250 mark wins the race. At that point, print the corresponding 
+//legendary obtained. Then, print the remaining shards, fragments, motes, ordered by quantity in descending order, each on a 
+//new line. Finally, print the collected junk items, in alphabetical order.
+//Input - Each line of input is in format {quantity} {material} {quantity} {material} … {quantity} {material}
+//Output
+// On the first line, print the obtained item in format {Legendary item} obtained!
+// On the next three lines, print the remaining key materials in descending order by quantity
+// If two key materials have the same quantity, print them in alphabetical order
+// On the final several lines, print the junk items in alphabetical order
+// All materials are printed in format {material}: {quantity}
+// All output should be lowercase, except the first letter of the legendary
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void adding(Map<String, Integer> materials, String material, int count) {
+		if(!materials.containsKey(material)) {
+			materials.put(material, count);
+		} else {
+			materials.put(material, materials.get(material) + count);
+		}
+	}
+	
+	public static String isObtained(Map<String, Integer> mats) {
+		String obtained = "";
+		for(Entry<String, Integer> mat : mats.entrySet()) {
+			if(mat.getValue() >= 250) {
+				mat.setValue(mat.getValue() - 250);
+				if(mat.getKey().equals("shards")) {
+					obtained = "Shadowmourne";
+				} else if(mat.getKey().equals("fragments")) {
+					obtained = "Valanyr";
+				} else if(mat.getKey().equals("motes")) {
+					obtained = "Dragonwrath";
+				}
+			}
+		}
+		return obtained;
+	}
+	
+	public static void print(Map<String, Integer> materials) {
+		for(Entry<String, Integer> mat : materials.entrySet()) {
+			System.out.println(mat.getKey() + ": " + mat.getValue());
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Integer> mats = new TreeMap<>();
+		mats.put("shards", 0);
+		mats.put("fragments", 0);
+		mats.put("motes", 0);
+		Map<String, Integer> junk = new TreeMap<>();
+		String obtained = "";
+		while(obtained.equals("")) {
+			String[] input = scan.nextLine().split(" ");
+			for(int i = 1; i < input.length; i+=2) {
+				String material = input[i].toLowerCase();
+				if(material.equals("shards") || material.equals("fragments") || material.equals("motes")) {
+					adding(mats, material, Integer.parseInt(input[i - 1]));
+					obtained = isObtained(mats);
+				} else {
+					adding(junk, material, Integer.parseInt(input[i - 1]));
+				}
+				if(!obtained.equals("")) {
+					break;
+				}
+			}
+		}
+		System.out.println(obtained + " obtained!");
+		mats.entrySet().stream().sorted((f,s) -> s.getValue().compareTo(f.getValue()))
+		.forEach(entry -> {
+			System.out.println(entry.getKey() + ": " + entry.getValue());
+		});;
+		print(junk);
+	}
+}
