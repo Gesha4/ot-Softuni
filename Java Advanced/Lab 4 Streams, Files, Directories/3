@@ -1,0 +1,32 @@
+//Read the file named "input.txt" and write to another file every character`s ASCII representation. Write every space or new line
+//as it is, e.g. as a space or a new line.
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String path = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\SoftUni resources\\input.txt";
+		try {
+			FileInputStream read = new FileInputStream(path);
+			PrintStream write = new PrintStream("output.txt", "windows-1251");
+			int oneByte = 0;
+			while((oneByte = read.read()) >= 0) {
+				if(oneByte == 10 || oneByte == 32) {
+					write.print((char)oneByte);
+				} else {
+					write.print(String.valueOf(oneByte));
+				}
+			}
+			read.close();
+			write.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
