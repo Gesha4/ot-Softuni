@@ -1,0 +1,34 @@
+//Read the file provided, named "input.txt" and write to another file all lines which number is divisible by 3. Line numbers 
+//start from one.
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String path = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\SoftUni resources\\input.txt";
+		try {
+			BufferedReader read = new BufferedReader(new FileReader(path));
+			PrintStream write = new PrintStream("output.txt", "windows-1251");
+			int counter = 1;
+			String line = read.readLine();
+			while(line != null) {
+				if(counter % 3 == 0) {
+					write.println(line);
+				}
+				counter++;
+				line = read.readLine();
+			}
+			read.close();
+			write.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
