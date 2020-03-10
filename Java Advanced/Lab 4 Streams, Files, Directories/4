@@ -1,0 +1,31 @@
+//Read the file provided, named &quot;input.txt&quot; and extracts all integers that are not a part of a word in a separate 
+//file. A valid integer is surrounded with white spaces.
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String path = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\SoftUni resources\\input.txt";
+		try {
+			Scanner read = new Scanner(new FileInputStream(path));
+			PrintStream write = new PrintStream("output.txt", "windows-1251");
+			while(read.hasNext()) {
+				if(read.hasNextInt()) {
+					write.println(read.nextInt());
+				}
+				read.next();
+			}
+			read.close();
+			write.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
