@@ -1,0 +1,25 @@
+//You are provided a folder named &quot;Files-and-Streams&quot;. Create a program that lists the names and file sizes 
+//(in bytes) of all files that are placed directly in it (do not include files in nested folders).
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String in = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\SoftUni resources\\Files-and-Streams";
+		Path out = Paths.get("C:\\Users\\Tarantula\\eclipse-workspace\\zadachi\\output.txt");
+		File file = new File(in);
+		if(file.exists()) {
+			if(file.isDirectory()) {
+				File[] files = file.listFiles();
+				for(File f : files) {
+					if(!f.isDirectory()) {
+						System.out.printf("%s: [%s]%n", f.getName(), f.length());
+					}
+				}
+			}
+		}
+	}
+}
