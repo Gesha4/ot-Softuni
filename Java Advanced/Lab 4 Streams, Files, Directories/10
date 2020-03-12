@@ -1,0 +1,32 @@
+//Write a program that reads a text file (input.txt from the Resources - Exercises) and prints on the console the sum of the
+//ASCII symbols of all characters inside of the file. Use BufferedReader in combination with FileReader.
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String in = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-Exercises-Resources"
+				+ "\\input.txt";
+		try (BufferedReader reader = new BufferedReader(new FileReader(in))) {
+			String line = reader.readLine();
+			int sum = 0;
+			while(line != null) {
+				for(char ch : line.toCharArray()) {
+					sum += ch;
+				}
+				line = reader.readLine();
+			}
+			System.out.println(sum);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
