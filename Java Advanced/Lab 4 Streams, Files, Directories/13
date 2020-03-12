@@ -1,0 +1,32 @@
+//Write a program that reads a text file (inputLineNumbers.txt from the Resources - Exercises) and inserts line numbers in front
+//of each of its lines. The result should be written to another text file – output.txt.
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String in = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-Exercises"
+				+ "-Resources\\inputLineNumbers.txt";
+		try (BufferedReader reader = new BufferedReader(new FileReader(in));
+				PrintWriter write = new PrintWriter("output.txt")) {
+			String line = reader.readLine();
+			long row = 1;
+			while(line != null) {
+				write.println(row + ". " + line);
+				row++;
+				line = reader.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
