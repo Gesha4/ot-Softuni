@@ -1,0 +1,50 @@
+//Write a program that reads a list of words from the file (input.txt from the Resources - Exercises) and finds the count of 
+//vowels, consonants and punctuation marks. Assume that:
+// a, e, i, o, u are vowels, only lower case
+// All others are consonants
+// Punctuation marks are (!,.?)
+// Do not count whitespace. Write the results to another file – output.txt.
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String in = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-Exercises-Resources"
+				+ "\\input.txt";
+		try (BufferedReader reader = new BufferedReader(new FileReader(in));
+				PrintWriter write = new PrintWriter("output.txt")) {
+			String line = reader.readLine();
+			long vowels = 0;
+			long punctMarks = 0;
+			long others = 0;
+			while(line != null) {
+				for(char ch : line.toCharArray()) {
+					if(ch != ' ') {
+						if(ch == '!' || ch == ',' || ch == '.' || ch == '?') {
+							punctMarks++;
+						} else if(ch == 'a' || ch == 'o' || ch == 'e' || ch == 'u' || ch == 'i') {
+							vowels++;
+						} else {
+							others++;
+						}
+					}
+				}
+				line = reader.readLine();
+			}
+			write.println("Vowels: " + vowels);
+			write.println("Consonants: " + others);
+			write.println("Punctuation: " + punctMarks);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
