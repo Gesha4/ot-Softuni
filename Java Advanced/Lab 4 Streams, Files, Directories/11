@@ -1,0 +1,31 @@
+//Write a program that reads a text file (input.txt from the Resources - Exercises) and changes the casing of all letters
+//to upper. Write the output to another file (output.txt).
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Path;;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String in = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-Exercises-Resources"
+				+ "\\input.txt";
+		try (BufferedReader reader = new BufferedReader(new FileReader(in));
+				PrintWriter write = new PrintWriter("out.txt")) {
+			String line = reader.readLine();
+			while(line != null) {
+				write.println(line.toUpperCase());
+				line = reader.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
