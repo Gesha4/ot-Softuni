@@ -1,0 +1,38 @@
+//Write a program that reads the contents of two text files (inputOne.txt, inputTwo.txt from Resources Exercises) and merges 
+//them together into a third one.
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		String countedWords = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-Exercises"
+				+ "-Resources\\inputOne.txt";
+		String countWordsFrom = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-"
+				+ "Exercises-Resources\\inputTwo.txt";
+		try (BufferedReader readFirst = new BufferedReader(new FileReader(countedWords));
+				PrintWriter write = new PrintWriter("out.txt");
+				BufferedReader readSecond = new BufferedReader(new FileReader(countWordsFrom))) {
+			String line = readFirst.readLine();
+			while(line != null) {
+				write.println(line);
+				line = readFirst.readLine();
+			}
+			line = readSecond.readLine();
+			while(line != null) {
+				write.println(line);
+				line = readSecond.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
