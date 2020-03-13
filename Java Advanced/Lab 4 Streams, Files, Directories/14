@@ -1,0 +1,61 @@
+//Write a program that reads a text file (inputLineNumbers.txt from the Resources - Exercises) and inserts line numbers in front
+//of each of its lines. The result should be written to another text file – output.txt.
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class zadachi {
+	
+	public static void adding(Map<String, Integer> words, String word) {
+		if(!words.containsKey(word)) {
+			words.put(word, 0);
+		} else {
+			words.put(word, words.get(word) + 1);
+		}
+	}
+	
+	public static void main(String[] args) {
+		String countedWords = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-Exercises"
+				+ "-Resources\\words.txt";
+		String countWordsFrom = "C:\\Users\\Tarantula\\Documents\\Georgi\\Eclipse\\04. Java-Advanced-Files-and-Streams-"
+				+ "Exercises-Resources\\text.txt";
+		try (BufferedReader readWords = new BufferedReader(new FileReader(countedWords));
+				PrintWriter write = new PrintWriter("out.txt");
+				BufferedReader countWords = new BufferedReader(new FileReader(countWordsFrom))) {
+			Map<String, Integer> wordsCount = new TreeMap<>();
+			String line = readWords.readLine();
+			while(line != null) {
+				String[] words = line.split(" ");
+				for(String word : words) {
+					adding(wordsCount, word);
+				}
+				line = readWords.readLine();
+			}
+			line = countWords.readLine();
+			while(line != null) {
+				String[] words = line.split(" ");
+				for(String word : words) {
+					if(wordsCount.containsKey(word)) {
+						adding(wordsCount, word);
+					}
+				}
+				line = countWords.readLine();
+			}
+			wordsCount.entrySet().stream().sorted((f,s) -> s.getValue().compareTo(f.getValue()))
+				.forEach(entry ->{
+					write.println(entry.getKey() + " - " + entry.getValue());
+				});
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+}
