@@ -1,5 +1,6 @@
-//Write a program that reads a text file (inputLineNumbers.txt from the Resources - Exercises) and inserts line numbers in front
-//of each of its lines. The result should be written to another text file – output.txt.
+//Write a program that reads a list of words from the file words.txt (from the Resources - Exercises) and finds how many times each
+//of the words is contained in another file text.txt (from the Resources – Exercises). Matching should be case-insensitive.
+//Write the results in file results.txt. Sort the words by frequency in descending order.
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
