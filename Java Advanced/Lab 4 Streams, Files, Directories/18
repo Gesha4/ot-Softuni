@@ -1,0 +1,25 @@
+//Write a program that reads three .txt files and creates a zip archive named files.zip. Use 
+//FileOutputStream, ZipOutputStream, and FileInputStream.
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+public class zadachi {
+	
+	public static void main(String[] args) throws IOException {
+		String[] filePath = new String[3];
+		filePath[0] = "1.txt";
+		filePath[1] = "2.txt";
+		filePath[2] = "3.txt";
+		ZipOutputStream output = new ZipOutputStream(new FileOutputStream("files.zip"));
+		for(String path : filePath) {
+			FileInputStream inputStream = new FileInputStream(path);
+			output.putNextEntry(new ZipEntry(path));
+			output.write(inputStream.readAllBytes());
+		}
+		output.close();
+	}
+}
