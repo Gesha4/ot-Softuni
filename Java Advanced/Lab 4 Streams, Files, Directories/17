@@ -1,0 +1,20 @@
+//You are provided a folder named "Files-and-Streams". Create a program that lists the names
+//of all directories in it (including all nested directories). On the last line, print the 
+//count of all folders, including the root folder.
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class zadachi {
+	
+	public static void main(String[] args) throws IOException {
+		String filePath = "E:\\Programs\\programs from Eclipse\\softuni 1.1\\pic.jpg";
+		FileInputStream inputStream = new FileInputStream(filePath);
+		byte[] image = inputStream.readAllBytes();
+		FileOutputStream outputStream = new FileOutputStream("picture-coppy.jpg");
+		outputStream.write(image);
+		inputStream.close();
+		outputStream.close();
+	}		
+}
