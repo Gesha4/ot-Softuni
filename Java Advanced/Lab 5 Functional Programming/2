@@ -1,0 +1,25 @@
+//Write a program that reads one line of Integers separated by ", ". Print the count of the 
+//numbers and their sum. Use a Function<String, Integer>
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<String> numbers = Arrays.stream(scan.nextLine().split(", "))
+				.collect(Collectors.toList());
+		Function<String, Integer> parser = x -> Integer.parseInt(x);
+		int sum = 0;
+		int count = 0;
+		for(String num : numbers) {
+			sum += parser.apply(num);
+			count++;
+		}
+		System.out.println("Count = " + count);
+		System.out.println("Sum = " + sum);
+	}
+}
