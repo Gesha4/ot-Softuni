@@ -1,0 +1,17 @@
+//Write a program that reads a collection of names as strings from the console and then 
+//appends “Sir” in front of every name and prints it back onto the console. Use a Consumer<T>.
+
+import java.util.Scanner;
+import java.util.function.Consumer;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] words = scan.nextLine().split("\\s+");
+		Consumer<String> print = word -> System.out.println("Sir " + word);
+		for(String word : words) {
+			print.accept(word);
+		}
+	}
+}
