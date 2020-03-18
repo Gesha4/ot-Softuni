@@ -1,0 +1,18 @@
+//Write a program that reads a collection of strings, separated by one or more whitespaces, 
+//from the console and then prints them onto the console. Each string should be printed on a 
+//new line. Use a Consumer<T>.
+
+import java.util.Scanner;
+import java.util.function.Consumer;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] words = scan.nextLine().split("\\s+");
+		Consumer<String> print = word -> System.out.println(word);
+		for(String word : words) {
+			print.accept(word);
+		}
+	}
+}
