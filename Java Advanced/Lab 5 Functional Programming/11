@@ -1,0 +1,31 @@
+//Write a program that reverses a collection and removes elements that are divisible by a given integer n.
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> nums = Arrays.stream(scan.nextLine().split("\\s+"))
+				.map(Integer::parseInt).collect(Collectors.toList());
+		int div = Integer.parseInt(scan.nextLine());
+		UnaryOperator<List<Integer>> reverse = list -> list.stream()
+				.sorted((f,s) -> s.compareTo(f)).collect(Collectors.toCollection(ArrayList::new));
+		BiFunction<List<Integer>, Integer, List<Integer>> divide = (num, x) -> num.stream().
+				filter(n -> n % x != 0).collect(Collectors.toList());
+		Consumer<List<Integer>> print = list -> list.stream()
+				.forEach(entry -> {
+					System.out.print(entry + " ");
+				});
+		nums = reverse.apply(nums);
+		nums = divide.apply(nums, div);
+		print.accept(nums);
+	}
+}
