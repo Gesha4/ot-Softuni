@@ -1,0 +1,42 @@
+//On the first line you are given a list of numbers. On the next lines you are passed different
+//commands that you need to apply to all numbers in the list: "add" -> adds 1; "multiply" 
+//-> multiplies by 2; "subtract" -> subtracts 1; "print" -> prints all numbers on a new line.
+//The input will end with an "end" command, after which you need to print the result.
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> nums = Arrays.stream(scan.nextLine().split("\\s+"))
+				.map(Integer::parseInt).collect(Collectors.toList());
+		String command = scan.nextLine();
+		Consumer<List<Integer>> print = arr -> arr.forEach(num ->{	
+			System.out.print(num + " ");
+		});
+		Function<List<Integer>, List<Integer>> increment = list -> list.stream()
+				.map(e -> ++e).collect(Collectors.toCollection(ArrayList::new));
+		UnaryOperator<List<Integer>> multiply = list -> list.stream()
+				.map(e -> e *= 2).collect(Collectors.toCollection(ArrayList::new));
+		UnaryOperator<List<Integer>> substract = list -> list.stream()
+				.map(e -> --e).collect(Collectors.toCollection(ArrayList::new));
+		while(!command.equals("end")) {
+			switch(command) {
+			case "add" : nums = increment.apply(nums);break;
+			case "multiply" : nums = multiply.apply(nums);break;
+			case "subtract" : nums = substract.apply(nums);break;
+			case "print" : print.accept(nums);
+							System.out.println();break;
+			}
+			command = scan.nextLine();
+		}
+	}
+}
