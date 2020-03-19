@@ -1,0 +1,22 @@
+//Write a predicate. Its goal is to check a name for its length and to return true if the names
+//length is less or equal the passed integer. You will be given an integer that represents the
+//length you have to use. On the second line you will be given a string array with some names.
+//Print the names, passing the condition in the predicate.
+
+import java.util.Scanner;
+import java.util.function.Predicate;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int length = Integer.parseInt(scan.nextLine());
+		String[] words = scan.nextLine().split("\\s+");
+		Predicate<String> checkLength = s -> s.length() <= length;
+		for(String word : words) {
+			if(checkLength.test(word)) {
+				System.out.println(word);
+			}
+		}
+	}
+}
