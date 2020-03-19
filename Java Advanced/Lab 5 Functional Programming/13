@@ -1,0 +1,36 @@
+//Write a custom comparator that sorts all even numbers before all odd ones in ascending order.
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> nums = Arrays.stream(scan.nextLine().split("\\s+"))
+				.map(Integer::parseInt).collect(Collectors.toList());
+		Predicate<Integer> isEven = n -> n % 2 == 0;
+		List<Integer> even = new ArrayList<>();
+		List<Integer> odd = new ArrayList<>();
+		for(int num : nums) {
+			if(isEven.test(num)) {
+				even.add(num);
+			} else {
+				odd.add(num);
+			}
+		}
+		Consumer<List<Integer>> sort = list -> list.stream().sorted();
+		Consumer<List<Integer>> print = list -> list.stream().forEach(num -> {
+			System.out.print(num + " ");
+		});
+		sort.accept(even);
+		sort.accept(odd);
+		print.accept(even);
+		print.accept(odd);
+	}
+}
