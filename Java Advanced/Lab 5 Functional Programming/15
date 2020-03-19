@@ -1,0 +1,79 @@
+//On the first line you get a list with all the people that are coming. On the next lines, until
+//you get the "Party!" command, you may be asked to double or remove all the people that apply
+//to given criteria. There are three different options:
+// Everyone that has a name starting with a given string;
+// Everyone that has a name ending with a given string;
+// Everyone that has a name with a given length.
+//When you print the guests that are coming to the party, you have to print them in asscending
+//order. If nobody is going, print "Nobody is going to the party!".
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	public static void add(Map<String, Predicate<String>> map, String input) {
+		String[] command = input.split(" ");
+		String type = command[1];
+		String criteria = command[2];
+		String predicateName = type + criteria;
+		Predicate<String> predicate;
+		if(type.contains("Starts")) {
+			predicate = str -> str.startsWith(criteria);
+		} else if(type.contains("Ends")) {
+			predicate = str -> str.endsWith(criteria);
+		} else {
+			predicate = str -> str.length() == Integer.parseInt(criteria);
+		}
+		map.put(predicateName, predicate);
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<String> names = Arrays.stream(scan.nextLine().split("\\s+"))
+				.collect(Collectors.toList());
+		Map<String, Predicate<String>> doubles = new HashMap<>();
+		Map<String, Predicate<String>> remove = new HashMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("Party!")) {
+			String[] command = input.split(" ");
+			if(command[0].contains("Double")) {
+				add(doubles, input);
+			} else {
+				add(remove, input);
+			}
+			input = scan.nextLine();
+		}
+		for(int i = 0; i < names.size(); i++) {
+			String name = names.get(i);
+			remove.entrySet().stream().forEach(entry -> {
+				if(entry.getValue().test(name)) {
+					names.remove(name);
+				}
+			});
+		}
+		if(!names.isEmpty()) {
+			names.sort((f,s) -> f.compareTo(s));
+			StringBuilder allNames = new StringBuilder();
+			names.stream().forEach(name -> {
+				doubles.entrySet().stream().forEach(entry -> {
+					if(entry.getValue().test(name)) {
+						allNames.append(name + ", ");
+						allNames.append(name + ", ");
+					} else {
+						allNames.append(name + ", ");
+					}
+				});
+			});
+			allNames.replace(allNames.length() - 2, allNames.length(), "");
+			System.out.print(allNames + " are going to the party!");
+		} else {
+			System.out.println("Nobody is going to the party!");
+		}
+	}
+}
