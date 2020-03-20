@@ -1,0 +1,159 @@
+//Define two classes Car and Engine. A Car has a model, engine, weight and color. An Engine has model, power, 
+//displacement and efficiency. A Car’s weight and color and its Engine’s displacements and efficiency are optional. 
+//On the first line, you will read a number N which will specify how many lines of engines you will receive, on each
+//of the next N lines you will receive information about an Engine in the following format “<Model> <Power> 
+//<Displacement> <Efficiency>”. After the lines with engines, on the next line you will receive a number M – specifying
+//the number of Cars that will follow, on each of the next M lines information about a Car will follow in the following
+//format “<Model> <Engine> <Weight> <Color>”, where the engine in the format will be the model of an existing Engine. 
+//When creating the object for a Car, you should keep a reference to the real engine in it, instead of just the engine’s
+//model, note that the optional properties might be missing from the formats.
+//Your task is to print each car (in the order you received them) and its information in the format defined bellow, if 
+//any of the optional fields has not been given print "n/a" in its place instead:
+//<CarModel>:
+//<EngineModel>:
+//Power: <EnginePower>
+//Displacement: <EngineDisplacement>
+//Efficiency: <EngineEfficiency>
+//Weight: <CarWeight>
+//Color: <CarColor>
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class zadachi {
+
+	static class Engine {
+		private String model;
+		private String power;
+		private String displacement;
+		private String efficiency;
+
+		public Engine(String model, String power) {
+			this.model = model;
+			this.power = power;
+			this.displacement = "n/a";
+			this.efficiency = "n/a";
+		}
+
+		public String getModel() {
+			return this.model;
+		}
+
+		public String getPower() {
+			return this.power;
+		}
+
+		public String getDisplacement() {
+			return this.displacement;
+		}
+
+		public String getEfficiency() {
+			return this.efficiency;
+		}
+
+		public void setDisplacement(String displacement) {
+			this.displacement = displacement;
+		}
+
+		public void setEfficiency(String efficiency) {
+			this.efficiency = efficiency;
+		}
+	}
+
+	static class Car {
+		private String model;
+		private Engine engine;
+		private String weight;
+		private String color;
+
+		public Car(String model) {
+			this.model = model;
+			this.weight = "n/a";
+			this.color = "n/a";
+		}
+
+		public String getModel() {
+			return this.model;
+		}
+
+		public Engine getEngine() {
+			return this.engine;
+		}
+
+		public String getWeight() {
+			return this.weight;
+		}
+
+		public String getColor() {
+			return this.color;
+		}
+		
+		public void setEngine(Engine engine) {
+			this.engine = engine;
+		}
+
+		public void setWeight(String weight) {
+			this.weight = weight;
+		}
+
+		public void setColor(String color) {
+			this.color = color;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s:%n%s:%nPower: %s%nDisplacement: %s%nEfficiency: %s%nWeight: %s%n" + "Color: %s",
+					getModel(), engine.getModel(), engine.getPower(), engine.getDisplacement(), engine.getEfficiency(),
+					getWeight(), getColor());
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int n = scan.nextInt();
+		scan.nextLine();
+		List<Engine> engines = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			String[] data = scan.nextLine().split(" ");
+			Engine engine = new Engine(data[0], data[1]);
+			if (data.length == 4) {
+				engine.setDisplacement(data[2]);
+				engine.setEfficiency(data[3]);
+			} else if (data.length == 3) {
+				if (data[2].charAt(0) > 47 && data[2].charAt(0) < 58) {
+					engine.setDisplacement(data[2]);
+				} else {
+					engine.setEfficiency(data[2]);
+				}
+			}
+			engines.add(engine);
+		}
+		int m = scan.nextInt();
+		scan.nextLine();
+		List<Car> cars = new ArrayList<>();
+		for (int i = 0; i < m; i++) {
+			String[] input = scan.nextLine().split(" ");
+			Car car = new Car(input[0]);
+			for (Engine engine : engines) {
+				if (engine.getModel().equals(input[1])) {
+					car.setEngine(engine);
+				}
+			}
+			if (input.length == 4) {
+				car.setWeight(input[2]);
+				car.setColor(input[3]);
+			} else if (input.length == 3) {
+				if (input[2].charAt(0) > 47 && input[2].charAt(0) < 58) {
+					car.setWeight(input[2]);
+				} else {
+					car.setColor(input[2]);
+				}
+			}
+			cars.add(car);
+		}
+		for (Car car : cars) {
+			System.out.println(car.toString());
+		}
+	}
+}
