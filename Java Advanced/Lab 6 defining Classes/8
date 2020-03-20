@@ -1,0 +1,147 @@
+//You wanna be the very best pokemon trainer, like no one ever was, so you set out to catch pokemons. Define a class Trainer and a 
+//class Pokemon. Trainer have a name, number of badges and a collection of pokemon. Pokemon have a name, an element and health, all
+//values are mandatory. Every Trainer starts with 0 badges. From the console you will receive an unknown number of lines until you
+receive the command "Tournament", each line will carry information about a pokemon and the trainer who caught it in the format 
+//"<TrainerName> <PokemonName> <PokemonElement> <PokemonHealth>" where TrainerName is the name of the Trainer who caught the 
+//pokemon, names are unique there cannot be 2 trainers with the same name. After receiving the command "Tournament" an unknown 
+//number of lines containing one of three elements "Fire", "Water", "Electricity" will follow until the command "End" is received.
+//For every command you must check if a trainer has atleast 1 pokemon with the given element, if he does he receives 1 badge, 
+//otherwise all his pokemon lose 10 health, if a pokemon falls to 0 or less health he dies and must be deleted from the trainer’s 
+//collection. After the command "End" is received you should print all trainers sorted by the amount of badges they have in 
+//descending order (if two trainers have the same amount of badges they should be sorted by order of appearance in the input) in 
+//the format "<TrainerName> <Badges> <NumberOfPokemon".
+
+//packages
+package zadachi;
+
+public class Pokemon {
+	private String name;
+	private String element;
+	private int health;
+	public String getName() {
+		return name;
+	}
+	public String getElement() {
+		return element;
+	}
+	public int getHealth() {
+		return health;
+	}
+	public void setHealth(int health) {
+		this.health = health;
+	}
+	public Pokemon(String name, String element, int health) {
+		this.name = name;
+		this.element = element;
+		this.health = health;
+	}
+}
+
+
+package zadachi;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Trainer {
+	private String name;
+	private int badges = 0;
+	private List<Pokemon> pokemons = new ArrayList<>();
+	public String getName() {
+		return name;
+	}
+	public int getBadges() {
+		return badges;
+	}
+	public List<Pokemon> getPokemons() {
+		return pokemons;
+	}
+	public void cach(Pokemon pokemon) {
+		pokemons.add(pokemon);
+	}
+	public Trainer(String name) {
+		this.name = name;
+	}
+	public void fight(String element) {
+		boolean noElement = true;
+		for(Pokemon pokemon : pokemons) {
+			if(pokemon.getElement().equals(element)) {
+				noElement = false;
+			}
+		}
+		if(noElement) {
+			for(int i = 0; i < pokemons.size(); i++) {
+				int pHealth = pokemons.get(i).getHealth() - 10;
+				if(pHealth <= 0) {
+					pokemons.remove(i);
+				} else {
+					pokemons.get(i).setHealth(pHealth);
+				}
+			}
+		} else {
+			badges++;
+		}
+	}
+}
+
+
+//test
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import zadachi.Pokemon;
+import zadachi.Trainer;
+
+public class zadachi {
+	
+	public static void trainersAndPokemons (Map<String, Trainer> trainers, String[] data) {
+		if(!trainers.containsKey(data[0])) {
+			Trainer trainer = new Trainer(data[0]);
+			Pokemon pokemon = new Pokemon(data[1], data[2], Integer.parseInt(data[3]));
+			trainer.cach(pokemon);
+			trainers.put(data[0], trainer);
+		} else {
+			Pokemon pokemon = new Pokemon(data[1], data[2], Integer.parseInt(data[3]));
+			trainers.get(data[0]).cach(pokemon);
+		}
+	}
+	
+	public static void fighting(Map<String, Trainer> trainers, String element) {
+		for(Entry<String, Trainer> trainer : trainers.entrySet()) {
+			trainer.getValue().fight(element);
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Trainer> trainers = new LinkedHashMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("Tournament")) {
+			String[] data = input.split(" ");
+			trainersAndPokemons(trainers, data);
+			input = scan.nextLine();
+		}
+		input = scan.nextLine();
+		while(!input.equals("End")) {
+			fighting(trainers, input);
+			input = scan.nextLine();
+		}
+		trainers.entrySet().stream()
+			.sorted((f,s) -> {
+				int first = f.getValue().getBadges();
+				int second = s.getValue().getBadges();
+				if(first > second) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}).forEach(entry -> {
+				String name = entry.getKey();
+				int badges = entry.getValue().getBadges();
+				int numPokemons = entry.getValue().getPokemons().size();
+				System.out.printf("%s %d %d%n", name, badges, numPokemons);
+			});;
+	}
+}
