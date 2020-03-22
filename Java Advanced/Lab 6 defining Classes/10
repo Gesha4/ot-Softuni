@@ -1,0 +1,196 @@
+//You want to build your family tree, so you went to ask your grandmother, sadly your grandmother keeps remembering information 
+//about your predecessors in pieces, so it falls to you to group the information and build the family tree. On the first line of 
+//the input you will receive either a name or a birthdate in the format "<FirstName> <LastName>" or "day/month/year" - your task is
+//to find information about the person in the family tree. On the next lines until the command "End" is received you will receive 
+//information about your predecessors that you will use it to build the family tree. 
+//The information will be in one of the following formats: 
+//	"FirstName LastName - FirstName LastName"
+//	"FirstName LastName - day/month/year"
+//	"day/month/year - FirstName LastName"
+//	"day/month/year - day/month/year"
+//	"FirstName LastName day/month/year"
+//The first 4 formats reveal a family tie – the person on the left is parent to the person on the right (as you can see the format
+//does not need to contain names, for example the 4th format means the person born on the left date is parent to the person born on
+//the right date). The last format ties different information together – i.e. the person with that name was born on that date. 
+//Names and birthdates are unique – there won’t be 2 people with the same name or birthdate, there will always be enough entries 
+//to construct the family tree (all people names and birthdates are known and they have atleast one connection to another person 
+//in the tree). After the command "End" is received you should print all information about the person whose name or birthdate you 
+//received on the first line – his name, birthday, parents and children (check the examples for the format). The people in the 
+//parents and children lists should be ordered by their first appearance in the input (regardless if they appeared as a birthdate 
+//or a name, for example in the first input Stamat is before Penka because he first appeared in the second line, while she appears
+//in the third.).
+
+//package
+package zadachi;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+public class Person {
+	private String name = "missing";
+	private String date = "missing";
+	private Set<Integer> children = new LinkedHashSet<>();
+	private Set<Integer> parents = new LinkedHashSet<>();
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	public Set<Integer> getChildren() {
+		return children;
+	}
+	public void addChildren(int child) {
+		this.children.add(child);
+	}
+	public Set<Integer> getParents(){
+		return parents;
+	}
+	public void addParent(int parent) {
+		parents.add(parent);
+	}
+}
+
+
+//solution
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
+
+import zadachi.Person;
+
+public class zadachi {
+	
+	public static boolean isDate(String test) {
+		if(test.contains("/")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static Person newPerson(String input) {
+		Person person = new Person();
+		if(isDate(input)) {
+			person.setDate(input);
+		} else {
+			person.setName(input);
+		}
+		return person;
+	}
+	
+	public static int findPerson(List<Person> ppl, String search) {
+		int place = -1;
+		if(isDate(search)) {
+			for(int i = 0; i < ppl.size(); i++){
+				if(!ppl.get(i).getDate().equals("missing") && ppl.get(i).getDate().equals(search)) {
+					place = i;
+					break;
+				}
+			}
+		} else {
+			for(int i = 0; i < ppl.size(); i++) {
+				if(!ppl.get(i).getName().equals("missing") && ppl.get(i).getName().equals(search)) {
+					place = i;
+					break;
+				}
+			}
+		}
+		return place;
+	}
+	
+	public static void moving(List<Person> ppl, int movingFrom, int movingTo) {
+		Person from = ppl.get(movingFrom);
+		Person to = ppl.get(movingTo);
+		if(!from.getName().equals("missing")) {
+			to.setName(from.getName());
+		}
+		if(!from.getDate().equals("missing")) {
+			to.setDate(from.getDate());
+		}
+		if(!from.getParents().isEmpty()) {
+			for(Integer place : from.getParents()) {
+				to.addParent(place);
+			}
+		}
+		if(!from.getChildren().isEmpty()) {
+			for(Integer place : from.getChildren()) {
+				to.addChildren(place);
+			}
+		}
+	}
+	
+	public static void related(List<Person> ppl, String[] data) {
+		int parentPosition;
+		if(findPerson(ppl, data[0]) == -1) {
+			ppl.add(newPerson(data[0]));
+			parentPosition = ppl.size() - 1;
+		} else {
+			parentPosition = findPerson(ppl, data[0]);
+		}
+		int childPosition;
+		if(findPerson(ppl, data[1]) == -1) {
+			ppl.add(newPerson(data[1]));
+			childPosition = ppl.size() - 1;
+		} else {
+			childPosition = findPerson(ppl, data[1]);
+		}
+		ppl.get(parentPosition).addChildren(childPosition);
+		ppl.get(childPosition).addParent(parentPosition);
+	}
+	
+	public static void notRelated(List<Person> ppl, String[] data) {
+		int namePosition = findPerson(ppl, data[0]);
+		int datePosition = findPerson(ppl, data[1]);
+		if(namePosition != -1 && datePosition != -1) {
+			if(namePosition > datePosition) {
+				moving(ppl, namePosition, datePosition);
+			} else {
+				moving(ppl, datePosition, namePosition);
+			}
+		} else if(namePosition != -1) {
+			ppl.get(findPerson(ppl, data[0])).setDate(data[1]);
+		} else {
+			ppl.get(findPerson(ppl, data[1])).setName(data[0]);
+		}
+	}
+	
+	public static void print(List<Person> allPpl, Set<Integer> ppl) {
+		for(int position : ppl) {
+			Person person = allPpl.get(position);
+			System.out.println(person.getName() + " " + person.getDate());
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Person> ppl = new ArrayList<>();
+		String searched = scan.nextLine();
+		String input = scan.nextLine();
+		while(!input.equals("End")) {
+			if(input.contains("-")) {
+				String[] data = input.split(" - ");
+				related(ppl, data);
+			} else {
+				String[] data = {input.substring(0, input.lastIndexOf(" ")),
+						input.substring(input.lastIndexOf(" ") + 1)};
+				notRelated(ppl, data);
+			}
+			input = scan.nextLine();
+		}
+		int place = findPerson(ppl, searched);
+		Person searchedPerson = ppl.get(findPerson(ppl, searched));
+		System.out.println(searchedPerson.getName() + " " + searchedPerson.getDate());
+		System.out.println("Parents:");
+		print(ppl, searchedPerson.getParents());
+		System.out.println("Children:");
+		print(ppl, searchedPerson.getChildren());
+	}
+}
