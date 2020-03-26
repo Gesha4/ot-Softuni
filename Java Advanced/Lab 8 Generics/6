@@ -1,0 +1,46 @@
+//Create a generic method that receives a list containing any type of data and swaps the elements at two given indexes. As in the 
+//previous problems, read n number of boxes of type String and add them to the list. On the next line, however, you will receive
+//a swap command consisting of two indexes. Use the method you&#39;ve created to swap the elements that correspond to the given
+//indexes and print each element in the list.
+
+//package
+package zadachi;
+import java.util.List;
+public class Box<T> {
+	private List<T> elements;
+	public Box(List<T> list) {	
+		this.elements = list;
+	}
+	public void swap(int first, int second) {
+		T temp = elements.get(first);
+		this.elements.set(first, elements.get(second));
+		this.elements.set(second, temp);
+	}
+	public void print() {
+		for(T element : this.elements) {
+			System.out.println(element.getClass().getName() + ": " + element.toString());
+		}
+	}
+}
+
+//test
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import zadachi.Box;
+
+public class zadachi {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<String> list = new ArrayList<>();
+		int number = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < number; i++) {
+			String input = scan.nextLine();
+			list.add(input);
+		}
+		String[] input = scan.nextLine().split("\\s+");
+		Box<Integer> box = new Box(list);
+		box.swap(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
+		box.print();
+	}
+}
