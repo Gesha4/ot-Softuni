@@ -1,0 +1,33 @@
+//Create a generic class Box that can store any type. Override the toString() method to print the type and the value of
+//the stored data in the format {class full name: value}. Use the class that you`ve created and test it with the class 
+//java.lang.String. On the first line you will get n - the number of strings to read from the console. On the next n lines, you 
+//will get the actual strings. For each of them create a box and call its toString() method to print its data on the console.
+
+//package
+package zadachi;
+
+public class Box<T> {
+	private T element;
+	public Box(T element) {	
+		this.element = element;
+	}
+	@Override
+	public String toString() {
+		return this.element.getClass().getName() + ": " + element.toString();
+	}
+}
+
+//test
+import java.util.Scanner;
+import zadachi.Box;
+public class zadachi {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int number = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < number; i++) {
+			String input = scan.nextLine();
+			Box<String> box = new Box<>(input);
+			System.out.println(box.toString());
+		}
+	}
+}
