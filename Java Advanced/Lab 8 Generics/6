@@ -39,7 +39,7 @@ public class zadachi {
 			list.add(input);
 		}
 		String[] input = scan.nextLine().split("\\s+");
-		Box<Integer> box = new Box(list);
+		Box box = new Box(list);
 		box.swap(Integer.parseInt(input[0]), Integer.parseInt(input[1]));
 		box.print();
 	}
