@@ -1,0 +1,17 @@
+//Extend the previous problem by creating an additional Sorter class. It should have a single static method sort() which can sort
+//objects of type CustomList containing any type that can be compared. Extend the command list to support one additional command 
+//Sort:	Sort - Sort the elements in the list in ascending order.
+//package
+package zadachi;
+
+public class Sorter {
+	public static<T extends Comparable<T>> void sort(CustomList<T> list) {
+		for(int i = 0; i < list.size(); i++) {
+			for(int j = i + 1; j < list.size(); j++) {
+				if(list.get(i).compareTo(list.get(j)) > 0) {
+					list.swap(i, j);
+				}
+			}
+		}
+	}
+}
