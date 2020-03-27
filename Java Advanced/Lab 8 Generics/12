@@ -1,0 +1,80 @@
+//Now you are aware of a Class which is probably a bad practice to use. Anyway, it is a nice example of using generics. Our next 
+//task is to create another Tuple. This time, our task is harder. Create a Class Threeuple. Its name is telling us, that it will
+//hold no longer, just a pair of objects. The task is simple, our Threeuple should hold three objects. Make it have getters and 
+//setters. You can even extend the previous class. The input consists of three lines:
+//•	The first one is holding a name, an address and a town. Format of the input: 
+//<<first name> <last name>> <address> <town>
+//•	The second line is holding a name, beer liters, and a Boolean variable - drunk or not. Format:
+//<name> <liters of beer> <drunk or not>
+//•	The last line will hold a name, a bank balance (double) and a bank name. Format: 
+//<name> <account balance> <bank name>
+//Output
+//•	Print the Threeuples’ objects in format: {firstElement} -> {secondElement} -> {thirdElement}
+//package
+package zadachi;
+
+public class Tuple<T1, T2, T3> {
+	private T1 item1;
+	private T2 item2;
+	private T3 item3;
+	public T1 getItem1() {
+		return item1;
+	}
+	public void setItem1(T1 item1) {
+		this.item1 = item1;
+	}
+	public T2 getItem2() {
+		return item2;
+	}
+	public void setItem2(T2 item2) {
+		this.item2 = item2;
+	}
+	public T3 getItem3() {
+		return item3;
+	}
+	public void setItem3(T3 item3) {
+		this.item3 = item3;
+	}
+	public Tuple(T1 item1, T2 item2, T3 item3) {
+		this.item1 = item1;
+		this.item2 = item2;
+		this.item3 = item3;
+	}
+	@Override
+	public String toString() {
+		return this.item1 + " -> " + this.item2 + " -> " + this.item3;
+	}
+}
+
+//test
+
+import java.util.Scanner;
+import zadachi.Tuple;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] firstLine = scan.nextLine().split(" ");
+		String name = firstLine[0] + " " + firstLine[1];
+		String adress = firstLine[2];
+		String town = firstLine[3];
+		String[] secondLine = scan.nextLine().split(" ");
+		String person = secondLine[0];
+		int liters = Integer.parseInt(secondLine[1]);
+		boolean drunk = false;
+		if(secondLine.equals("drunk")) {
+			drunk = true;
+		}
+		String[] thirdLine = scan.nextLine().split(" ");
+		String nameAgain = thirdLine[0];
+		Double balance = Double.parseDouble(thirdLine[1]);
+		String bank = thirdLine[2];
+		Tuple<String, String, String> first = new Tuple<>(name, adress, town);
+		Tuple<String, Integer, Boolean> second = new Tuple<>(person, liters, drunk);
+		Tuple<String, Double, String> third = new Tuple<>(nameAgain, balance, bank);
+		System.out.println(first.toString());
+		System.out.println(second.toString());
+		System.out.println(third.toString());
+	}
+}
