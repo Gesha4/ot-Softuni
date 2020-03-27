@@ -1,0 +1,94 @@
+//Create a generic data structure that can store any type that can be compared. Implement functions:
+//•	void add(T element)
+//•	T remove(int index)
+//•	boolean contains(T element)
+//•	void swap(int index, int index)
+//•	int countGreaterThan(T element)
+//•	T getMax()
+//•	T getMin()
+//Create a command interpreter that reads commands and modifies the custom list that you have created. Implement the commands:
+//•	Add <element> - Adds the given element to the end of the list
+//•	Remove <index> - Removes the element at the given index
+//•	Contains <element> - Prints if the list contains the given element (true or false)
+//•	Swap <index> <index> - Swaps the elements at the given indexes
+//•	Greater <element> - Counts the elements that are greater than the given element and prints their count
+//•	Max - Prints the maximum element in the list
+//•	Min - Prints the minimum element in the list
+//•	Print - Prints all elements in the list, each on a separate line
+//•	END - stops the reading of commands
+//Note: For the Judge tests, use String as T.
+
+//package
+package zadachi;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class CustomList<T extends Comparable> {
+	private List<T> data;
+	public CustomList() {
+		this.data = new ArrayList<>();
+	}
+	public void add(T element) {
+		data.add(element);
+	}
+	public T remove(int index) {
+		return this.data.remove(index);
+	}
+	public boolean contains(T element) {
+		return this.data.contains(element);
+	}
+	public void swap(int first, int second) {
+		Collections.swap(this.data, first, second);
+	}
+	public int countGreaterThan ( T element) {
+		return (int) this.data.stream()
+				.filter(value -> value.compareTo(element) > 0)
+				.count();
+	}
+	public T getMax() {
+		return (T) Collections.max(this.data);
+	}
+	public T getMin() {
+		return (T) Collections.min(this.data);
+	}
+	public void print() {
+		for(T element : this.data) {
+			System.out.println(element);
+		}
+	}
+}
+
+//test
+
+import java.util.Scanner;
+
+import zadachi.CustomList;
+
+public class zadachi {
+	
+	public static void interpreter(CustomList<String> list, String input) {
+		String[] command = input.split(" ");
+		switch(command[0]) {
+		case "Add" : list.add(command[1]);break;
+		case "Remove" : list.remove(Integer.parseInt(command[1]));break;
+		case "Contains" : System.out.println(list.contains(command[1]));break;
+		case "Swap" : list.swap(Integer.parseInt(command[1]), Integer.parseInt(command[2]));break;
+		case "Greater" : System.out.println(list.countGreaterThan(command[1]));break;
+		case "Max" : System.out.println(list.getMax());break;
+		case "Min" : System.out.println(list.getMin());break;
+		case "Print" : list.print();break;
+		}
+	}
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		CustomList<String> list = new CustomList();
+		String input = scan.nextLine();
+		while(!input.equals("END")) {
+			interpreter(list, input);
+			input = scan.nextLine();
+		}
+	}
+}
