@@ -1,0 +1,70 @@
+//There is something, really annoying in the C# - language. It is called a "Tuple". It is a class, which contains two objects. 
+//The first one is "item1" and the second one is "item2". It is kind of like a Map.Entry except - it simply has items, which are 
+//neither key nor value. The annoyance is coming from the fact, that you have no idea what these objects are holding. The class
+//name is telling you nothing, the methods which it has – too. So let’s say we could try to implement it in Java, just for 
+//practicing generics. The task: Create a class "Tuple", which is holding two objects. Like we said, the first one, will be "item1"
+//and the second one -  "item2". The tricky part here is to make the class hold generics. This means, that when you create a new 
+//object of class - "Tuple", there should be a way to explicitly, specify both the items type separately. Input
+T//he input consists of three lines:
+//•	The first one is holding a person name and an address. They are separated by space(s). Your task is to collect them in the
+//tuple and print them on the console. Format of the input:
+//<<first name> <last name>> <address>
+//•	The second line holds a name of a person and the amount of beer he can drink. Format:
+//<name> <liters of beer>
+//•	The last line will hold an Integer and a Double. Format:
+//<Integer> <Double>
+//Output
+//•	Print the tuples’ items in format: {item1} -> {item2}
+//package
+package zadachi;
+
+public class Tuple<T1, T2> {
+	private T1 item1;
+	private T2 item2;
+	public T1 getItem1() {
+		return item1;
+	}
+	public void setItem1(T1 item1) {
+		this.item1 = item1;
+	}
+	public T2 getItem2() {
+		return item2;
+	}
+	public void setItem2(T2 item2) {
+		this.item2 = item2;
+	}
+	public Tuple(T1 item1, T2 item2) {
+		this.item1 = item1;
+		this.item2 = item2;
+	}
+	@Override
+	public String toString() {
+		return this.item1 + " -> " + this.item2;
+	}
+}
+
+//test
+
+import java.util.Scanner;
+import zadachi.Tuple;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String firstLine = scan.nextLine();
+		String name = firstLine.substring(0, firstLine.lastIndexOf(" "));
+		String adress = firstLine.substring(firstLine.lastIndexOf(" "));
+		String[] secondLine = scan.nextLine().split(" ");
+		String person = secondLine[0];
+		int liters = Integer.parseInt(secondLine[1]);
+		int num = scan.nextInt();
+		double number = scan.nextDouble();
+		Tuple<String, String> first = new Tuple<>(name, adress);
+		Tuple<String, Integer> second = new Tuple<>(person, liters);
+		Tuple<Integer, Double> third = new Tuple<>(num, number);
+		System.out.println(first.toString());
+		System.out.println(second.toString());
+		System.out.println(third.toString());
+	}
+}
