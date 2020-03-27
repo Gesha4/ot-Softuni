@@ -1,0 +1,53 @@
+//For the print command you have probably used a for loop. Extend your custom list class by making it to implement Iterable.
+//This should allow you to iterate your list in a foreach statement.
+package zadachi;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+public class CustomList<T extends Comparable<T>> implements Iterable<T> {
+	private List<T> data;
+	public CustomList() {
+		this.data = new ArrayList<>();
+	}
+	public void add(T element) {
+		data.add(element);
+	}
+	public T remove(int index) {
+		return this.data.remove(index);
+	}
+	public boolean contains(T element) {
+		return this.data.contains(element);
+	}
+	public void swap(int first, int second) {
+		Collections.swap(this.data, first, second);
+	}
+	public int countGreaterThan ( T element) {
+		return (int) this.data.stream()
+				.filter(value -> value.compareTo(element) > 0)
+				.count();
+	}
+	public T getMax() {
+		return (T) Collections.max(this.data);
+	}
+	public T getMin() {
+		return (T) Collections.min(this.data);
+	}
+	public void print() {
+		for(T element : this.data) {
+			System.out.println(element);
+		}
+	}
+	public int size() {
+		return this.data.size();
+	}
+	public T get(int i) {
+		return this.data.get(i);
+	}
+	@Override
+	public Iterator<T> iterator() {
+		return this.data.iterator();
+	}
+}
