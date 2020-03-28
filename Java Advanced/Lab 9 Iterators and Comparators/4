@@ -1,0 +1,22 @@
+//Create a class BookComparator from UML diagram below:
+//<<Comparator<Book>>>
+//BookComparator
+//+ compare(Book, Book): int
+//BookComparator have to compare two books by:
+//1. Book title
+//2. Year of publishing a book
+
+package zadachi;
+
+import java.util.Comparator;
+
+public class BookComparator implements Comparator<Book>{
+	
+	@Override
+	public int compare(Book b1, Book b2) {
+		if(b1.getTitle().compareTo(b2.getTitle()) == 0) {
+			return b1.getYear() - b2.getYear();
+		}
+		return b1.getTitle().compareTo(b2.getTitle());
+	}
+}
