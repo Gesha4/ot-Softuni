@@ -1,0 +1,99 @@
+//Since you have passed the basics algorithms course, now you have a task to create your custom stack. You are aware of the Stack
+//structure. There is a collection to store the elements and two functions (not from the functional programming) - to push an 
+//element and to pop it. Keep in mind that the first element which is popped is the last in the collection. The push method adds 
+//an element to the top of the collection and the pop method returns the top element and removes it.Write your custom 
+//implementation of Stack<Integer> and implement your custom iterator. There is a way that IntelliJ could help you, your Stack 
+//class should implement the "Iterable<Integer>" interface and your Iterator Class should implement "Iterator<Integer>" interface.
+//Your Custom Iterator should follow the rules of the Abstract Data Type - Stack. Like we said, the first element is the element
+//at the top and so on. Iterators are used only for iterating through the collection, they should not remove or mutate the elements.
+//Input
+//The input will come from the console as lines of commands. Commands will only be push and pop, followed by integers for the push 
+//command and no another input for the pop command. 
+//Format:
+//•	"Push {element, secondElement…}"
+//•	"Pop"
+//Output
+//When you receive "END", the input is over. Foreach the stack twice and print all elements. Each element should be on a new line.
+//package
+package zadachi;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+public class CustomStackWithList implements Iterable<Integer>{
+	private List<Integer> data;
+	public CustomStackWithList() {
+		this.data = new ArrayList<Integer>();
+	}
+	public void push(String... data) {
+		this.data.addAll(Arrays.stream(data).map(Integer::parseInt)
+				.collect(Collectors.toList()));
+	}
+	public List<Integer> getData() {
+		return data;
+	}
+	public boolean isEmpty() {
+		if(this.data.size() == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public int pop() {
+		if(isEmpty()) {
+			throw new NoSuchElementException("No elements");
+		} else {
+			return this.data.remove(this.data.size() - 1);
+		}
+	}
+
+	@Override
+	public Iterator<Integer> iterator() {
+		return new Iterator<Integer>() {
+			private int index = data.size() - 1;
+			@Override
+			public boolean hasNext() {
+				return index >= 0;
+			}
+
+			@Override
+			public Integer next() {
+				return data.get(index--);
+			}
+		};
+	}
+}
+
+//test
+import java.util.Scanner;
+
+import zadachi.CustomStackWithList;
+
+public class zadachi {
+	
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		CustomStackWithList stack = new CustomStackWithList();
+		String input = scan.nextLine();
+		while(!input.equals("END")) {
+			if(input.contains("Push")) {
+				stack.push(input.substring(input.indexOf(" ") + 1)
+						.split(", "));
+			} else if(input.contains("Pop")) {
+				stack.pop();
+			}
+			input = scan.nextLine();
+		}
+		if(!stack.isEmpty()) {
+			for(int i = 0; i < 2; i++) {
+				for(Integer element : stack) {
+					System.out.println(element);
+				}
+			}
+		}
+	}
+}
