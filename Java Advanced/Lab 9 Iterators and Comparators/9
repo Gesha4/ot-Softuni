@@ -1,0 +1,86 @@
+//There is a Comparable interface but probably you already know. Your task is simple. Create a Class Person. Each person should 
+//have name, age and town. You should implement the interface - Comparable and try to override the compareTo method. When you 
+//compare two people, first you should compare their names, after that - their age and last but not at least - compare their town. 
+//Input
+//On single lines, you will be given people in format:
+//{name} {age} {town}
+//Collect them till you receive "END"
+//After that, you will receive an integer N - the Nth person in your collection.
+//Output
+//On the single output line, you should bring statistics, how many people are equal to him, how many people are not equal to him 
+//and the total people in your collection.
+//Format:
+//{number of equal people} {number of not equal people} {total number of people}
+//Constraints
+//•	Names, ages and addresses will be valid.
+//•	Input number will be always а valid integer in range [2…100].
+//•	If there are no equal people print: "No matches"
+//package
+package zadachi;
+
+public class Person implements Comparable<Person>{
+	private String name;
+	private String date;
+	private String town;
+	
+	public String getName() {
+		return name;
+	}
+	public String getDate() {
+		return date;
+	}
+	public String getTown() {
+		return town;
+	}
+	public Person(String name, String date, String town) {
+		this.name = name;
+		this.date = date;
+		this.town = town;
+	}
+	@Override
+	public int compareTo(Person p) {
+		if(this.name.compareTo(p.getName()) == 0) {
+			if(this.date.compareTo(p.getDate()) == 0) {
+				return this.town.compareTo(p.getTown());
+			} else {
+				return this.date.compareTo(p.getDate());
+			}
+		} else {
+			return this.name.compareTo(p.getName());
+		}
+	}
+}
+
+//test
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import zadachi.Person;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		List<Person> persons = new ArrayList<>();
+		while(!input.equals("END")) {
+			String[] data = input.split(" ");
+			persons.add(new Person(data[0], data[1], data[2]));
+			input = scan.nextLine();
+		}
+		int place = Integer.parseInt(scan.nextLine()) - 1;
+		int equals = 0;
+		for(Person person : persons) {
+			if(persons.get(place).compareTo(person) == 0) {
+				equals += 2;
+			}
+		}
+		equals -= 2;
+		if(equals == 0) {
+			System.out.println("No matches");
+		} else {
+			System.out.printf("%d %d %d", equals, persons.size() - equals, persons.size());
+		}
+	}
+}
