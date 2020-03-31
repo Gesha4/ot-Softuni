@@ -1,0 +1,76 @@
+//Create a class Person holding name and age. A person with the same name and age should be considered the same, override any 
+//methods needed to enforce this logic. Your class should work with both standard and hashed collections. Create a TreeSet and a 
+//HashSet of type Person.
+//Input
+//On the first line of input you will receive a number N. On each of the next N lines you will receive information about people in
+//the format "<name> <age>".  Add the people from the input into both sets (both sets should hold all the people passed in from 
+//the input). 
+//Output
+//The output should consist of exactly 2 lines. On the first you should print the size of the TreeSet and on the second - the size
+//of the HashSet.
+// package
+package zadachi;
+
+public class Person implements Comparable<Person>{
+	private String name;
+	private int age;
+	
+	public String getName() {
+		return name;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	public Person(String[] data) {
+		this.name = data[0];
+		this.age = Integer.parseInt(data[1]);
+	}
+	@Override
+	public int compareTo(Person p) {
+		if(this.name.equals(p.name)) {
+			return this.age - p.age;
+		}
+		return this.name.compareTo(p.name);
+	}
+	@Override
+	public boolean equals(Object other) {
+		if(other instanceof Person) {
+			if(this.name.equals(((Person) other).name)
+				&& this.age == ((Person) other).age) {
+				return true;
+			}
+		}
+		return false;
+	}
+	@Override
+	public int hashCode() {
+		return this.name.hashCode() + this.age;
+	}
+}
+
+//test
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.TreeSet;
+import zadachi.Person;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		TreeSet<Person> personsTree = new TreeSet<>();
+		HashSet<Person> personsHash = new HashSet<>();
+		int num = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < num; i++) {
+			Person person = new Person(scan.nextLine().split(" "));
+			personsTree.add(person);
+			personsHash.add(person);
+		}
+		System.out.println(personsTree.size());
+		System.out.println(personsHash.size());
+	}
+}
