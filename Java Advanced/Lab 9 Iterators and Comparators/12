@@ -1,0 +1,273 @@
+//You are a young and ambitious owner of a Pet Clinics Holding. You ask your employees to create a program which will store all
+//information about the pets in the database. Each pet should have name, age and kind. Your application should support a few
+//basic operations such as creating a pet, creating a clinic, adding a pet to a clinic, releasing a pet from a clinic, printing 
+//information about a specific room in a clinic or printing information about all rooms in a clinic. Clinics should have an odd
+//number of rooms, attempting to create a clinic with an even number of should fail and throw an appropriate exception.
+//Accommodation Order
+//For example let us take a look at a clinic with 5 rooms. The first room where a pet will be treated is the central one 
+//(room 3). So the order of which an animal is entering is: first animal is going to the centre (3) room and after that the next
+//pets are entering first to the left (2) and then to the right (4) room. The last rooms in which pets can enter are room 1 and
+//room 5. In case a room is already occupied, we skip it and go to the next room in the above order. Your task is to model the
+//application and make it support some commands. 
+//The first pet enters room 3. 					-> 	1 2 3 4 5
+//After that, the next pet enters room 2. 				-> 	1 2 3 4 5
+//The third pet would enter room 4. 				-> 	1 2 3 4 5
+//And the last two pets would be going to rooms - 1 and 5. 	->	1 2 3 4 5
+//Now when we have covered adding the pets, it is time to find a way to release them. The process of releasing them is not so 
+//simple, when the release method is called, we start from the centre room (3) and continue right (4, 5… and so on) until we 
+//find a pet or reach the last room. If we reach the last room, we start from the first (1) and again move right until we reach 
+//the centre room (3). If a pet is found, we remove it from the collection, stop further search and return true, if a pet is NOT
+//found, the operation returns false. When a print command for a room is called, if the room contains a pet we print the pet on
+//a single line in the format "<pet name> <pet age> <pet kind>". Alternatively if the room is empty print "Room empty" instead.
+//When a print command for a clinic is called it should print all rooms in the clinic in order of their number.
+//Commands
+//Command	Return Type	Description
+//Create Pet {name} {age} {kind}	void	Creates a pet with the specified name and age.
+//(true if the operation is successful and false if it isn't)
+//Create Clinic {name} {rooms}	void	Creates a Clinic with the specified name and number of rooms.
+//(if the rooms are not odd, throws an exception)
+//Add {pet's name} {clinic's name}	boolean 	This command should add the given pet in the specified clinic.
+//(true if the operation is successful and false if it isn't).
+//Release {clinic's name}	boolean	This command should release an animal from the specified clinic.
+//(true if the operation is successful and false if it isn't).
+//HasEmptyRooms {clinic’s name}	boolean	Returns whether the clinic has any empty rooms.
+//(true if it has and false if it doesn’t).
+//Print {clinic's name}	void	This command should print each room in the specified clinic, ordered by room number. 
+//Print {clinic's name} {room}	void	Prints on a single line the content of the specified room.
+//Input
+On the first line, you will be given an integer N - the number of commands you will receive. On each of the next N lines you 
+//will receive a command. Commands and parameters will always be correct (Add, Release, HasEmptyRooms and Print commands will 
+//always be passed to existing clinics/pets), except for the number of rooms in the Create Clinic command which can be any
+//valid integer between 1 and 101.
+//Output
+//For each command with a boolean return type received through the input, you should print its return value on a separate line. 
+//In case of a method throwing an exception (such as trying to create a clinic with even number of rooms or trying to add a pet 
+//that doesn’t exist) you should catch the exceptions and instead print "Invalid Operation!". The Print command with a clinic
+//and a room should print information for that room in the format specified above. The Print command with only a clinic should
+//print information for each room in the clinic in order of their numbers. 
+//packages
+package zadachi;
+
+public class Pet {
+	private String name;
+	private int age;
+	private String kind;
+	public String getName() {
+		return name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public String getKind() {
+		return kind;
+	}
+	public Pet(String name, int age, String kind) {
+		this.name = name;
+		this.age = age;
+		this.kind = kind;
+	}
+	@Override
+	public String toString() {
+		return this.name + " " + this.age + " " + this.kind;
+	}
+}
+
+package zadachi;
+
+import java.util.Iterator;
+
+public class PetClinic implements Iterable<Pet>{
+	private String name;
+	private Pet[] rooms;
+	private final int center;
+	private int distance;
+	public Pet getPet(int place) {
+		return this.rooms[place];
+	}
+	public String getName() {
+		return this.name;
+	}
+	public PetClinic(String name, int rooms) {
+		this.name = name;
+		this.rooms = new Pet[rooms];
+		if(rooms == 1) {
+			this.center = 0;
+			this.distance = 0;
+		} else {
+			this.center = rooms / 2;
+			this.distance = 1;
+		}
+	}
+	public boolean release() {
+		boolean isReleased = false;
+		for(int i = center; i < this.rooms.length - 1; i++) {
+			if(!this.rooms[i].equals(null)) {
+				this.rooms[i] = null;
+				isReleased = true;break;
+			}
+		}
+		if(!isReleased) {
+			for(int i = 0; i < center; i++) {
+				if(this.rooms[i] != null) {
+					this.rooms[i] = null;
+					isReleased = true;break;
+				}
+			}
+		}
+		return isReleased;
+	}
+	public boolean hasEmptyRooms() {
+		if(this.rooms[0] == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public boolean addPet(Pet pet) {
+		boolean isAdded = false;
+		if(hasEmptyRooms()) {
+			if(this.rooms[center] == null) {
+				this.rooms[center] = pet;
+				isAdded = true;
+			} else {
+				while(distance <= this.rooms.length / 2) {
+					if(this.rooms[center - distance] == null) {
+						this.rooms[center - distance] = pet;
+						isAdded = true;
+					}
+					if(!isAdded && this.rooms[center + distance].equals(null)) {
+						this.rooms[center + distance] = pet;
+						isAdded = true;
+						distance++;
+					}
+					if(isAdded) {
+						break;
+					}
+				}
+			}
+		} 
+		return isAdded;
+	}
+	@Override
+	public Iterator<Pet> iterator() {
+		return new Iterator<Pet>(){
+			private int index = 0;
+			@Override
+			public boolean hasNext() {
+				return index < rooms.length;
+			}
+
+			@Override
+			public Pet next() {
+				Pet pet = rooms[index];
+				index++;
+				return pet;
+			}
+			
+		};
+	}
+}
+
+//test
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import zadachi.Pet;
+import zadachi.PetClinic;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Pet> pets = new ArrayList<Pet>();
+		List<PetClinic> clinics = new ArrayList<>();
+		int num = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < num; i++) {
+			String[] input = scan.nextLine().split(" ");
+			commands(pets, clinics, input);
+		}
+	}
+
+	private static void commands(List<Pet> pets, List<PetClinic> clinics, String[] input) {
+		switch(input[0]) {
+		case "Create" : create(pets, clinics, input);break;
+		case "Add" : System.out.println(add(pets, clinics, input));break;
+		case "Release" : System.out.println(release(clinics, input));break;
+		case "HasEmptyRooms" : System.out.println(hasEmptyRooms(clinics, input));break;
+		case "Print" :
+			for(PetClinic clinic : clinics) {
+				if(clinic.getName().equals(input[1])) {
+					if(input.length == 3) {
+					int place = Integer.parseInt(input[2]);
+					System.out.println(clinic.getPet(place - 1));
+					break;
+					} else {
+						for(Pet pet : clinic) {
+							if(pet == null) {
+								System.out.println("Room empty");
+							} else {
+								System.out.println(pet);
+							}
+						}
+					}
+				}
+			} 
+		}
+	}
+
+	private static boolean hasEmptyRooms(List<PetClinic> clinics, String[] input) {
+		boolean hasEmpty = false;
+		for(PetClinic clinic : clinics) {
+			if(clinic.getName().equals(input[1])) {
+				hasEmpty = clinic.hasEmptyRooms();
+				break;
+			}
+		}
+		return hasEmpty;
+	}
+
+	private static boolean release(List<PetClinic> clinics, String[] input) {
+		boolean isReleasing = false;
+		for(PetClinic clinic : clinics) {
+			if(clinic.getName().equals(input[1])) {
+				isReleasing = clinic.release();
+				break;
+			}
+		}
+		return isReleasing;
+	}
+
+	private static boolean add(List<Pet> pets, List<PetClinic> clinics, String[] input) {
+		boolean isAdding = false;
+		for(Pet pet : pets) {
+			if(pet.getName().equals(input[1])) {
+				for(PetClinic clinic : clinics) {
+					if(clinic.getName().equals(input[2])) {
+						isAdding = clinic.addPet(pet);
+						break;
+					}
+				}
+			}
+		}
+		return isAdding;
+	}
+
+	private static void create(List<Pet> pets, List<PetClinic> clinics, String[] input) {
+		if(input[1].equals("Pet")) {
+			String name = input[2];
+			int age = Integer.parseInt(input[3]);
+			String type = input[4];
+			Pet pet = new Pet(name, age, type);
+			pets.add(pet);
+		} else {
+			String name = input[2];
+			int rooms = Integer.parseInt(input[3]);
+			if(rooms % 2 == 0) {
+				System.out.println("Invalid Operation!");
+			} else {
+				PetClinic clinic = new PetClinic(name, rooms);
+				clinics.add(clinic);
+			}
+		}
+	}
+}
