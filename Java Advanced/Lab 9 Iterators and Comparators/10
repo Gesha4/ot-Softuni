@@ -1,0 +1,97 @@
+//An interesting pattern you may have heard of is the Strategy Pattern, if we have multiple ways to do a task (let's say sort a 
+//collection) it allows the client to choose the way that most fits his needs. A famous implementation of the pattern in Java is 
+//the Collections.sort() method that takes a Comparator. Create a class Person that holds name and age. Create 2 Comparators for
+//Person (classes which implement the Comparator<Person> interface). The first comparator should compare people based on the length
+//of their name as a first parameter, if 2 people have a name with the same length, perform a case-insensitive compare based on 
+//the first letter of their name instead. The second comparator should compare them based on their age. Create 2 TreeSets of type 
+//Person, the first should implement the name comparator and the second should implement the age comparator.
+//Input
+//On the first line of input you will receive a number N. On each of the next N lines you will receive information about people in
+//the format "<name> <age>". Add the people from the input into both sets (both sets should hold all the people passed in from the
+//input).
+//Output
+//Foreach the sets and print each person from the set on a new line in the same format that you received them. Start with the set 
+//that implements the name comparator.
+//packages
+package zadachi;
+
+import java.util.Comparator;
+
+public class CompareAge implements Comparator<Person>{
+
+	@Override
+	public int compare(Person p1, Person p2) {
+		return p1.getAge().compareTo(p2.getAge());
+	}
+}
+
+package zadachi;
+
+import java.util.Comparator;
+
+public class CompareName implements Comparator<Person>{
+
+	@Override
+	public int compare(Person p1, Person p2) {
+		if(p1.getName().length() == p2.getName().length()) {
+			return p1.getName().toLowerCase().charAt(0) - p2.getName().toLowerCase().charAt(0);
+		} else {
+			return p1.getName().length() - p2.getName().length();
+		}
+	}
+}
+
+package zadachi;
+
+public class Person implements Comparable<Person>{
+	private String name;
+	private int age;
+	
+	public String getName() {
+		return name;
+	}
+	public Integer getAge() {
+		return age;
+	}
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	public Person(String[] data) {
+		this.name = data[0];
+		this.age = Integer.parseInt(data[1]);
+	}
+	@Override
+	public int compareTo(Person o) {
+		return 0;
+	}
+}
+
+//test
+import java.util.Scanner;
+import java.util.TreeSet;
+
+import zadachi.CompareAge;
+import zadachi.CompareName;
+import zadachi.Person;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		TreeSet<Person> personsByName = new TreeSet<>(new CompareName());
+		TreeSet<Person> personsByAge = new TreeSet<>(new CompareAge());
+		int num = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < num; i++) {
+			Person person = new Person(scan.nextLine().split(" "));
+			personsByName.add(person);
+			personsByAge.add(person);
+		}
+		for(Person person : personsByName) {
+			System.out.println(person.getName() + " " + person.getAge());
+		}
+		for(Person person : personsByAge) {
+			System.out.println(person.getName() + " " + person.getAge());
+		}
+	}
+}
