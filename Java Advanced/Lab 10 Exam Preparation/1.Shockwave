@@ -1,0 +1,66 @@
+//Doctor T. decided to experiment with shockwaves. He performs his studies in a rectangular room of size N * M.
+//However what is interesting is that the shockwaves are also rectangular, through some unknown properties of
+//matter. There are pressure plates which indicate each time a shockwave hits a certain area in the room.
+//You will be given N and M – integers indicating the size of the room – in rows and columns. There is a plate in each
+//column. In the beginning the plates have value – 0, because no shockwaves have been executed.
+//After that you will begin receiving lines of exactly 4 integers, separated by a single space – X1, Y1, X2, Y2. These are
+//coordinates of the points which are the upper-left and the bottom-right corners of the rectangular shockwave. You
+//must increase the value of each plate in the area the rectangular shockwave affects, by 1. You must perform this
+//for every shockwave input.When you receive the command “Here We Go”, that means Doctor T. is ready to check the results of the
+//shockwaves. You must print all the plates on rows, each plate’s value separated by a space.
+//Input
+//On the first line of input you will receive N and M – separated by a space.
+//On the next several lines you will receive the 4 integers – separated by a space, until you receive the command “Here We Go”.
+//Output
+//Print all of the rows of the room, each on a new line, with all columns separated by a single space.
+
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] dimentions = scan.nextLine().split(" ");
+		int rows = Integer.parseInt(dimentions[0]);
+		int columns = Integer.parseInt(dimentions[1]);
+		int[][] room = creatingMatrix(rows, columns);
+		String input = scan.nextLine();
+		while(!input.equals("Here We Go")) {
+			String[] wave = input.split(" ");
+			int startRow = Integer.parseInt(wave[0]);
+			int startCol = Integer.parseInt(wave[1]);
+			int endRow = Integer.parseInt(wave[2]);
+			int endCol = Integer.parseInt(wave[3]);
+			shockwaveMoving(room, startRow, startCol, endRow, endCol);
+			input = scan.nextLine();
+		}
+		printRoom(room);
+	}
+
+	private static void printRoom(int[][] room) {
+		for(int i = 0; i < room.length; i++) {
+			for(int j = 0; j < room[i].length; j++) {
+				System.out.print(room[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	private static void shockwaveMoving(int[][] room, int startRow, int startCol, int endRow, int endCol) {
+		for(int i = startRow; i <= endRow; i++) {
+			for(int j = startCol; j <= endCol; j++) {
+				room[i][j]++;
+			}
+		}
+	}
+
+	private static int[][] creatingMatrix(int rows, int columns) {
+		int[][] matrix = new int[rows][columns];
+		for(int i = 0; i < rows; i++) {
+			for(int j = 0; j < columns; j++) {
+				matrix[i][j] = 0;
+			}
+		}
+		return matrix;
+	}
+}
