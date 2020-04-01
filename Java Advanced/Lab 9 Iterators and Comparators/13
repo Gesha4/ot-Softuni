@@ -1,0 +1,207 @@
+//You need to write your own simplified implementation of a generic Linked List which has an Iterator. The list should support the
+//Add and Remove operations, should reveal the amount of elements it has with a getSize function and should have an implemented 
+//iterator (should be foreachable). The add method should add the new element at the end of the collection. The remove method 
+//should remove the first occurrence of the item starting at the beginning of the collection, if the element is successfully 
+//removed the method returns true, alternatively if the element passed is not in the collection the method should return false.
+//The getSize method should return the number of elements currently in the list. The iterator should iterate over the collection 
+//starting from the first entered element.
+//Input
+//On the first line of input you will receive a number N. On each of the next N lines you will receive a command in one
+//of the following formats:
+//"Add <number>" - adds a number to your linked list.
+//"Remove <number>" - removes the first occurrence of the number from the linked list. If there is no such element this command 
+//leaves the collection unchanged.
+//Output
+//The output should consist of exactly 2 lines. On the first you should print the result of calling the getSize function on
+//the Linked list. On the next lines you should print all elements of the collection by calling foreach on the collection.
+//package
+package zadachi;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class DoublyLinkedList implements Iterable<Integer>{
+	private class ListNode{
+		private int item;
+		private ListNode previous;
+		private ListNode next;
+		private ListNode(int item) {
+			this.item = item;
+		}
+	}
+	private ListNode head;
+	private ListNode tail;
+	private int size;
+	public int getSize() {
+		return this.size;
+	}
+	public void addFirst(int element) {
+		ListNode newHead = new ListNode(element);
+		if(this.size == 0) {
+			this.head = this.tail = newHead;
+		} else {
+			newHead.next = this.head;
+			this.head.previous = newHead;
+			this.head = newHead;
+		}
+		this.size++;
+	}
+	public void addLast(int element) {
+		ListNode newTail = new ListNode(element);
+		if(this.size == 0) {
+			this.head = this.tail = newTail;
+		} else {
+			newTail.previous = this.tail;
+			this.tail.next = newTail;
+			this.tail = newTail;
+		}
+		this.size++;
+	}
+	private void checkIndex(int index) {
+		if(index < 0 || index >= this.size) {
+			String messege = String.format("Index %d, Size %d", index, this.size);
+			throw new IndexOutOfBoundsException(messege);
+		}
+	}
+	public ListNode get(int index) {
+		checkIndex(index);
+		if(index <= this.size / 2) {
+			ListNode firstNode = this.head;
+			for(int i = 0; i < index; i++) {
+				firstNode = firstNode.next;
+			}
+			return firstNode;
+		} else {
+			ListNode lastNode = this.tail;
+			for(int i = this.size - 1; i > index; i--) {
+				lastNode = lastNode.previous;
+			}
+			return lastNode;
+		}
+	}
+	private void checkSize() {
+		if(this.size == 0) {
+			throw new NoSuchElementException("The list is empty");
+		}
+	}
+	public int removeFirst() {
+		checkSize();
+		int firstItem = this.head.item;
+		this.head = this.head.next;
+		if(this.head == null) {
+			this.tail = null;
+		} else {
+			this.head.previous = null;
+		}
+		this.size--;
+		return firstItem;
+	}
+	public int removeLast() {
+		checkSize();
+		int lastItem = this.tail.item;
+		this.tail = this.tail.previous;
+		if(this.tail == null) {
+			this.head = null;
+		} else {
+			this.tail.next = null;
+		}
+		this.size--;
+		return lastItem;
+	}
+	public int[] toArray() {
+		int[] elements = new int[this.size];
+		ListNode currentNode = this.head;
+		int counter = 0;
+		while(currentNode != null) {
+			elements[counter++] = currentNode.item;
+			currentNode = currentNode.next;
+		}
+		return elements;
+	}
+	public boolean remove(int element) {
+		boolean isRemoved = false;
+		checkSize();
+		if(element == this.head.item) {
+			ListNode currentNode = this.head.next;
+			currentNode.previous = null;
+			this.head = currentNode;
+			this.size--;
+			isRemoved = true;
+		} else {
+			ListNode currentNode = this.head;
+			while(currentNode.next != null) {
+				if(currentNode.item == element) {
+					ListNode previos = currentNode.previous;
+					ListNode next = currentNode.next;
+					previos.next = next;
+					next.previous = previos;
+					this.size--;
+					isRemoved = true;
+					break;
+				}
+				currentNode = currentNode.next;
+			}
+		}
+		if(!isRemoved && element == this.tail.item) {
+			ListNode currentNode = this.tail.previous;
+			currentNode.next = null;
+			this.tail = currentNode;
+			this.size--;
+			isRemoved = true;
+		}
+		return isRemoved;
+	}
+	@Override
+	public Iterator<Integer> iterator() {
+		return new Iterator<Integer>() {
+			ListNode currentNode = head;
+			@Override
+			public boolean hasNext() {
+				if(currentNode != null) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			@Override
+			public Integer next() {
+				ListNode thisNode = currentNode;
+				currentNode = currentNode.next;
+				return thisNode.item;
+			}
+			
+		};
+	}
+}
+
+//test
+import java.util.Scanner;
+
+import zadachi.DoublyLinkedList;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		DoublyLinkedList list = new DoublyLinkedList();
+		int numRows = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < numRows; i++) {
+			String[] input = scan.nextLine().split(" ");
+			commands(list, input);
+		}
+		System.out.println(list.getSize());
+		for(Integer item : list) {
+			System.out.print(item + " ");
+		}
+	}
+
+	private static void commands(DoublyLinkedList list, String[] input) {
+		String command = input[0];
+		int number = Integer.parseInt(input[1]);
+		switch(command) {
+		case "Add" : list.addLast(number);break;
+		case "Remove" : list.remove(number);break;
+		}
+	}
+}
