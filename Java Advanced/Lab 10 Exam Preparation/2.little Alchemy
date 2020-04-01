@@ -1,0 +1,78 @@
+//Professor X. has finally come up with an idea how to become rich. He designed a special acid, which applied in a precise 
+//amount, transforms stone into pure gold. Calculating how much acid is needed for each stone is hard, that’s why Professor X 
+//has labeled each stone with a number, showing how many doses it needs to turn into the valuable metal. The stones are laid one
+//after another on a table and every time he takes the first (leftmost) stone, he applies acid on it and returns it on the 
+//(right) end of the sequence. For example, he starts with stones 2 3 4. On the first turn he will take 2, apply acid and change
+//the label on it to 1 (because there is only one dose left to be applied). Then, he places it on the end of the sequence and 
+//continue doing so.
+//2 3 4 -> 3 4 1 -> 4 1 2 -> 1 2 3 …
+//When the required amount of acid is applied on a stone (label becomes 0), it is moved from the table to the storage – a secret
+//place, where Professor X keeps the gold. Because oxygen can revert the effect of the acid, he keeps the storage air free.
+//Unfortunately, there are some air leaks into the storage, which make the gold pieces turn back into stones. Every time there 
+//is a leak, the last piece that got into the storage gets damaged and the Professor has to calculate again the acid doses he 
+//needs for it to turn in back into gold. After labeling the stone again, he returns it back to the table - at the end of the 
+//sequence.
+//Input
+//On the first line of the input you will receive the sequence of the stones the Professor has at the beginning, each 
+//represented by an integer – its label. The stones will be separated by space.
+//Afterwards you will get a series of commands of the following types:
+//"Apply acid {n}" – Prof. X applies n doses of acid on n number of stones and moves each at the end. If there are no stones at 
+//the table, ignore the command.
+//"Air Leak {m}" – there is a leak in the storage, the last piece gets damaged and must be treated with n more doses to turn 
+//into gold again. If the storage is empty, ignore the command.
+//"Revision" – end of input.
+//Output
+//After receiving the "Revision" command you should print
+//n the first line - all stones left, in their current order on the table
+//On the second line - the amount of gold pieces in the storage
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Integer> stones = Arrays.stream(scan.nextLine().split(" "))
+			.map(Integer::parseInt).collect(Collectors.toList());
+		int gold = 0;
+		String input = scan.nextLine();
+		while(!input.equals("Revision")) {
+			String[] command = input.split(" ");
+			gold = working(stones, gold, command);
+			input = scan.nextLine();
+		}
+		for(Integer stone : stones) {
+			System.out.print(stone + " ");
+		}
+		System.out.println();
+		System.out.println(gold);
+	}
+
+	private static int working(List<Integer> stones, int gold, String[] command) {
+		switch(command[0]) {
+		case "Apply" :
+			int acid = Integer.parseInt(command[2]);
+			for(int i = 0; i < acid; i++) {
+				if(stones.size() > 0) {
+					int stone = stones.remove(0);
+					stone--;
+					if(stone == 0) {
+						gold++;
+					} else {
+						stones.add(stone);
+					}
+				}
+			}break;
+		case "Air" : 
+			if(gold > 0) {
+				gold--;
+				int leak = Integer.parseInt(command[2]);
+				stones.add(leak);
+			}
+		}
+		return gold;
+	}
+}
