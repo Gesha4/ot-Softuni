@@ -1,0 +1,72 @@
+//You know that football is &quot;The King of Sports&quot;. In our days football is not just a sport, it is business and like 
+//every business there is some stats that are needed. More important stats than everything is result of matches between teams. So
+//now you will need to write a program that take care of all results between teams. At begging you will need to read all results 
+//from matches in format: {firstTeam} - {secondTeam} result {firstTeamGoals}:{secondTeamGoals}
+//You will get results till you read &quot;Season End&quot; command. Then you will get one more single line with all teams that
+//you need to print, separated with ", ". You have to print all games, that team play in format:
+//{team} - {opponent} result {teamGoals}:{opponentGoals}
+//All opponents for current team have to be print in alphabetical order.
+//Input
+//The input comes from the console as varying number of lines. You have to parse every command until the command that follows is
+//"Season End". The input will be in the format displayed above, there is no need to check it explicitly.
+//Output
+//For every team stats you need to print, you need to sort its opponents in alphabetical order. Result for all matches have to be
+//in format {teamGoals}:{opponentGoals}.
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.TreeMap;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Map<String, List<String>>> teams = new HashMap<>();
+		String input = scan.nextLine();
+		while(!input.equals("Season End")) {
+			String[] stats = input.split(" ");
+			addingStats(teams, stats);
+			input = scan.nextLine();
+		}
+		String[] teamsToPrint = scan.nextLine().split(", ");
+		for(String team : teamsToPrint) {
+			printingTeamResults(team, teams.get(team));
+		}
+	}
+
+	private static void printingTeamResults(String team, Map<String, List<String>> oponents) {
+		for(Entry<String, List<String>> oponent : oponents.entrySet()) {
+			oponent.getValue().sort((f,s) -> s.compareTo(f));
+			for(String result : oponent.getValue()) {
+				System.out.printf("%s - %s -> %s%n", team, oponent.getKey(), result);
+			}
+		}
+	}
+
+	private static void addingStats(Map<String, Map<String, List<String>>> teams, String[] stats) {
+		String firstTeam = stats[0];
+		String secondTeam = stats[2];
+		StringBuilder result = new StringBuilder(stats[4]);
+		addingTeam(teams, firstTeam, secondTeam, result.toString());
+		addingTeam(teams, secondTeam, firstTeam, result.reverse().toString());
+	}
+
+	private static void addingTeam(Map<String, Map<String, List<String>>> teams, String firstTeam, String secondTeam,
+			String result) {
+		if(!teams.containsKey(firstTeam)) {
+			teams.put(firstTeam, new TreeMap<>());
+			teams.get(firstTeam).put(secondTeam, new ArrayList<String>());
+			teams.get(firstTeam).get(secondTeam).add(result);
+		} else {
+			if(!teams.get(firstTeam).containsKey(secondTeam)) {
+				teams.get(firstTeam).put(secondTeam, new ArrayList<String>());
+				teams.get(firstTeam).get(secondTeam).add(result);
+			} else {
+				teams.get(firstTeam).get(secondTeam).add(result);
+			}
+		}
+	}
+}
