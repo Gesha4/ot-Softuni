@@ -1,0 +1,86 @@
+//Doctor T. likes to communicate with encrypted messages with his lackeys. But the lackeys are relatively stupid, so you need to 
+//help them understand the Doctor’s messages, by decrypting his encrypted data.You have been tasked to decrypt several messages.
+//You will be given the messages as several input lines. You must read and decrypt messages until you receive the command “Ascend”.
+//When you receive a given message you must decrypt it and print it immediately. The messages have several encoded strings in them,
+//which you must find. The encoded string consist of – a single comma (,) or an underscore (_), a sequence of English Alphabet 
+//letters, and a digit at the end of it. Examples: “,asd9”, “_z8”, “,xzc9“. The decoding of a message is done by adding or
+//subtracting the digit in it, from the ASCII code of every character in the sequence of letters. If the front character is a comma
+//(,) you add the digit to the ASCII codes of the characters, if it’s an underscore (_), you subtract it. When you find an encoded
+//string, you must “memorize” it. In other words, you find the encoded string “_qlfh5”, and decode it – it results in “lgac”. If 
+//you find the same encoded string (_qlfh5), again, in a message afterwards, you must replace it with the decoded value
+//corresponding to it (lgac), BEFORE beginning to decode the message itself.
+//Example: “abcdefg,_qlfh52hijklmn” = “abcdefg,lgac2hijklmn” = “abcdefgnicehijklm”. You know that “_qlfh5” is “lgac”, so the 
+//message would turn into “abcedfg,lgac2hijklmn” which after decoding turns into “abcdefgnicehijklm”.
+//Input
+//The input comes in the form of input lines containing the encoded messages.
+//When you receive the command “Ascend” the input sequence ends.
+//Output
+//You must print every message, immediately after you’ve decoded it.
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		while(!input.equals("Ascend")) {
+			String decrypted = decrypting(input);
+			System.out.println(decrypted);
+			input = scan.nextLine();
+		}
+	}
+
+	private static String decrypting(String input) {
+		StringBuilder crypted = new StringBuilder(input);
+		Pattern addingCode = Pattern.compile(",[a-zA-Z]+[0-9]");//do not find words properly
+		Pattern substractingCode = Pattern.compile("_[a-zA-Z]+[0-9]");
+		Matcher matchingAddCode = addingCode.matcher(crypted);
+		Matcher matchingSubstractingCode = substractingCode.matcher(crypted);
+		boolean thereIsAMatch = false;
+		if(matchingAddCode.find() || matchingSubstractingCode.find()) {
+			thereIsAMatch = true;
+		}
+		while(thereIsAMatch) {
+			if(matchingAddCode.find()) {
+				String match = matchingAddCode.group();
+				addingDecrypting(crypted, match);
+			}
+			if(matchingSubstractingCode.find()) {
+				String match = matchingSubstractingCode.group();
+				substractingDecrypting(crypted, match);
+			}
+			if(matchingAddCode.find() || matchingSubstractingCode.find()) {
+				thereIsAMatch = true;
+			} else {
+				thereIsAMatch = false;
+			}
+		}
+		return crypted.toString();
+	}
+
+	private static void substractingDecrypting(StringBuilder crypted, String match) {
+		StringBuilder newSymbols = new StringBuilder();
+		int digit = match.charAt(match.length() - 1) - 48;
+		for(int i = 1; i < match.length() - 1; i++) {
+			char ch = (char) (match.charAt(i) - digit);
+			newSymbols.append(ch);
+		}
+		int start = crypted.indexOf(match);
+		int end = start + match.length();
+		crypted.replace(start, end, newSymbols.toString());
+	}
+
+	private static void addingDecrypting(StringBuilder crypted, String match) {
+		StringBuilder newSymbols = new StringBuilder();
+		int digit = match.charAt(match.length() - 1) - 48;
+		for(int i = 1; i < match.length()- 1; i++) {
+			char ch = (char) (match.charAt(i) + digit);
+			newSymbols.append(ch);
+		}
+		int start = crypted.indexOf(match);
+		int end = start + match.length();
+		crypted.replace(start, end, newSymbols.toString());
+	}
+}
