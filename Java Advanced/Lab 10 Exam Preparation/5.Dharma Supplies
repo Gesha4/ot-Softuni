@@ -1,0 +1,92 @@
+//The periodic resupply drop is the name given to a DHARMA Initiative procedure in which new provisions and supplies are
+//parachuted onto the Island from the DHARMA Logistics Warehouse. Horace Goodspeed, the leader of the DHARMA Initiative on the 
+//Island, has asked you to help him identify and collect all parachuted supply crates. You will start receiving strings, 
+//represinting different parts of the Island, until “Collect” command is received. The plane dropped many supply crates, all over 
+//the Island. Your task is to search in every part of the Island for the supplies, but be careful, the Hostiles poisoned some of 
+//the delivered crates. A supply crate must start with an opening bracket "[", may have a supply tag(tag may be valid, may be not),
+//may have a supply body, after the body must have the exact same supply tag and a closing bracket "]".
+//Example: "[{supplyTag}{supplyBody}{supplyTag}]". There are two types of valid supply tags:
+//•	Food tag - starts with "#" and has N digits(Ex: #123)
+//•	Drinks tag - starts with "#" and has N lowercase english alphabet letters(Ex: #asdf)
+//N will be a positive integer calculated by the following formula: 
+//•	number of ALL crates / number of Island parts(inputlines). 
+//N is representing the length of all valid supply tags. Any different length makes the tag invalid. Invalid tag means poisoned 
+//crate. Supply bodies of the crates may contain english alphabet letters and/or digits and/or one or many whitespaces.
+//After all food and drink supply crates are collected, your task is simple. Calculate and print the number of valid supply crates
+//collected, amount of food and amount of drunks. If no valid crates are found, print “No supplies found!”.
+//•	The amount of food in the food crates is calculated by multiplying the sum of the supply body unique ascci codes with the 
+//length of the supply tag(without the "#").
+//•	The amount of drinks is calculated by multiplying the sum of the supply body ascci codes with the sum of the supply tag 
+//ascii codes(without the "#").  
+//Input
+//•	Until “Collect” is received, you must read input lines representing Island parts.
+//Output
+//•	If you found some valid supplies, as output you must print three lines:
+//1.	Number of valid supply crates collected in format:  “Number of supply crates: {number of supply crates}”
+//2.	Amount of food found in the crates: “Amount of food collected: {amount of food}”
+//3.	Amount of drinks found in the crates: “Amount of drinks collected: {amount of drinks}”
+//•	If no crates found, as output you must print a single line: “No supplies found!”
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class zadachi {
+
+	public static void main(String[] args) throws IOException{
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		int countOfLines = 0;
+		StringBuilder lines = new StringBuilder();
+		String line = reader.readLine();
+		while(!line.equals("Collect")) {
+			lines.append(line).append(System.lineSeparator());
+			countOfLines++;
+			line = reader.readLine();
+		}
+		Pattern patternSpplies = Pattern.compile("\\[.*?]");
+		Matcher matcher = patternSpplies.matcher(lines.toString());
+		int countCrates = 0;
+		while(matcher.find()) {
+			countCrates++;
+		}
+		int n = countCrates / countOfLines;
+		Pattern validCratesRegex = Pattern.compile("\\[(#(\\d{" + n + "}|[a-z]{" + n + "}))([A-Za-z0-9\\s]+)(\\1)]");
+		Matcher validCrate = validCratesRegex.matcher(lines.toString());
+		int countValidCrates = 0;
+		int amountOfFood= 0;
+		int amountOfDrinks = 0;
+		while(validCrate.find()) {
+			String supplyTag = validCrate.group(2);
+			String body = validCrate.group(3);
+			if(Character.isDigit(supplyTag.charAt(0))) {
+				amountOfFood += computeFoodAmount(supplyTag, body);
+			} else {
+				amountOfDrinks += computeDrinksAmount(supplyTag, body);
+			}
+			countValidCrates++;
+		}
+		if(countValidCrates == 0) {
+			System.out.print("No supplies found!");
+		} else {
+			StringBuilder result = new StringBuilder(String.format("Number ofsupply crates: %d", countValidCrates))
+					.append(System.lineSeparator())
+					.append(String.format("Amount of food collected: %d", amountOfFood))
+					.append(System.lineSeparator())
+					.append(String.format("Amount of drinks collected: %d", amountOfDrinks));
+			System.out.println(result.toString());
+		}
+	}
+
+	private static int computeDrinksAmount(String supplyTag, String body) {
+		int sumOfCharsBody = Arrays.stream(body.split("")).mapToInt(s -> s.charAt(0)).sum();
+		int sumOfCharsSupplyTag = Arrays.stream(supplyTag.split("")).mapToInt(s -> s.charAt(0)).sum();
+		return sumOfCharsBody * sumOfCharsSupplyTag;
+	}
+
+	private static int computeFoodAmount(String supplyTag, String body) {
+		int sumOfUniqueChars = Arrays.stream(body.split("")).distinct().mapToInt(s -> s.charAt(0)).sum();
+		return sumOfUniqueChars * supplyTag.length();
+	}
+}
