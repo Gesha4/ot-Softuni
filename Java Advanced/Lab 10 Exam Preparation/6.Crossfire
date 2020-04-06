@@ -1,0 +1,98 @@
+//You will receive two integers which represent the dimensions of a matrix. Then, you must fill the matrix
+//with increasing integers starting from 1, and continuing on every row, like this:
+//first row: 1, 2, 3, …, n
+//second row: n + 1, n + 2, n + 3, …, n + n
+//third row: 2 * n + 1, 2 * n + 2, …, 2 * n + n
+//You will also receive several commands in the form of 3 integers separated by a space. Those 3 integers
+//will represent a row in the matrix, a column and a radius. You must then destroy the cells which correspond
+//to those arguments cross-like. Destroying a cell means that, that cell becomes completely nonexistent in the
+//matrix. Destroying cells cross-like means that you form a cross figure with center point - equal to the cell
+//with coordinates – the given row and column, and lines with length equal to the given radius. See the examples
+//for more info. The input ends when you receive the command “Nuke it from orbit”. When that happens, you must
+//print what has remained from the initial matrix.
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+	
+	private static void columnsToZero(List<List<Integer>> matrix, int row, int col, int radius) {
+		int start = row - radius;
+		if(start < 0) {
+			start = 0;
+		}
+		int end = row + radius;
+		if(end > matrix.size()) {
+			end = matrix.size();
+		}
+		for(int i = start; i < end; i++) {
+			if(matrix.get(i).size() >= col) {
+				matrix.get(i).set(col, 0);
+			}
+		}
+	}
+	
+	private static void rowsToZero(List<List<Integer>> matrix, int row, int col, int radius) {
+		int start = col - radius;
+		if(start < 0) {
+			start = 0;
+		}
+		int end = col + radius;
+		if(end > matrix.get(row).size()) {
+			end = matrix.get(row).size();
+		}
+		for(int i = start; i < end; i++) {
+			if(matrix.get(row).size() >= end) {
+				matrix.get(row).set(i, 0);
+			}
+		}
+	}
+	
+	public static void print (List<List<Integer>> matrix) {
+		for(int i = 0; i < matrix.size(); i++) {
+			for(int j = 0; j < matrix.get(i).size(); j++) {
+				System.out.print(matrix.get(i).get(j) + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] line = scan.nextLine().split(" ");
+		int rows = Integer.parseInt(line[0]);
+		int columns = Integer.parseInt(line[1]);
+		List<List<Integer>> matrix = new ArrayList<>();
+		int value = 1;
+		for(int i = 0; i < rows; i++) {
+			List<Integer> row = new ArrayList<>();
+			for(int j = 0; j < columns; j++) {
+				row.add(value);
+				value++;
+			}
+			matrix.add(row);
+		}
+		String input = scan.nextLine();
+		while(!input.equals("Nuke it from orbit")) {
+			int[] command = Arrays.stream(input.split(" ")).mapToInt(Integer::parseInt).toArray();
+			int row = command[0];
+			int column = command[1];
+			int radius = command[2];
+			columnsToZero(matrix, row, column, radius);
+			rowsToZero(matrix, row, column, radius);
+			for(int i = 0; i < matrix.size(); i++) {
+				matrix.set(i, matrix.get(i).stream().filter(element -> element !=0)
+				.collect(Collectors.toCollection(ArrayList::new)));
+				if(matrix.get(i).size() == 0) {
+					matrix.remove(i);
+					i--;
+				}
+			}
+			input = scan.nextLine();
+		}
+		print(matrix);
+	}
+}
