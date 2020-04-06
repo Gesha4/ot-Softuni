@@ -1,0 +1,57 @@
+//You are given N – an integer. On the next N lines you will receive sequences of integers, which will represent seismic 
+//activities, and the seismic waves in them. The waves will hit the surface one by one, but they will also neutralize the weaker
+//waves after them. The integers represent the waves’ power. You must take the first integer from the first activity – that’s the 
+//seismicity. Then, you must start comparing it with the other integers from the current activity, by order of input. If the 
+//seismicity is greater than or equal to an integer (the wave), that integer must be removed from the activity. If the seismicity 
+//has smaller value than the integer, the seismicity should be removed. When the current seismicity is removed, the process should
+//repeat with the next sequence of integers in order. The previous sequence should go at the back of all sequences and should await
+//its next turn. When all integers from a given activity are removed, you should remove the activity itself. Your task is to find
+//how many seismic waves will hit the surface and their power are they. That means you must calculate how many seismicities you 
+//will find, before all integers and activities are removed.
+//Input
+//•	On the first line of input you will receive N.
+//•	On the next N lines you will receive sequences of integers, separated by a space.
+//Output
+//•	As output you must print a single integer on the first line, indicating the amount of seismicities you’ve found.
+//•	On the second line of output you must print the seismicities you found, by order of entrance.
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int countOfLines = Integer.parseInt(scan.nextLine());
+		Deque<Deque<Integer>> sequences = new ArrayDeque<>();
+		List<Integer> seismisities = new ArrayList<>();
+		while(countOfLines-- > 0) {
+			Deque<Integer> sequence = Arrays.stream(scan.nextLine().split(" "))
+					.map(Integer::parseInt).collect(Collectors.toCollection(ArrayDeque::new));
+			sequences.add(sequence);
+		}
+		while(!sequences.isEmpty()) {
+			Deque<Integer> currentSequence = sequences.remove();
+			int seismicity = currentSequence.remove();
+			seismisities.add(seismicity);
+			while(!currentSequence.isEmpty()) {
+				int wave = currentSequence.peek();
+				if(wave <= seismicity) {
+					currentSequence.remove();
+				} else {
+					break;
+				}
+			}
+			if(!currentSequence.isEmpty()) {
+				sequences.add(currentSequence);
+			}
+		}
+		System.out.println(seismisities.size());
+		System.out.println(seismisities.stream()
+			.map(String::valueOf).collect(Collectors.joining(" ")));
+	}
+}
