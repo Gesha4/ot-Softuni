@@ -1,15 +1,19 @@
-
+package implementations;
 import interfaces.List;
-
 import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 
 public class ArrayList<E> implements List<E> {
+	private static final int INITIAL_SIZE = 4;
+	private int size;
+	private Object[] elements;
 	
-	private int size = 4;
-	private Object[] elements = new Object[size];
+	public ArrayList() {
+		this.elements = new Object[INITIAL_SIZE];
+		this.size = 0;
+	}
 	
     @Override
     public boolean add(E element) {
@@ -31,7 +35,7 @@ public class ArrayList<E> implements List<E> {
 			this.elements = grow();
 		}
 		E lastElement = this.get(this.size - 1);
-		for(int i = this.size - 1; i > index; i--) {
+		for(int i = this.size - 1; i >= index; i--) {
 			this.elements[i] = this.elements[i - 1];
 		}
 		this.elements[this.size] = lastElement;
@@ -49,7 +53,7 @@ public class ArrayList<E> implements List<E> {
 	@Override
     public E get(int index) {
 		checkIndex(index);
-        return this.get(index);
+        return (E)this.elements[index];
     }
 
     @Override
@@ -62,7 +66,7 @@ public class ArrayList<E> implements List<E> {
 
     @Override
     public E remove(int index) {
-    	this.checkIndex(index);
+    	checkIndex(index);
     	E element = this.get(index);
     	this.elements[index] = null;
     	this.size--;
@@ -82,7 +86,7 @@ public class ArrayList<E> implements List<E> {
 	}
 
 	private void shift(int index) {
-		for(int i = index; i < this.size; i++) {
+		for(int i = index; i < this.size - 1; i++) {
 			this.elements[i] = this.elements[i + 1];
 		}
 	}
@@ -94,17 +98,22 @@ public class ArrayList<E> implements List<E> {
 
     @Override
     public int indexOf(E element) {
-        return this.indexOf(element);
+    	for(int i = 0; i < this.size; i++) {
+    		if(this.elements[i].equals(element)) {
+    			return i;
+    		}
+    	}
+        return -1;
     }
 
     @Override
     public boolean contains(E element) {
-        return this.contains(element);
+        return this.indexOf(element) != -1;
     }
 
     @Override
     public boolean isEmpty() {
-        return this.isEmpty();
+        return this.size == 0;
     }
 
     @Nonnull
