@@ -1,0 +1,146 @@
+/*Your task is to take the implementation of the SinglyLinkedList&lt;E&gt; form the lab and make it doubly linked list. This
+means that you have to add two things:
+1. Add additional field Node<E> tail that will always point to the last element of the linked list.
+2. Add field Node<E> previous to the Node class this should point to the previous node.
+Do the changes above the methods below should remain with unchanged erasure, use the tests provided to ensure
+that.
+ AddFirst (E element) – adds an element in front of the collection and increases the size.
+ AddLast (E element) – adds an element after the last element of the collection and increases the size.
+ E removeFirst () – removes and returns the first element of the collection if there is such if no then throw
+IllegalStateException with appropriate message.
+ E removeLast () – removes and returns the last element of the collection if there is such if no then throw
+IllegalStateException with appropriate message.
+ E getFirst () – returns but does not remove the first element of the collection if there is such if no then
+throw IllegalStateException with appropriate message.
+ E getLast () – returns but does not remove the last element of the collection if there is such if no then
+throw IllegalStateException with appropriate message.
+ Int size () – returns the number of elements inside the collection.
+ Boolean isEmpty () – returns if the collection contains any elements or not.*/
+import interfaces.LinkedList;
+import java.util.Iterator;
+
+public class DoublyLinkedList<E> implements LinkedList<E> {
+    private Node<E> head;
+    private Node<E> tail;
+    private int size;
+
+    private static class Node<E> {
+        private E element;
+        private Node<E> next;
+        private Node<E> previous;
+
+        public Node(E value) {
+            this.element = value;
+        }
+    }
+
+    public DoublyLinkedList() {
+    	this.head = this.tail = null;
+    	this.size = 0;
+    }
+
+    @Override
+    public void addFirst(E element) {
+        Node<E> newNode = new Node<>(element);
+        if(this.head == null) {
+        	this.head = this.tail = newNode;
+        } else {
+        	newNode.next = this.head;
+        	this.head.previous = newNode;
+        	this.head = newNode;
+        }
+        this.size++;
+    }
+
+    @Override
+    public void addLast(E element) {
+        if (this.size == 0l) {
+            this.addFirst(element);
+        } else {
+        	Node<E> newNode = new Node<>(element);
+        	this.tail.next = newNode;
+        	newNode.previous = this.tail;
+        	this.tail = newNode;
+        	this.size++;
+        }
+    }
+
+    @Override
+    public E removeFirst() {
+        ensureNotEmpty();
+        E element = this.head.element;
+        if (this.size == 1) {
+            this.head = this.tail = null;
+        } else {
+            Node<E> newHead = this.head.next;
+            newHead.previous = null;
+            this.head.next = null;
+            this.head = newHead;
+        }
+        this.size--;
+        return element;
+    }
+
+    private void ensureNotEmpty() {
+        if (this.size == 0) {
+            throw new IllegalStateException("Illegal remove for empty LinkedList");
+        }
+    }
+
+    @Override
+    public E removeLast() {
+        ensureNotEmpty();
+        if (this.size == 1) {
+            return removeFirst();
+        } else {
+        	E element =  this.tail.element;
+        	Node<E> currentTail = this.tail;
+        	this.tail = this.tail.previous;
+        	this.tail.next = null;
+        	this.size--;
+        	return element;
+        }
+    }
+
+    @Override
+    public E getFirst() {
+        ensureNotEmpty();
+        return this.head.element;
+    }
+
+    @Override
+    public E getLast() {
+        ensureNonEmpty();
+        return this.tail.element;
+    }
+
+    @Override
+    public int size() {
+        return this.size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.size == 0;
+    }
+
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            private Node<E> current = head;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public E next() {
+                E element = current.element;
+                current = current.next;
+                return element;
+            }
+        };
+    }
+}
