@@ -1,0 +1,140 @@
+/*Implement a data structure ReversedList<E> that holds a sequence of elements of generic type E. It should hold
+a sequence of items in reversed order. The structure should have some capacity that grows twice when it is filled,
+always starting at 2.*/
+
+package implementations;
+import interfaces.List;
+import java.util.Arrays;
+import java.util.Iterator;
+import javax.annotation.Nonnull;
+
+public class ReversedList<E> implements List<E> {
+	private static final int INITIAL_SIZE = 4;
+	private int size;
+	private Object[] elements;
+	
+	public ReversedList() {
+		this.elements = new Object[INITIAL_SIZE];
+		this.size = 0;
+	}
+	
+    @Override
+    public boolean add(E element) {
+    	if(this.size == this.elements.length) {
+    		this.elements = grow();
+    	}
+    	this.elements[this.size++] = element;
+        return true;
+    }
+
+    private Object[] grow() {
+		return Arrays.copyOf(this.elements, this.elements.length * 2);
+	}
+
+	@Override
+    public boolean add(int index, E element) {
+		checkIndex(index);
+		if(this.size == this.elements.length) {
+			this.elements = grow();
+		}
+		E lastElement = this.get(this.size - 1);
+		for(int i = this.size - 1; i >= index; i--) {
+			this.elements[i] = this.elements[i - 1];
+		}
+		this.elements[this.size] = lastElement;
+		this.elements[index] = element;
+		this.size++;
+        return true;
+    }
+
+    private void checkIndex(int index) {
+		if(index < 0 || index >= this.size) {
+			throw new IndexOutOfBoundsException(String.format("Index out of bounds: %d for size %d", index, this.size));
+		}
+	}
+
+	@Override
+    public E get(int index) {
+		checkIndex(index);
+        return (E)this.elements[this.size - index];
+    }
+
+    @Override
+    public E set(int initialIndex, E element) {
+    	checkIndex(initialIndex);
+    	int index = this.size - initialIndex;
+    	E oldElement = this.get(index);
+    	this.elements[index] = element;
+        return oldElement;
+    }
+
+    @Override
+    public E remove(int initialIndex) {
+    	checkIndex(initialIndex);
+    	int index = this.size - initialIndex;
+    	E element = this.get(index);
+    	this.elements[index] = null;
+    	this.size--;
+    	shift(index);
+    	ensureCapacity();
+        return element;
+    }
+
+    private void ensureCapacity() {
+		if(this.size < this.elements.length / 3) {
+			this.elements = shrink();
+		}
+	}
+
+	private Object[] shrink() {
+		return Arrays.copyOf(this.elements, this.elements.length / 2);
+	}
+
+	private void shift(int index) {
+		for(int i = index; i < this.size - 1; i++) {
+			this.elements[i] = this.elements[i + 1];
+		}
+	}
+
+	@Override
+    public int size() {
+        return this.size;
+    }
+
+    @Override
+    public int indexOf(E element) {
+    	for(int i = 0; i < this.size; i++) {
+    		if(this.elements[i].equals(element)) {
+    			return this.size - i;
+    		}
+    	}
+        return -1;
+    }
+
+    @Override
+    public boolean contains(E element) {
+        return this.indexOf(element) != -1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.size == 0;
+    }
+
+    @Nonnull
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+        	private int index = size;
+			@Override
+			public boolean hasNext() {
+				return this.index > 0;
+			}
+
+			@Override
+			public E next() {
+				return get(index--);
+			}
+        };
+    }
+}
