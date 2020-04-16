@@ -1,0 +1,151 @@
+/*Implement the Tree class&#39;s constructor to set the correct key and to be able to build full tree by accepting all the
+children for each node. Also make sure to create the proper fields.
+Implement the Tree class`s public List<E> orderBfs () method which should traverse the elements in order of each
+level sequentially be careful the order of output matters.
+Implement the Tree class`s public List<E> orderDfs () method which should traverse the elements in terms of descendant before 
+sibling order of each level sequentially be careful the order of output matters.
+This time you have to find a Tree node with a specified key and add a child tree to its children. You have to traverse
+all the Nodes and find the one with the same key. After that simply attach the child Tree. Make some test of your
+own to see how you can make a single tree from multiple trees regardless of the sizes of both.
+This time you have to find a Tree node with a specified key and remove it from the initial tree. You have to be sure
+that removing also removes any descendants of that node. Simple example would be if we remove the root of the
+tree we get empty tree afterwards. If we remove a leaf we only affect that specific node. If we remove node that is
+parent to leaf/s we remove all leafs that have the node as parent etc… Think of all the possible cases of the remove
+operation.
+This time you have to find a Tree nodes with a specified keys and swap them. Now this problem is a bit harder. But
+you have all the knowledge required. So what you have to do is swap two nodes alongside their descendants. Keep
+in mind that swapping should also arrange the references inside the nodes in a proper way. Think about the edge
+cases what will happen if we attempt to swap the root with a leaf. Or in this order one of the middle nodes with a
+leaf etc…
+package implementations;
+
+import interfaces.AbstractTree;
+
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+
+public class Tree<E> implements AbstractTree<E> {
+	private E value;
+	private Tree<E> parent;
+	private List<Tree<E>> children;
+	
+	public Tree(E value, Tree<E>...childrens) {
+		this.value = value;
+		this.parent = null;
+		this.children = new ArrayList<>();
+		for(Tree<E> subtree : childrens) {
+			this.children.add(subtree);
+			subtree.parent = this;
+		}
+	}
+	
+    @Override
+    public List<E> orderBfs() {
+    	List<E> result = new ArrayList<>();
+    	if(this.value == null) {
+    		return result;
+    	}
+    	ArrayDeque<Tree<E>> childrenQueue = new ArrayDeque<>();
+    	childrenQueue.offer(this);
+    	while(!childrenQueue.isEmpty()) {
+    		Tree<E> current = childrenQueue.poll();
+    		result.add(current.value);
+    		for(Tree<E> child : current.children) {
+    			childrenQueue.offer(child);
+    		}
+    	}
+    	return result;
+    }
+
+    @Override
+    public List<E> orderDfs() {
+        List<E> result = new ArrayList<>();
+        this.doDfs(this, result);
+        return result;
+    }
+    
+    private void doDfs(Tree<E> node, List<E> result) {
+    	for(Tree<E> child : node.children) {
+    		this.doDfs(child, result);
+    	}
+    	result.add(node.value);
+    }
+
+    @Override
+    public void addChild(E parentKey, Tree<E> child) {
+    	Tree<E> search = find(parentKey);
+    	if(search == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	search.children.add(child);
+    	child.parent = search;
+    }
+    
+    prvate Tree<E> find(E parentKey){
+    	Deque<Tree<E>> childrenQueue = new ArrayDeque<>();
+    	childrenQueue.offer(this);
+    	while(!childrenQueue.isEmpty()) {
+    		Tree<E> current = childrenQueue.poll();
+    		if(current.value == parentKey) {
+    			return current;
+    		}
+    		for(Tree<E> child : current.children) {
+				childrenQueue.offer(child);
+			}
+    	}
+    	return null;
+    }
+	
+	@Override
+    public void removeNode(E nodeKey) {
+		Tree<E> toRemove = find(nodeKey);
+		if(toRemove == null) {
+			throw new IllegalARgumentException();
+		}
+		for(Tree<E> child : toRemove.children) {
+			child.parent = null;
+		}
+		toRemove.children.clear();
+		Tree<E> parent = toRemove.parent;
+		if(parent != null) {
+			parent.children.remove(toRemove);			
+		}
+		toRemove.value = null;
+    }
+
+    @Override
+    public void swap(E firstKey, E secondKey) {
+    	Tree<E> firstNode = findBfs(firstKey);
+    	Tree<E> secondNode = findBfs(secondKey);
+    	if(firstNode == null || secondNode == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	Tree<E> firstParent = firstNode.parent;
+    	Tree<E> secondParent = secondNode.parent;
+    	if(firstParent == null) {
+    		this.value = secondNode.value;
+    		this.parent = null;
+    		this.children = secondNode.children;
+    		secondNode.parent = null;
+    		return;
+    	} else if(secondParent == null) {
+    		this.value = firstNode.value;
+    		this.parent = null;
+    		this.children = firstNode.children;
+    		firstNode.parent = null;
+    		return;
+    	} else {
+    		Tree<E> tmp = firstNode;
+    		firstNode = secondNode;
+    		secondNode = tmp;
+    		firstNode.parent = secondParent;
+    		secondNode.parent = firstParent;
+    		int firstIndex = firstParent.children.indexOf(firstNode);
+    		int secondIndex = secondParent.children.indexOf(secondNode);
+    		firstParent.children.set(firstIndex, secondNode);
+    		secondParent.children.set(secondIndex, firstNode);
+    	}
+    }
+}
