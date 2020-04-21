@@ -27,6 +27,7 @@ public class MaxHeap<E extends Comparable<E>> implements Heap<E> {
 		while(index > 0 && isLess(index, parentIndex)) {
 			Collections.swap(this.elements, index, parentIndex);
 			index = parentIndex;
+			parentIndex = getParentIndex(index);
 		}
 	}
 
