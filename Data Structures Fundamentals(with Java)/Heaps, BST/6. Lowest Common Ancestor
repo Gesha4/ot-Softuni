@@ -1,0 +1,57 @@
+/*You are given the binary tree and two values V 1 and V 2 . You need to return the lowest common ancestor (LCA) of V 1
+and V 2 in the binary tree. Note that lowest here means in terms of level distance. The close the node is to both
+values the lower we say it is. In other words you can ignore the value you should only care for the distance.*/
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class BinaryTree {
+	private int value;
+	private BinaryTree left;
+	private BinaryTree right;
+	
+    public BinaryTree(int key, BinaryTree first, BinaryTree second) {
+    	this.value = key;
+    	this.left =first;
+    	this.right = second;
+    }
+
+    public Integer findLowestCommonAncestor(int first, int second) {
+        List<Integer> firstPath = findPath(first);
+        List<Integer> secondPath = findPath(second);
+        int smallerSize = Math.min(firstPath.size(), secondPath.size());
+    	int i = 0;
+    	for(; i < smallerSize; i++) {
+    		if(!firstPath.get(i).equals(secondPath.get(i))) {
+    			break;
+    		}
+    	}
+    	return firstPath.get(i - 1);
+    }
+
+    private List<Integer> findPath(int element) {
+		List<Integer> result = new ArrayList<>();
+		findNodePath(this, element, result);
+		return result;
+	}
+
+	private boolean findNodePath(BinaryTree tree, int element, List<Integer> currentPath) {
+		if(tree == null) {
+			return false;
+		}
+		if(tree.value == element) {
+			return false;
+		}
+		currentPath.add(tree.value);
+		boolean leftResult = findNodePath(tree.left, element, currentPath);
+		if(leftResult) {
+			return true;
+		}
+		boolean rightResult = findNodePath(tree.right, element, currentPath);
+		if(rightResult) {
+			return true;
+		}
+		currentPath.remove(Integer.valueOf(tree.value));
+		return false;
+	}
+}
