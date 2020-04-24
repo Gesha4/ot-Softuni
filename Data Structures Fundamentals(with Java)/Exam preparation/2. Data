@@ -1,0 +1,120 @@
+/*You are given a skeleton with a class Data that implements the Repository interface. The methods are not
+implemented your task is to implement them:
+- void add(Entity entity) – adds an entity inside the Data
+- Entity getById (int id) – returns an entity by the id if the id is invalid return null
+- List<Entity> getByParentId (int id) – returns all the entities by the id of their parent if the id is invalid return empty List
+- List<Entity> getAll () – returns all the entities if there are none return an empty List
+- Repository copy () – returns exact copy of the data object
+- List<Entity> getAllByType (String type) – returns all the entities by given type if there are none return an empty list. 
+The parameter is a string which is the type if the parameter is invalid throw llegalArgumentException ("Illegal type: " + type)
+- Entity peekMostRecent () – returns the most recent object (the object with greatest ID) added without removing it, the criteria
+is the id of the object if there are no elements throw IllegalStateException("Operation on empty Data")
+- Entity pollMostRecent () – returns and removes the most recent object (the object with greatest ID) added without removing it, 
+the criteria is the id of the object if there are no elements throw IllegalStateException("Operation on empty Data")
+- int size () – returns the number of entities stored*/
+
+package core;
+
+import interfaces.Entity;
+import interfaces.Repository;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.stream.Collectors;
+
+public class Data implements Repository {
+	private Entity root;
+	private Queue<Entity> data;
+	
+	public Data() {
+		this.data = new PriorityQueue<>();
+		this.root = null;
+	}
+	public Data(Data other) {
+		this.root = other.root;
+		this.data = new PriorityQueue<>(other.data);
+	}
+    @Override
+    public void add(Entity entity) {
+    	if(this.root == null) {
+    		this.root = entity;
+    	} else {
+    		this.getById(entity.getParentId()).addChild(entity);
+    	}
+    	this.data.offer(entity);
+    }
+
+    @Override
+    public Entity getById(int id) {
+    	if(this.root == null) {
+    		return null;
+    	}
+        Deque<Entity> queue = new ArrayDeque<>();
+        queue.offer(this.root);
+        while(!queue.isEmpty()) {
+        	Entity current = queue.poll();
+        	if(current.getId() == id) {
+        		return current;
+        	} 
+        	for(Entity child : current.getChildren()) {
+        		queue.offer(child);
+        	}
+        }
+        return null;
+    }
+
+    @Override
+    public List<Entity> getByParentId(int id) {
+    	Entity parent = this.getById(id);
+        return parent == null ? new ArrayList<>() : parent.getChildren();
+    }
+
+    @Override
+    public List<Entity> getAll() {
+        return new ArrayList<>(this.data);
+    }
+
+    @Override
+    public Repository copy() {
+        return new Data(this);
+    }
+
+    @Override
+    public List<Entity> getAllByType(String type) {
+    	if(!type.equals("User") && !type.equals("Invoice") && !type.equals("StoreClient")) {
+    		throw new IllegalArgumentException("Illegal type: " + type);
+    	}
+        return this.data.stream().filter(e -> e.getClass().getSimpleName().equals(type))
+        		.collect(Collectors.toList());
+    }
+
+    @Override
+    public Entity peekMostRecent() {
+       if(this.size() == 0) {
+    	   throw new IllegalStateException("Operation on empty Data");
+       }
+       return this.data.peek();
+    }
+
+    @Override
+    public Entity pollMostRecent() {
+    	if(this.size() == 0) {
+     	   throw new IllegalStateException("Operation on empty Data");
+        }
+    	Entity result = this.data.poll();
+    	Entity parent = this.getById(result.getParentId());
+    	if(parent != null && parent.getChildren() != null) {
+    		parent.getChildren().remove(result);
+    	}
+    	return result;
+    }
+
+    @Override
+    public int size() {
+        return this.data.size();
+    }
+}
