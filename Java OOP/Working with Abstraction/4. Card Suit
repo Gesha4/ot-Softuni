@@ -1,0 +1,28 @@
+/*Create an enumeration type that has as its constants the four suits of a deck of playing cards (CLUBS, DIAMONDS,
+HEARTS, SPADES). Iterate over the values of the enumeration type and print all ordinal values and names.*/
+//enum class
+package zadachi;
+
+public enum CardSuit {
+	CLUBS,
+	DIAMONDS,
+	HEARTS,
+	SPADES;
+	
+	CardSuit(){
+	}
+}
+
+//main
+import zadachi.CardSuit;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		System.out.println("Card Suits:");
+		CardSuit[] values = CardSuit.values();
+		for(CardSuit suit : values) {
+			System.out.printf("Ordinal value: %d; Name value: %s%n", suit.ordinal(), suit.name());
+		}
+	}
+}
