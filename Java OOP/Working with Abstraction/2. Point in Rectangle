@@ -1,0 +1,82 @@
+/*Create a class Point and a class Rectangle. The Point should hold coordinates X and Y and the Rectangle should hold 2 Points – 
+its bottom left and top right corners. In the Rectangle class, you should implement a contains(Point point) method that returns 
+true or false, based on whether the Point given as attribute is inside or outside of the Rectangle object. Points on the side of a
+Square are considered inside.
+Input
+- On the first line read the coordinates of the bottom left and top right corner of the Rectangle in the format:
+“<bottomLeftX> <bottomLeftY> <topRightX> <topRightY>”.
+- On the second line, read an integer N and on the next N lines, read the coordinates of points.
+Output
+- For each point, print out the result of the Contains() method.*/
+import java.util.Scanner;
+
+public class zadachi {
+
+	public static class Point {
+		private int x;
+		private int y;
+
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public int getX() {
+			return x;
+		}
+
+		public int getY() {
+			return y;
+		}
+	}
+
+	public static class Rectangle {
+		private Point bottomLeft;
+		private Point topRight;
+
+		public Rectangle(Point bottomLeft, Point topRight) {
+			this.bottomLeft = bottomLeft;
+			this.topRight = topRight;
+		}
+		
+		public Point getBottomLeft() {
+			return bottomLeft;
+		}
+		public void setBottomLeft(Point bottomLeft) {
+			this.bottomLeft = bottomLeft;
+		}
+		public Point getTopRight() {
+			return topRight;
+		}
+		public void setTopRight(Point topRight) {
+			this.topRight = topRight;
+		}
+
+		public boolean contains(Point point) {
+			boolean isInHorizontal = this.bottomLeft.getX() <= point.getX() &&
+						this.topRight.getX() >= point.getX();
+
+			boolean isInVertical = this.bottomLeft.getY() <= point.getY() &&
+						this.topRight.getY() >= point.getY();
+			boolean isInRectangle = isInHorizontal && isInVertical;
+			return isInRectangle;
+		}
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Point bottomLeft = creatingPointFromConsole(scan);
+		Point topRight = creatingPointFromConsole(scan);
+		Rectangle rectangle = new Rectangle(bottomLeft, topRight);
+		int nunberOtPoints = scan.nextInt();
+		for(int i = 0; i < nunberOtPoints; i++) {
+			System.out.println(rectangle.contains(creatingPointFromConsole(scan)));
+		}
+	}
+
+	private static Point creatingPointFromConsole(Scanner scan) {
+		int x = scan.nextInt();
+		int y = scan.nextInt();
+		return new Point(x, y);
+	}
+}
