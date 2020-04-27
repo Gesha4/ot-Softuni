@@ -1,0 +1,89 @@
+/*Create a class PriceCalculator that calculates the total price of a holiday, given the price per day, number of days,
+the season and a discount type. The discount type and season should be enums. Use the class in your main() method to read input 
+and print on the console the price of the whole holiday. The price per day will be multiplied depending on the season by:
+- 1 during Autumn
+- 2 during Spring
+- 3 during Winter
+- 4 during Summer
+The discount is applied to the total price and is one of the following:
+- 20% for VIP clients - VIP
+- 10% for clients, visiting for a second time - SecondVisit
+- 0% if there is no discount - None
+Input
+On a single line you will receive all the information about the reservation in the format: 
+“<pricePerDay> <numberOfDays> <season> <discountType>”, where:
+- The price per day will be a valid decimal in the range [0.01…1000.00]
+- The number of days will be a valid integer in range [1…1000]
+- The season will be one of: Spring, Summer, Autumn, Winter
+- The discount will be one of: VIP, SecondVisit, None
+Output
+On a single line, print the total price of the holiday, rounded to 2 digits after the decimal separator.*/
+
+//enum class
+package zadachi;
+
+public enum Season {
+	Autumn(1),
+	Spring(2),
+	Winter(3),
+	Summer(4);
+	
+	private int value;
+	
+	Season(int value){
+		this.value = value;
+	}
+	
+	public int getValue() {
+		return this.value;
+	}
+}
+
+//enum class
+package zadachi;
+
+public enum Discount {
+	None(0), SecondVisit(10), VIP(20);
+	private int value;
+	
+	Discount(int value) {
+		this.value = value;
+	}
+	
+	public int getValue() {
+		return this.value;
+	}
+}
+
+//main
+import java.util.Scanner;
+import zadachi.Discount;
+import zadachi.Season;
+
+public class zadachi {
+
+	public static class PriceCalculator {
+		public static void CalculatePrice(double pricePerDay, int numberOfDays, 
+				Season season, Discount discount) {
+			int multiplier = season.getValue();
+			double discountMultiplier = discount.getValue() / 100.0;
+			double priceBeforeDiscount = numberOfDays * pricePerDay * multiplier;
+			double discountedAmount = priceBeforeDiscount * discountMultiplier;
+			double calculated = priceBeforeDiscount - discountedAmount;
+			System.out.printf("%.2f", calculated);
+		}
+	}
+	
+	public static void collectData(String[] data) {
+		double pricePerDay = Double.parseDouble(data[0]);
+		int numberOfDays = Integer.parseInt(data[1]);
+		Season season = Season.valueOf(data[2]);
+		Discount discount = Discount.valueOf(data[3]);
+		PriceCalculator.CalculatePrice(pricePerDay, numberOfDays, season, discount);
+	}
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		collectData(scan.nextLine().split(" "));
+	}
+}
