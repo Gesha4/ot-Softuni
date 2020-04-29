@@ -1,0 +1,81 @@
+/*Pesho is Jedi and so he starts gathering stars to grow stronger.
+His galaxy is represented as a two-dimensional array. Every cell in the matrix is a star that has a value. Ivo starts at
+the given col and row. He can move only on the diagonal from the lowest left to the upper right, and adds to his score 
+all the stars (values) from the cells he passes through. Unfortunately, there is always an Evil power that tries to 
+prevent his success. Evil power starts at the given row and col and instantly destroys all stars on the opposite 
+diagonal – From lowest right to the upper left. Ivo adds the values only of the stars that are not destroyed by the evil
+power. You will receive two integers, separated by space, which represent the two dimensional array - the first being the
+rows and the second being the columns. Then, you must fill the two dimensional array with increasing integers starting 
+from 0, and continuing on every row, like this:
+first row: 0, 1, 2… m
+second row: n+1, n+2, n+3… n + n.
+Ivo starts with coordinates row = 5, col = -1. He must collect all stars with value [20, 16, 12, 8, 4]. Evil starts with
+coordinates row = 5, col = 5. The Evil destroys all stars in range [24, 18, 12, 6, 0]. The star with value 12 is the cross
+point for Ivo and The Evil, so Ivo skips the stars and collects only these who are not in the evil range. You will also 
+receive multiple pairs of commands in the form of 2 integers separated by a single space. The first two integers will
+represent Ivo’s start coordinates. The second one will represent the Evil Power’s start coordinates. The input ends when 
+you receive the command "Let the Force be with you". When that happens, you must print the value of all stars that Ivo has
+collected successfully.*/
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class zadachi {
+	
+	public static int[][] createGalaxy(int[] dimentions){
+		int rows = dimentions[0];
+		int cols = dimentions[1];
+		int[][] matrix = new int[rows][cols];
+		int value = 0;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				matrix[i][j] = value++;
+			}
+		}
+		return matrix;
+	}
+	
+	public static void destroingStars(int[] evil, int[][] matrix) {
+		int xE = evil[0];
+		int yE = evil[1];
+		while (xE >= 0 && yE >= 0) {
+			if (xE < matrix.length && yE < matrix[0].length) {
+				matrix[xE][yE] = 0;
+			}
+			xE--;
+			yE--;
+		}
+	}
+	
+	public static long collectingStars(int[] ivoS, int[][] matrix, long sum) {
+		int xI = ivoS[0];
+		int yI = ivoS[1];
+		while (xI >= 0 && yI < matrix[1].length) {
+			if (xI < matrix.length && yI >= 0 && yI < matrix[0].length) {
+				sum += matrix[xI][yI];
+			}
+			yI++;
+			xI--;
+		}
+		return sum;
+	}
+
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int[] dimentions = Arrays.stream(scanner.nextLine().split(" "))
+				.mapToInt(Integer::parseInt).toArray();
+		int[][] galaxy = createGalaxy(dimentions);
+
+		String position = scanner.nextLine();
+		long sum = 0;
+		while (!position.equals("Let the Force be with you")) {
+			int[] ivoS = Arrays.stream(position.split(" ")).mapToInt(Integer::parseInt).toArray();
+			int[] evil = Arrays.stream(scanner.nextLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+			destroingStars(evil, galaxy);
+			sum = collectingStars(ivoS, galaxy, sum);
+			position = scanner.nextLine();
+		}
+
+		System.out.println(sum);
+	}
+}
