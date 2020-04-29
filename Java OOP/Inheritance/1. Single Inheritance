@@ -1,0 +1,34 @@
+/*Create two classes named Animal and Dog.
+Animal with a single public method eat() that prints: &quot;eating…&quot;
+Dog with a single public method bark() that prints: &quot;barking…&quot;
+Dog should inherit from Animal.*/
+//classes
+package zadachi;
+
+public class Animal {
+	public void eat() {
+		System.out.println("eating...");
+	}
+}
+
+package zadachi;
+
+public class Dog extends Animal{
+	public void bark() {
+		System.out.println("barking...");
+	}
+}
+
+//main
+import java.util.Scanner;
+
+import zadachi.Dog;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Dog dog = new Dog();
+		dog.eat();
+		dog.bark();
+	}
+}
