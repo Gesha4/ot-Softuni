@@ -1,0 +1,31 @@
+/*Create a class Stack which can store only strings and has the following functionality:
+ Private field: data: ArrayList&lt;String&gt;
+ Public method: push(String item): void
+ Public method: pop(): String
+ Public method: peek(): String*/
+
+package zadachi;
+
+import java.util.ArrayList;
+
+public class Stack extends ArrayList{
+	private ArrayList<String> data;
+
+	public Stack() {
+		this.data = new ArrayList<String>();
+	}
+	public Stack(ArrayList<String> data) {
+		this.data = data;
+	}
+	
+	public void push(String item) {
+		this.data.add(item);
+	}
+	
+	public String pop() {
+		return this.data.remove(this.data.size() - 1);
+	}
+	 public String peek() {
+		 return this.data.get(this.data.size() - 1);
+	 }
+}
