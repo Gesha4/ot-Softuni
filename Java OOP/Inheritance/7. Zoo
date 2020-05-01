@@ -1,0 +1,65 @@
+/*Create a package zoo. It needs to contain the following classes:
+Follow the diagram and create all of the classes. Each of them, except the Animal class, should inherit from
+another class. The Animal class should have field name – String and Getter for name.
+Every class should have:
+ A public constructor, which accepts one parameter: name*/
+//classes
+package zadachi;
+
+public class Animal {
+	private String name;
+	public Animal(String name) {
+		this.name = name;
+	}
+	public String getName() {
+		return this.name;
+	}
+}
+
+package zadachi;
+
+public class Reptile extends Animal{
+	public Reptile(String name) {
+		super(name);
+	}
+}
+
+package zadachi;
+
+public class Lizard extends Reptile{
+	public Lizard(String name) {
+		super(name);
+	}
+}
+
+package zadachi;
+
+public class Snake extends Reptile{
+	public Snake(String name) {
+		super(name);
+	}
+}
+
+package zadachi;
+
+public class Mammal extends Animal{
+	public Mammal(String name) {
+		super(name);
+	}
+}
+
+package zadachi;
+
+public class Gorilla extends Mammal{
+	public Gorilla(String name) {
+		super(name);
+	}
+}
+
+package zadachi;
+
+public class Bear extends Mammal{
+	public Bear(String name) {
+		super(name);
+	}
+}
