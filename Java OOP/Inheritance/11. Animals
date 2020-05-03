@@ -1,0 +1,182 @@
+/*Create a hierarchy(package) of animals. Your program should have three different animals – Dog, Frog and Cat. Deeper in the hierarchy you should have two additional classes – Kitten and Tomcat. Kittens are "Female" and Tomcats are "Male". All types of animals should be able to produce some kind of sound - String produceSound(). For example, the dog should be able to bark. Your task is to model the hierarchy and test its functionality. Create an animal of each kind and make them all produce sound and create getters for all fields.
+You will be given some lines of input. Each two lines will represent an animal. On the first line will be the type of animal and on the second – the name, the age and the gender. When the command "Beast!" is given, stop the input and print all the animals in the format shown below.
+Output
+•	Print the information for each animal on three lines. On the first line, print: "{animalType}"
+•	On the second line print: "{name} {age} {gender}"
+•	On the third line print the sounds it produces: "{produceSound()}"
+Constraints
+•	Each Animal should have a name, an age and a gender
+•	All input values should not be blank (e.g. name, age and so on…)
+•	If you receive an input for the gender of a Tomcat or a Kitten, ignore it but create the animal
+•	If the input is invalid for one of the properties, throw an exception with message: "Invalid input!"
+•	Each animal should have the functionality to produceSound()
+•	Here is the type of sound each animal should produce:
+o	Dog: "Woof!"
+o	Cat: "Meow meow"
+o	Frog: "Ribbit"
+o	Kittens: "Meow"
+o	Tomcat: "MEOW"*/
+//classes
+package zadachi;
+public abstract class Animal implements ProduceSound{
+	private String name;
+	private int age;
+	private String gender;
+	public Animal(String name, int age, String gender) {
+		this.setName(name);
+		this.setAge(age);
+		this.setIsMale(gender);
+	}
+	private void setIsMale(String gender) {
+		if(gender.equals("Male")) {
+			this.gender = "Male";
+		} else if(gender.equals("Female")) {
+			this.gender = "Female";
+		} else {
+			throw new IllegalStateException("Invalid input!");
+		}
+	}
+	private void setAge(int age) {
+		ensureAge(age);
+		this.age = age;
+	}
+	private void ensureAge(int age) {
+		if(age < 0) {
+			throw new IllegalStateException("Invalid input!");
+		}
+	}
+	private void setName(String name) {
+		if(name.trim().isEmpty()) {
+			throw new IllegalStateException("Invalid input!");
+		}
+		this.name = name;
+	}
+	public String getName() {
+		return this.name;
+	}
+	public int getAge() {
+		return this.age;
+	}
+	public String gender() {
+		return this.gender;
+	}
+	@Override
+	public String toString() {
+		return String.format("%s%n%s %d %s%n%s",this.getClass().getSimpleName(),
+				this.name, this.age, this.gender, this.produseSound());
+	}
+}
+
+package zadachi;
+public interface ProduceSound {
+	String produseSound();
+}
+
+package zadachi;
+public class Dog extends Animal{
+	public Dog(String name, int age, String gender) {
+		super(name, age, gender);
+	}
+	@Override
+	public String produseSound() {
+		return "Woof!";
+	}
+}
+
+package zadachi;
+public class Frog extends Animal{
+	public Frog(String name, int age, String gender) {
+		super(name, age, gender);
+	}
+	@Override
+	public String produseSound() {
+		return "Ribbit";
+	}
+}
+
+package zadachi;
+public class Cat extends Animal{
+	public Cat(String name, int age, String gender) {
+		super(name, age, gender);
+	}
+	@Override
+	public String produseSound() {
+		return "Meow meow";
+	}
+}
+
+package zadachi;
+public class Kitten extends Cat{
+	private static final String GENDER = "Female";
+	public Kitten(String name, int age) {
+		super(name, age, GENDER);
+	}
+	@Override
+	public String produseSound() {
+		return "Meow";
+	}
+}
+
+package zadachi;
+public class Tomcat extends Cat{
+	private static final String GENDER = "Male";
+	public Tomcat(String name, int age) {
+		super(name, age, GENDER);
+	}
+	@Override
+	public String produseSound() {
+		return "MEOW";
+	}
+}
+
+//main
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import zadachi.Animal;
+import zadachi.Cat;
+import zadachi.Dog;
+import zadachi.Frog;
+import zadachi.Kitten;
+import zadachi.Tomcat;
+
+public class zadachi {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Animal> animals = new ArrayList<>();
+		String line = scan.nextLine();
+		while(!line.equals("Beast!")) {
+			String type = line;
+			String[] data = scan.nextLine().split("\\s+");
+			try {
+				Animal animal = createAnimal(type, data);
+				animals.add(animal);
+			} catch (Exception e) {
+				System.out.println("Invalid input!");
+			}
+			line = scan.nextLine();
+		}
+		for(Animal animal : animals) {
+			System.out.println(animal.toString());
+		}
+	}
+
+	private static Animal createAnimal(String type, String[] data) {
+		String name = data[0];
+		int age = Integer.parseInt(data[1]);
+		String gender = "";
+		if(data.length > 2) {
+			gender = data[2];
+		}
+		Animal animal = null;
+		switch(type) {
+		case "Cat" : animal = new Cat(name, age, gender);break;
+		case "Dog" : animal = new Dog(name, age, gender);break;
+		case "Frog" : animal = new Frog(name, age, gender);break;
+		case "Kitten": animal = new Kitten(name, age);break;
+		case "Tomcat" : animal = new Tomcat(name, age);break;
+		default : throw new IllegalStateException("Invalid animal type!");
+		}
+		return animal;
+	}
+}
