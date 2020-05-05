@@ -1,0 +1,122 @@
+/*A football team has variable number of players, a name and a rating.
+Team
+-	name: String
+-	players: List<Player> 
++ 	Team (String)
+-	setName(String) : void
++	getName(): String
++	addPlayer(Player) : void
++	removePlayer(String) : void
++	getRating() : double
+
+A player has a name and stats which are the basis for his skill level. The stats a player has are endurance, sprint, dribble, 
+passing and shooting. Each stat can be in the range [0..100]. The overall skill level of a player is calculated as the average
+of his stats. Only the name of a player and his stats should be visible to all of the outside world. Everything else should be
+hidden.
+Player
+-	name: String
+-	endurance:  int
+-	sprint:  int
+-	dribble: int  
+-	passing: int
+-	shooting: int 
++ 	Player (String, int, int, int, int, int)
+-	setName(String) : void
++	getName(): String
+-	setEndurance (int) : void
+-	setSprint (int) : void
+-	setDribble (int) : void
+-	setPassing (int) : void
+-	setShooting (int) : void
++	overallSkillLevel() : double
+
+A team should expose a name, a rating (calculated by the average skill level of all players in the team) and methods for adding
+and removing players. Your task is to model the team and the players following the proper principles of Encapsulation. Expose 
+only the fields that needs to be visible and validate data appropriately.*/
+//classes
+package zadachi;
+public class Player {
+	private String name;
+	private int endurance;
+	private int sprint;
+	private int dribble;
+	private int passing;
+	private int shooting;
+	private void setName(String name) {
+		if(name.trim().isEmpty()) {
+			throw new IllegalArgumentException("A name should not be empty.");
+		} else {
+			this.name = name;
+		}
+	}
+	private void setEndurance(int endurance) {
+		ensureStats("Endurance", endurance);
+		this.endurance = endurance;
+	}
+	private void setSprint(int sprint) {
+		ensureStats("Sprint", sprint);
+		this.sprint = sprint;
+	}
+	private void setDribble(int dribble) {
+		ensureStats("Dribble", dribble);
+		this.dribble = dribble;
+	}
+	private void setPassing(int passing) {
+		ensureStats("Passing", passing);
+		this.passing = passing;
+	}
+	private void setShooting(int shooting) {
+		ensureStats("Shooting", shooting);
+		this.shooting = shooting;
+	}
+	private void ensureStats(String statName, int statPower) {
+		if(statPower < 0 || statPower > 100) {
+			throw new IllegalArgumentException(statName + " should be between 0 and 100.");
+		}
+	}
+	public Player(String name, int endurance, int sprint, int dribble, int passing, int shooting) {
+		this.setName(name);;
+		this.setEndurance(endurance);;
+		this.setSprint(sprint);;
+		this.setDribble(dribble);;
+		this.setPassing(passing);;
+		this.setShooting(shooting);;
+	}
+	public String getName() {
+		return this.name;
+	}
+	public double overallSkillLevel() {
+		return (this.endurance + this.sprint + this.dribble + this.passing + this.shooting) / 5.00;
+	}
+}
+
+package zadachi;
+import java.util.ArrayList;
+import java.util.List;
+public class Team {
+	private String name;
+	private List<Player> players;
+	private void setName(String name) {
+		if(name.trim().isEmpty()) {
+			throw new IllegalArgumentException("A name should not be empty.");
+		} else {
+			this.name = name;
+		}
+	}
+	public String getName() {
+		return this.name;
+	}
+	public Team(String name) {
+		this.setName(name);
+		this.players = new ArrayList<>();
+	}
+	public void addPlayer(Player player) {
+		this.players.add(player);
+	}
+	public void removePlayer(String name) {
+		this.players.removeIf(p -> p.getName().equals(name));
+	}
+	public double getRating() {
+		return this.players.stream().mapToDouble(Player::overallSkillLevel).average().orElse(0.0);
+	}
+}
