@@ -1,0 +1,100 @@
+/*Extend previous problem: 
+<<Car>>
+CarImpl
++CarImpl(model, color, horsePower, countryProduced)
++toString(): String
+
+<<Rentable>>
++getMinRentDay(): Integer
++getPricePerDay(): Double
+
+<<Sellable>>
++getPrice(): Double
+
+Seat
+-price: Double
++toString(): String
+
+Audi
+-minRentDay: Integer
+-pricePerDay: Double
++toString(): String
+*/
+package zadachi;
+public class CarImpl implements Car{
+	private String model;
+	private String color;
+	private int horsePower;
+	private String countryProduced;
+	public CarImpl(String model, String color, int horsePower, String countryProduced) {
+		this.model = model;
+		this.color = color;
+		this.horsePower = horsePower;
+		this.countryProduced = countryProduced;
+	}
+	@Override
+	public String getModel() {
+		return this.model;
+	}
+	@Override
+	public String getColor() {
+		return this.color;
+	}
+	@Override
+	public int getHorsePower() {
+		return this.horsePower;
+	}
+	@Override
+	public String countryProduced() {
+		return this.countryProduced;
+	}
+	@Override
+	public String toString() {
+		return String.format("%s is %s color and have %d horse power%nThis is %s produced in %s "
+				+ "and have %d tires", this.model, this.color, this.horsePower, this.model, 
+				this.countryProduced, Car.TIRES);
+	}
+}
+
+package zadachi;
+public interface Sellable {
+	double getPrice();
+}
+
+package zadachi;
+public interface Rentable {
+	int getMinRentDay();
+	double getPricePerDay();
+}
+
+package zadachi;
+public class Seat extends CarImpl implements Sellable{
+	private double price;
+	public Seat(String model, String color, int horsePower, String countryProduced, double price) {
+		super(model, color, horsePower, countryProduced);
+		this.price = price;
+	}
+	@Override
+	public double getPrice() {
+		return this.price;
+	}
+}
+
+package zadachi;
+public class Audi extends CarImpl implements Rentable{
+	private int minRentDay;
+	private double pricePerDay;
+	public Audi(String model, String color, int horsePower, String countryProduced, int minRentDay, double pricePerDay) {
+		super(model, color, horsePower, countryProduced);
+		this.minRentDay = minRentDay;
+		this.pricePerDay = pricePerDay;
+	}
+	@Override
+	public int getMinRentDay() {
+		return this.minRentDay;
+	}
+	@Override
+	public double getPricePerDay() {
+		return this.pricePerDay;
+	}
+}
