@@ -1,0 +1,48 @@
+/*It’s the future, you’re the ruler of a totalitarian dystopian society inhabited by citizens and robots, since you’re afraid 
+of rebellions you decide to implement strict control of who enters your city. Your soldiers check the Ids of everyone who enters
+and leaves. You will receive from the console an unknown amount of lines until the command "End" is received, on each line there 
+will be the information for either a citizen or a robot who tries to enter your city in the format "<name> <age> <id>" for 
+citizens and "<model> <id>" for robots. After the end command on the next line you will receive a single number representing
+the last digits of fake ids, all citizens or robots whose Id ends with the specified digits must be detained.*/
+//classes
+package zadachi;
+public interface Identifiable {
+	String getId();
+}
+
+package zadachi;
+public class Robot implements Identifiable{
+	private String id;
+	private String model;
+	public Robot(String id, String model) {
+		this.id = id;
+		this.model = model;
+	}
+	public String getId() {
+		return id;
+	}
+	public String getModel() {
+		return model;
+	}
+}
+
+package zadachi;
+public class Citizen implements Identifiable{
+	private String name;
+	private int age;
+	private String id;
+	public Citizen(String name, int age, String id) {
+		this.name = name;
+		this.age = age;
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public String getId() {
+		return id;
+	}
+}
