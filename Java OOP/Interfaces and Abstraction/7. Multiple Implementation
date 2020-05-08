@@ -1,0 +1,46 @@
+/*Using the code from the previous task, define an interface Identifiable with a String method getId and an interface Birthable 
+with a String method getBirthDate and implement them in the Citizen class. Rewrite the Citizen constructor to accept the new
+parameters.*/
+package zadachi;
+public interface Person {
+	String getName();
+	int getAge();
+}
+
+package zadachi;
+public interface Identifiable {
+	String getId();
+}
+
+package zadachi;
+public interface Birthable {
+	String getBirthDate();
+}
+
+package zadachi;
+public class Citizen implements Person, Identifiable, Birthable{
+	private String name;
+	private int age;
+	private String id;
+	private String birthDate;
+	public String getName() {
+		return name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public Citizen(String name, int age, String id, String birthDate) {
+		this.name = name;
+		this.age = age;
+		this.id = id;
+		this.birthDate = birthDate;
+	}
+	@Override
+	public String getBirthDate() {
+		return this.birthDate;
+	}
+	@Override
+	public String getId() {
+		return this.id;
+	}
+}
