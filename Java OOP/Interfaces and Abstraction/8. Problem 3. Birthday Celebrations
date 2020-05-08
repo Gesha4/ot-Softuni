@@ -1,0 +1,79 @@
+/*It is a well known fact that people celebrate birthdays, it is also known that some people also celebrate their pets birthdays.
+Extend the program from your last task to add birthdates to citizens and include a class Pet, pets have a name and a birthdate.
+Also create class Robot which has an id and model. Encompass repeated functionality into interfaces and implement them in your 
+classes.*/
+package zadachi;
+public interface Person {
+	String getName();
+	int getAge();
+}
+
+package zadachi;
+public interface Identifiable {
+	String getId();
+}
+
+package zadachi;
+public interface Birthable {
+	String getBirthDate();
+}
+
+package zadachi;
+public class Citizen implements Person, Identifiable, Birthable{
+	private String name;
+	private int age;
+	private String id;
+	private String birthDate;
+	public String getName() {
+		return name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public Citizen(String name, int age, String id, String birthDate) {
+		this.name = name;
+		this.age = age;
+		this.id = id;
+		this.birthDate = birthDate;
+	}
+	@Override
+	public String getBirthDate() {
+		return this.birthDate;
+	}
+	@Override
+	public String getId() {
+		return this.id;
+	}
+}
+
+package zadachi;
+public class Robot implements Identifiable{
+	private String id;
+	private String model;
+	public Robot(String id, String model) {
+		this.id = id;
+		this.model = model;
+	}
+	public String getId() {
+		return id;
+	}
+	public String getModel() {
+		return model;
+	}
+}
+
+package zadachi;
+public class Pet implements Birthable{
+	private String name;
+	private String birthDate;
+	public Pet(String name, String birthDate) {
+		this.name = name;
+		this.birthDate = birthDate;
+	}
+	public String getName() {
+		return name;
+	}
+	public String getBirthDate() {
+		return birthDate;
+	}
+}
