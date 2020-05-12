@@ -1,0 +1,399 @@
+/*Create the following class hierarchy:
+•	SoldierImpl – general class for soldiers, holding id (int), first name and last name
+o	PrivateImpl – lowest base soldier type, holding the field salary(double)
+	LieutenantGeneralImpl – holds a set of PrivatesImpl under his command
+-	public void addPrivate(Private priv)
+	SpecialisedSoldierImpl – general class for all specialised soldiers – holds the corps of the soldier. The corps can only be one of the following: "Airforces" or "Marines" (Enumeration)
+-	EngineerImpl – holds a set of repairs. A repair holds a part name and 
+hours worked (int)
+o	public void addRepair(Repair repair)
+o	public Collection<Repair> getRepairs()
+-	CommandoImpl – holds a set of missions. A mission holds code name and a state (Enumeration: "inProgress" or "finished"). A mission can be finished through the method completeMission()
+o	public void addMission(Mission mission)
+o	public Collection<Mission> getMissions()
+o	SpyImpl – holds the code number of the spy.
+Extract interfaces for each class. (e.g. Soldier, Private, LieutenantGeneral, etc.) The interfaces should hold their public get methods (e.g. Soldier should hold getId, getFirstName and getLastName). Each class should implement its respective interface. Validate the input where necessary (corps, mission state) - input should match exactly one of the required values, otherwise it should be treated as invalid. In case of invalid corps the entire line should be skipped, in case of an invalid mission state only the mission should be skipped.
+You will receive from the console an unknown amount of lines containing information about soldiers until the command "End" is received. The information will be in one of the following formats:
+•	Private: "Private <id> <firstName> <lastName> <salary>"
+•	LieutenantGeneral: "LieutenantGeneral <id> <firstName> <lastName> <salary> <private1Id> <private2Id> … <privateNId>" where privateXId will always be an Id of a private already received through the input
+•	Engineer: "Engineer <id> <firstName> <lastName> <salary> <corps> <repair1Part> <repair1Hours> … <repairNPart> <repairNHours>" where repairXPart is the name of a repaired part and repairXHours the hours it took to repair it (the two parameters will always come paired)
+•	Commando: "Commando <id> <firstName> <lastName> <salary> <corps> <mission1CodeName>  <mission1state> … <missionNCodeName> <missionNstate>" a missions code name, description and state will always come together
+•	Spy: "Spy <id> <firstName> <lastName> <codeNumber>"
+Define proper constructors. Avoid code duplication through abstraction. Override toString() in all classes to print detailed information about the object.
+Privates:
+"Name: <firstName> <lastName> Id: <id> Salary: <salary>"
+Spy:
+"Name: <firstName> <lastName> Id: <id>
+Code Number: <codeNumber>"
+LieutenantGeneral:
+"Name: <firstName> <lastName> Id: <id> Salary: <salary>
+Privates:
+  <private1 ToString()>
+  <private2 ToString()>
+  …
+  <privateN ToString()>"
+Note: privates must be sorted by id in descending order.
+Engineer:
+"Name: <firstName> <lastName> Id: <id> Salary: <salary>
+Corps: <corps>
+Repairs:
+  <repair1 ToString()>
+  <repair2 ToString()>
+  …
+  <repairN ToString()>"
+Commando:
+"Name: <firstName> <lastName> Id: <id> Salary: <salary>
+Corps: <corps>
+Missions:
+  <mission1 ToString()>
+  <mission2 ToString()>
+  …
+  <missionN ToString()>"
+Repair:
+"Part Name: <partName> Hours Worked: <hoursWorked>"
+Mission:
+"Code Name: <codeName> State: <state>"*/
+
+package military.interfaces;
+import java.util.Collection;
+public interface Commando extends Soldier{
+	void addMission(Mission mission);
+	Collection<Mission> getMissions();
+}
+
+package military.interfaces;
+import java.util.Collection;
+public interface Engineer extends Soldier{
+	void addRepair(Repair repair);
+	Collection<Repair> getRepairs();
+}
+
+package military.interfaces;
+public interface LieutenantGeneral extends Soldier{
+	public void addPrivate(Private priv);
+}
+
+package military.interfaces;
+public interface Mission {
+	void completeMission();
+}
+
+package military.interfaces;
+public interface Private extends Soldier{
+	double getSalary();
+}
+
+package military.interfaces;
+public interface Repair {
+	
+}
+
+package military.interfaces;
+public interface Soldier {
+	int getId();
+	String getFirstName();
+	String getLastName();
+}
+
+package military.interfaces;
+public interface SpecialisedSoldier extends Soldier{
+	
+}
+
+package military.interfaces;
+public interface Spy extends Soldier{
+}
+
+package military.entityes;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import military.interfaces.Commando;
+import military.interfaces.Mission;
+public class CommandoImpl extends SpecialisedSoldierImpl implements Commando{
+	private List<Mission> missions;
+	public CommandoImpl(int id, String firstName, String lastName, double salary, Corps corps) {
+		super(id, firstName, lastName, salary, corps);
+		this.missions = new ArrayList<>();
+	}
+	@Override
+	public void addMission(Mission mission) {
+		this.missions.add(mission);
+	}
+	@Override
+	public Collection<Mission> getMissions() {
+		return Collections.unmodifiableCollection(this.missions);
+	}
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder(super.toString()).append(System.lineSeparator());
+		str.append("Corps: " + this.getCorps().toString()).append(System.lineSeparator());
+		for(Mission mission : missions) {
+			str.append(mission.toString()).append(System.lineSeparator());
+		}
+		return str.toString();
+	}
+}
+
+package military.entityes;
+public enum Corps {
+	AIRFORCES,
+	MARINES;
+}
+
+package military.entityes;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import military.interfaces.Engineer;
+import military.interfaces.Repair;
+public class EngineerImpl extends SpecialisedSoldierImpl implements Engineer{
+	private List<Repair> repairs;
+	public EngineerImpl(int id, String firstName, String lastName, double salary, Corps corps) {
+		super(id, firstName, lastName, salary, corps);
+		this.repairs = new ArrayList<>();
+		
+	}
+	@Override
+	public void addRepair(Repair repair) {
+		this.repairs.add(repair);
+	}
+	@Override
+	public Collection<Repair> getRepairs() {
+		return Collections.unmodifiableCollection(this.repairs);
+	}
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder(super.toString()).append(System.lineSeparator());
+		str.append("Corps: " + this.getCorps().toString()).append(System.lineSeparator());
+		for(Repair repair : repairs) {
+			str.append(repair.toString()).append(System.lineSeparator());
+		}
+		return str.toString();
+	}
+}
+
+package military.entityes;
+import java.util.ArrayList;
+import java.util.List;
+import military.interfaces.LieutenantGeneral;
+import military.interfaces.Private;
+public class LieutenantGeneralImpl extends PrivateImpl implements LieutenantGeneral{
+	private List<Private> privates;
+	public LieutenantGeneralImpl(int id, String firstName, String lastName, double salary) {
+		super(id, firstName, lastName, salary);
+		this.privates = new ArrayList<>();
+	}
+	@Override
+	public void addPrivate(Private priv) {
+		this.privates.add(priv);
+	}
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder(String.format("Name: %s %s id: %s Salary: %.2f", this.getFirstName(), 
+				this.getLastName(), this.getId(), this.getSalary()));
+		str.append(System.lineSeparator());
+		privates.stream().sorted((f,s) -> f.getId() - s.getId()).forEach(ordered ->{
+			str.append(ordered.toString()).append(System.lineSeparator());
+		});
+		return str.toString();
+	}
+}
+
+package military.entityes;
+import military.interfaces.Mission;
+public class MissionImpl implements Mission{
+	public enum Status{
+		IN_PROGRES,
+		FINISHED;
+	}
+	private String codeName;
+	private Status status;
+	public MissionImpl(String codeName, Status status) {
+		this.codeName = codeName;
+		this.status = status;
+	}
+	@Override
+	public void completeMission() {
+		this.status = Status.FINISHED;
+	}
+	@Override
+	public String toString() {
+		return "Code Name: " + this.codeName + " State: " + this.status;
+	}
+}
+
+package military.entityes;
+import military.interfaces.Private;
+public class PrivateImpl extends SoldierImpl implements Private{
+	private double salary;
+	public PrivateImpl(int id, String firstName, String lastName, double salary) {
+		super(id, firstName, lastName);
+		this.salary = salary;
+	}
+	@Override
+	public double getSalary() {
+		return this.salary;
+	}
+	@Override
+	public String toString() {
+		return String.format("Name: %s %s id: %s Salary: %.2f", this.getFirstName(), 
+				this.getLastName(), this.getId(), this.getSalary());
+	}
+}
+
+package military.entityes;
+import military.interfaces.Repair;
+public class RepairImpl implements Repair{
+	private String partName;
+	private int hoursWorked;
+	public RepairImpl(String partName, int hoursWorked) {
+		this.partName = partName;
+		this.hoursWorked = hoursWorked;
+	}
+	@Override
+	public String toString() {
+		return String.format("Part Name: %s Hours Worked: %d", this.partName, this.hoursWorked);
+	}
+}
+
+package military.entityes;
+import military.interfaces.Soldier;
+public abstract class SoldierImpl implements Soldier{
+	private int id;
+	private String firstName;
+	private String lastName;
+	protected SoldierImpl(int id, String firstName, String lastName) {
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+	}
+	public int getId() {
+		return this.id;
+	}
+	public String getFirstName() {
+		return this.firstName;
+	}
+	public String getLastName() {
+		return this.lastName;
+	}
+}
+
+package military.entityes;
+import military.interfaces.SpecialisedSoldier;
+public abstract class SpecialisedSoldierImpl extends PrivateImpl implements SpecialisedSoldier{
+	private Corps corps;
+	protected SpecialisedSoldierImpl(int id, String firstName, String lastName, double salary, Corps corps) {
+		super(id, firstName, lastName, salary);
+		this.corps = corps;
+	}
+	public Corps getCorps() {
+		return corps;
+	}
+}
+
+package military.entityes;
+import military.interfaces.Spy;
+public class SpyImpl extends SoldierImpl implements Spy{
+	private String codeNumber;
+	public SpyImpl(int id, String firstName, String lastName, String codeNumber) {
+		super(id, firstName, lastName);
+		this.codeNumber = codeNumber;
+	}
+	@Override
+	public String toString() {
+		return String.format("Name: %s %s Id: %s%nCode Number: %s", this.getFirstName(),
+				this.getLastName(), this.getId(), this.codeNumber);
+	}
+}
+
+package military;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+import military.entityes.CommandoImpl;
+import military.entityes.Corps;
+import military.entityes.EngineerImpl;
+import military.entityes.LieutenantGeneralImpl;
+import military.entityes.MissionImpl;
+import military.entityes.PrivateImpl;
+import military.entityes.RepairImpl;
+import military.entityes.SpyImpl;
+public class MilitaryElite {
+	private static Map<Integer, PrivateImpl> soldiersByIds = new LinkedHashMap<>();
+	private static Map<Integer, SpyImpl> spyByIds = new LinkedHashMap<>();
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String input = scan.nextLine();
+		while(!input.equals("ENd")) {
+			PrivateImpl soldier = createSoldier(input);
+			if(soldier != null) {
+				soldiersByIds.put(soldier.getId(), soldier);
+			}
+			input = scan.nextLine();
+		}
+	}
+	private static PrivateImpl createSoldier(String input) {
+		String[] data = input.split("\\s+");
+		String type = data[0];
+		PrivateImpl soldier;
+		switch(type) {
+		case "Private": soldier = new PrivateImpl(Integer.parseInt(data[1]), 
+				data[2], data[3], Double.parseDouble(data[4]));break;
+		case "LieutenantGeneral" : soldier = createLieutenantGeneral(data);break;
+		case "Engineer" : soldier = createEngineer(data);break;
+		case "Commando" : soldier = createCommando(data);break;
+		case "Spy" : spyByIds.put(Integer.parseInt(data[1]), new SpyImpl(Integer.parseInt(data[1]), 
+				data[2], data[3], data[4]));
+		default : soldier = null;break;
+		}
+		return soldier;
+	}
+
+	private static PrivateImpl createCommando(String[] data) {
+		String corps = data[5];
+		if(corps.equals("Airforces") || corps.equals("Marines")) {
+			CommandoImpl commando = new CommandoImpl(Integer.parseInt(data[1]), data[2], data[3], 
+					Double.parseDouble(data[4]), Corps.valueOf(corps.toUpperCase()));
+			for(int i = 5; i < data.length; i += 2) {
+				String codeName = data[i];
+				String state = data[i + 1];
+				if(!state.equals("inProgres") && !state.equals("finished")) {
+					continue;
+				}
+				MissionImpl mission = new MissionImpl(codeName, state.equals("inProgres") ? 
+						MissionImpl.Status.IN_PROGRES : MissionImpl.Status.FINISHED);
+				commando.addMission(mission);
+			}
+			return commando;
+		} else {
+			return null;
+		}
+	}
+	private static PrivateImpl createEngineer(String[] data) {
+		String corps = data[5];
+		if(corps.equals("Airforces") || corps.equals("Marines")) {
+			EngineerImpl engineer = new EngineerImpl(Integer.parseInt(data[1]), data[2], data[3], 
+					Double.parseDouble(data[4]), Corps.valueOf(corps.toUpperCase()));
+			for(int i = 5; i < data.length; i += 2) {
+				String partName = data[i];
+				int hoursWorked = Integer.parseInt(data[i + 1]);
+				RepairImpl repair = new RepairImpl(partName, hoursWorked);
+				engineer.addRepair(repair);
+			}
+			return engineer;
+		} else {
+			return null;
+		}
+	}
+	private static PrivateImpl createLieutenantGeneral(String[] data) {
+		LieutenantGeneralImpl soldier =new LieutenantGeneralImpl(Integer.parseInt(data[1]), 
+				data[2], data[3], Double.parseDouble(data[4]));
+		for(int i = 5; i < data.length; i++) {
+			soldier.addPrivate(soldiersByIds.get(Integer.parseInt(data[i])));
+		}
+		return soldier;
+	}
+}
