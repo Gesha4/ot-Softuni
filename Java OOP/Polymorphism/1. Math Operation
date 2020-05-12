@@ -1,0 +1,15 @@
+/*Create a class MathOperation, which should have method add(). Method add() have to be invoked with two, 
+three or four Integers.*/
+
+package zadachi;
+public class MathOperation {
+	public int add(int a, int b) {
+		return a + b;
+	}
+	public int add(int a, int b, int c) {
+		return a + b + c;
+	}
+	public int add(int a, int b, int c, int d) {
+		return a + b + c + d;
+	}
+}
