@@ -1,0 +1,159 @@
+/*Create 3 different string collections – AddCollection, AddRemoveCollection and MyListImpl.
+ The AddCollection should have:
+•	Only a single method add(String) which adds an item to the end of the collection.
+ The AddRemoveCollection should have:
+•	An add(String) method – which adds an item to the start of the collection.
+•	A remove() method which removes the last item in the collection.
+ The MyListImpl collection should have:
+•	An add(String) method which adds an item to the start of the collection.
+•	A remove() method which removes the first element in the collection.
+•	A used field which displays the size of elements currently in the collection.
+Create interfaces which define the collections functionality, think how to model the relations between interfaces to reuse code.
+Add an extra bit of functionality to the methods in the custom collections, add methods should return the index in which the 
+item was added, remove methods should return the item that was removed.Your task is to create a single copy of your collections,
+after which on the first input line you will receive a random amount of strings in a single line separated by spaces - the 
+elements you have to add to each of your collections. For each of your collections write a single line in the output that holds
+the results of all add operations separated by spaces. On the second input line you will receive a single number - the amount
+of remove operations you have to call on each collection. In the same manner as with the add operations for each collection 
+(except the AddCollection), print a line with the results of each removeoperation separated by spaces.
+<<Interface>>
+Addable
++	add(String) : int
+<<Interface>>
+AddRemovable
++	remove() : String
+<<Interface>>
+MyList
++	getUsed() : int
+
+<<Abstract>>
+Collection
+-	maxSize: int = 100
+-	items: List<String>
+	Collection()
+MyListImpl
++	add(String)
++	remove() : String 
++	getUsed() : int
+AddRemoveCollection
++	add(String) : int
++	remove() : String
+AddCollection
++	add(String) : int
+
+Input
+The input comes from the console. It will hold two lines:
+•	The first line will contain a random amount of strings separated by spaces - the elements you have to add to each of your 
+collections.
+•	The second line will contain a single number - the amount of remove operations.
+Output
+The output will consist of 5 lines:
+•	The first line contains the results of all add operations on the AddCollection separated by spaces.
+•	The second line contains the results of all add operations on the AddRemoveCollection separated by spaces.
+•	The third line contains the result of all add operations on the MyListImpl collection separated by spaces.
+•	The fourth line contains the result of all remove operations on the AddRemoveCollection separated by spaces.
+•	The fifth line contains the result of all remove operations on the MyListImpl collection separated by spaces.*/
+
+package interfaces;
+public interface Addable {
+	int add(String element);
+}
+
+package interfaces;
+public interface AddRemovable extends Addable{
+	String remove();
+}
+
+package interfaces;
+public interface MyList extends AddRemovable{
+	int getUsed();
+}
+
+package classes;
+import java.util.ArrayList;
+import java.util.List;
+public abstract class Collection {
+	private int maxSize = 100;
+	protected List<String> items;
+	public Collection() {
+		this.items = new ArrayList<>(maxSize);
+	}
+}
+
+package classes;
+import interfaces.Addable;
+public class AddCollection extends Collection implements Addable{
+	@Override
+	public int add(String element) {
+		this.items.add(element);
+		return this.items.size() - 1;
+	}
+}
+
+package classes;
+import interfaces.AddRemovable;
+public class AddRemoveCollection extends Collection implements AddRemovable{
+	@Override
+	public int add(String element) {
+		this.items.add(0, element);
+		return 0;
+	}
+	@Override
+	public String remove() {
+		return this.items.remove(this.items.size() - 1);
+	}
+}
+
+package classes;
+import interfaces.MyList;
+public class MyListImpl extends Collection implements MyList{
+	@Override
+	public int add(String element) {
+		this.items.add(0, element);
+		return 0;
+	}
+	@Override
+	public String remove() {
+		return this.items.remove(0);
+	}
+	@Override
+	public int getUsed() {
+		return this.items.size();
+	}
+}
+
+//test
+package collections;
+import java.util.Scanner;
+import classes.AddCollection;
+import classes.AddRemoveCollection;
+import classes.MyListImpl;
+public class Collections {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		AddCollection addColl = new AddCollection();
+		AddRemoveCollection addRemColl = new AddRemoveCollection();
+		MyListImpl list = new MyListImpl();
+		String[] items = scan.nextLine().split("\\s+");
+		StringBuilder strAddColl = new StringBuilder();
+		StringBuilder strAddRemColl = new StringBuilder();
+		StringBuilder strMyList = new StringBuilder();
+		for(String item : items) {
+			strAddColl.append(addColl.add(item) + " ");
+			strAddRemColl.append(addRemColl.add(item) + " ");
+			strMyList.append(list.add(item) + " ");
+		}
+		System.out.println(strAddColl);
+		System.out.println(strAddRemColl);
+		System.out.println(strMyList);
+		strAddRemColl.setLength(0);
+		strMyList.setLength(0);
+		int timesToRemove = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < timesToRemove; i++) {
+			strAddRemColl.append(addRemColl.remove() + " ");
+			strMyList.append(list.remove() + " ");
+		}
+		System.out.println(strAddRemColl);
+		System.out.println(strMyList);
+	}
+}
