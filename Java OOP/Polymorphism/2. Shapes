@@ -1,0 +1,84 @@
+/*Create class hierarchy, starting with abstract class Shape:
+- Fields:
+o perimeter : Double
+o area : Double
+- Encapsulation for this fields
+- Abstract methods:
+o calculatePerimeter()
+o calculateArea()
+Extend Shape class with two children:
+- Rectangle
+- Circle
+Each of them needs to have:
+- Fields:
+For Rectangle
+o height : Double
+o width : Double
+For Circle
+o radius : Double
+- Encapsulation for this fields
+- Public constructor
+- Concrete methods for calculations (perimeter and area)*/
+
+package zadachi;
+public abstract class Shapes {
+	private double perimeter;
+	private double area;
+	public double getPerimeter() {
+		return perimeter;
+	}
+	public double getArea() {
+		return area;
+	}
+	protected void setPerimeter(double perimeter) {
+		this.perimeter = perimeter;
+	}
+	protected void setArea(double area) {
+		this.area = area;
+	}
+	abstract void calculatePerimeter();
+	abstract void calculateArea();
+}
+
+package zadachi;
+public class Rectangle extends Shapes{
+	private double height;
+	private double width;
+	public Rectangle(double height, double width) {
+		this.height = height;
+		this.width = width;
+	}
+	public double getHeight() {
+		return this.height;
+	}
+	public double getWidth() {
+		return this.width;
+	}
+	@Override
+	void calculatePerimeter() {
+		this.setPerimeter((this.height + this.width) * 2);
+	}
+	@Override
+	void calculateArea() {
+		this.setArea(this.height * this.width);
+	}
+}
+
+package zadachi;
+public class Circle extends Shapes{
+	private double radius;
+	public Circle(double radius) {
+		this.radius = radius;
+	}
+	public double getRadius() {
+		return this.radius;
+	}
+	@Override
+	void calculatePerimeter() {
+		this.setPerimeter(2 * Math.PI * this.radius);
+	}
+	@Override
+	void calculateArea() {
+		this.setArea(Math.PI * this.radius * this.radius);
+	}
+}
