@@ -1,0 +1,41 @@
+/*Create a class Animal, which holds two fields:
+- name: String
+- favouriteFood: String
+Animal has one abstract method explainSelf(): String.
+You should add two new classes - Cat and Dog. Override the explainSelf() method by adding concrete animal
+sound on a new line.*/
+
+package zadachi;
+public abstract class Animal {
+	private String name;
+	private String favouriteFood;
+	protected Animal(String name, String favouriteFood) {
+		this.name = name;
+		this.favouriteFood = favouriteFood;
+	}
+	public String explainSelf() {
+		return String.format("I am %s and my favourite food is %s", this.name, this.favouriteFood);
+	}
+}
+
+package zadachi;
+public class Cat extends Animal{
+	public Cat(String name, String favouriteFood) {
+		super(name, favouriteFood);
+	}
+	@Override
+	public String explainSelf() {
+		return String.format("%s%nMEEOW", super.explainSelf());
+	}
+}
+
+package zadachi;
+public class Dog extends Animal{
+	public Dog(String name, String favouriteFood) {
+		super(name, favouriteFood);
+	}
+	@Override
+	public String explainSelf() {
+		return String.format("%s%nDJAAF", super.explainSelf());
+	}
+}
