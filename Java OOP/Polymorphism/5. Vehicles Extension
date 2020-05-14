@@ -1,0 +1,170 @@
+/*Use your solution of the previous task for starting point and add more functionality. Add new vehicle – Bus. Now every
+vehicle has tank capacity and fuel quantity cannot fall (set) below 0 (If fuel quantity become less than 0 print on the console
+"Fuel must be a positive number"). The vehicles cannot be filled with fuel more than their tank capacity. If you try to put 
+more fuel in the tank than the available space, print on the console "Cannot fit fuel in tank" and do not add any fuel in 
+vehicles tank. Add new command for the bus. The bus can drive with or without people. If the bus is driving with people, the 
+air-conditioner is turned on and its fuel consumption per kilometer is increased with 1.4 liters. If there are no people in the
+bus when driving the air-conditioner is turned off and does not increase the fuel consumption.
+Input
+•	On the first three lines you will receive information about the vehicles in format:
+Vehicle {initial fuel quantity} {liters per km} {tank capacity}
+•	On fourth line - number of commands N that will be given on the next N lines
+•	On the next N lines – commands in format
+o	Drive Car {distance}
+o	Drive Truck {distance}
+o	Drive Bus {distance}
+o	DriveEmpty Bus {distance}
+o	Refuel Car {liters}
+o	Refuel Truck {liters}
+o	Refuel Bus {liters}
+Output
+•	After each Drive command print whether the Car/Truck was able to travel given distance in format if it’s successful:
+"Car/Truck/Bus travelled {distance} km"
+•	Or if it is not:
+"Car/Truck/Bus needs refueling"
+•	If given fuel is ≤ 0 print "Fuel must be a positive number".
+•	If given fuel cannot fit in car or bus tank print "Cannot fit fuel in tank"
+•	Finally print the remaining fuel for car, truck and bus rounded 2 digits after floating point in format:
+"Car: {liters}
+Truck: {liters}
+Bus: {liters}"*/
+
+package zadachi;
+import java.text.DecimalFormat;
+public abstract class Vehicle {
+	private double fuelQuantity;
+	private double fuelConsumption;
+	private int tankCapacity;
+	public double getFuelQuantity() {
+		return this.fuelQuantity;
+	}
+	protected void setFuelQuantity(double fuel) {
+		this.fuelQuantity = fuel;
+	}
+	protected double getFuelConsumption() {
+		return this.fuelConsumption;
+	}
+	protected int getTankCapacity() {
+		return this.tankCapacity;
+	}
+	protected Vehicle(double fuelQuantity, double fuelConsumption, int tankCapacity) {
+		this.fuelQuantity = fuelQuantity;
+		this.fuelConsumption = fuelConsumption;
+		this.tankCapacity = tankCapacity;
+	}
+	public void drive(double km) {
+		double fuelNeeded = this.fuelConsumption * km;
+		DecimalFormat format = new DecimalFormat("#0.##");
+		if(fuelNeeded > this.fuelQuantity) {
+			System.out.println(this.getClass().getSimpleName() + " needs refueling");
+		} else {
+			this.fuelQuantity -= fuelNeeded;
+			System.out.println(this.getClass().getSimpleName() + " travelled " + 
+					format.format(km) + " km");
+		}
+	}
+	public void refuel(double fuel) {
+		if(fuel <= 0) {
+			System.out.println("Fuel must be a positive number");
+		} else {
+			if(fuel + this.fuelQuantity > this.tankCapacity) {
+				System.out.println("Cannot fit fuel in tank");
+			} else {
+				this.fuelQuantity += fuel;							
+			}
+		}
+	}
+}
+
+package zadachi;
+public class Truck extends Vehicle{
+	public Truck(double fuelQuantity, double fuelConsumption, int tankCapacity) {
+		super(fuelQuantity, fuelConsumption + 1.6, tankCapacity);
+	}
+	@Override
+	public void refuel(double fuel) {
+		super.refuel(fuel * 0.95);
+	}
+}
+
+package zadachi;
+public class Car extends Vehicle{
+	public Car(double fuelQuantity, double fuelConsumption, int tankCapacity) {
+		super(fuelQuantity, fuelConsumption + 0.9, tankCapacity);
+	}
+}
+
+package zadachi;
+import java.text.DecimalFormat;
+public class Bus extends Vehicle{
+	public Bus(double fuelQuantity, double fuelConsumption, int tankCapacity) {
+		super(fuelQuantity, fuelConsumption, tankCapacity);
+	}
+	@Override
+	public void drive(double km) {
+		super.drive(km);
+	}
+	public void driveFull(double km) {
+		double fuelNeeded = (this.getFuelConsumption() + 1.4) * km;
+		if(fuelNeeded > this.getFuelQuantity()) {
+			System.out.println(this.getClass().getSimpleName() + " needs refueling");
+		} else {
+			super.setFuelQuantity(this.getFuelQuantity() - fuelNeeded);
+			DecimalFormat format = new DecimalFormat("#0.##");
+			System.out.println(this.getClass().getSimpleName() + " travelled " + 
+					format.format(km) + " km");
+		}
+	}
+}
+
+import java.util.Scanner;
+
+import zadachi.Bus;
+import zadachi.Car;
+import zadachi.Truck;
+
+public class zadachi {
+
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] carInfo = scan.nextLine().split("\\s+");
+		String[] truckInfo = scan.nextLine().split("\\s+");
+		String[] busInfo = scan.nextLine().split("\\s+");
+		Car car = new Car(Double.parseDouble(carInfo[1]), Double.parseDouble(carInfo[2]),
+				Integer.parseInt(carInfo[3]));
+		Truck truck = new Truck(Double.parseDouble(truckInfo[1]), Double.parseDouble(truckInfo[2]), 
+				Integer.parseInt(truckInfo[3]));
+		Bus bus = new Bus(Double.parseDouble(busInfo[1]), Double.parseDouble(busInfo[2]), 
+				Integer.parseInt(busInfo[3]));
+		int numberOfCommands = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < numberOfCommands; i++) {
+			String[] command = scan.nextLine().split("\\s+");
+			String type = command[1];
+			double number = Double.parseDouble(command[2]);
+			if(command[0].equals("Refuel")) {
+				if(type.equals("Car")) {
+					car.refuel(number);
+				} else if(type.equals("Truck")) {
+					truck.refuel(number);
+				} else if(type.equals("Bus")) {
+					bus.refuel(number);
+				}
+			} else {
+				if(type.equals("Car")) {
+					car.drive(number);
+				} else if(type.equals("Truck")) {
+					truck.drive(number);
+				} else if(type.equals("Bus")) {
+					if(command[0].contains("Empty")) {
+						bus.drive(number);
+					} else {
+						bus.driveFull(number);
+					}
+				}
+			}
+		}
+		System.out.printf("Car: %.2f%n", car.getFuelQuantity());
+		System.out.printf("Truck: %.2f%n", truck.getFuelQuantity());
+		System.out.printf("Bus: %.2f%n", bus.getFuelQuantity());
+	}
+}
