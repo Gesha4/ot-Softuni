@@ -1,0 +1,217 @@
+/*Your task is to create a class hierarchy like the picture below. All the classes except Vegetable, Meat, Mouse, Tiger, Cat & 
+Zebra should be abstract. Input should be read from the console. Every even line will contain information about the Animal in 
+following format:
+{AnimalType} {AnimalName} {AnimalWeight} {AnimalLivingRegion} [{CatBreed} = Only if its cat]
+On the odd lines you will receive information about the food that you should give to the Animal. The line will consist of FoodType
+and quantity separated by a whitespace. You should build the logic to determine if the animal is going to eat the provided food. 
+The Mouse and Zebra should check if the food is a Vegetable. If it is they will eat it. Otherwise you should print a message in 
+the format:
+{AnimalType} are not eating that type of food!
+Cats eat any kind of food, but Tigers accept only Meat. If Vegetable is provided to a tiger message like the one above should be 
+printed on the console. After you read information about the Animal and Food then invoke makeSound() method of the current animal
+and then feed it. At the end print the whole object and proceed reading information about the next animal/food. The input will 
+continue until you receive "End". After that print the information of all received animals in format:
+{AnimalType} [{AnimalName}, {CatBreed}, {AnimalWeight}, {AnimalLivingRegion}, {FoodEaten}]
+Print all AnimalWeight with no trailing zeroes after the decimal separator. Use the DecimalFormat class.
+Note: consider overriding toString() method.*/
+
+package animals;
+abstract class Food {
+	private int quantity;
+	protected Food(int quantity) {
+		this.quantity = quantity;
+	}
+	public int getQuantity() {
+		return this.quantity;
+	}
+}
+
+package animals;
+public class Vegetable extends Food{
+	public Vegetable(int quantity) {
+		super(quantity);
+	}
+}
+
+package animals;
+public class Meat extends Food{
+	public Meat(int quantity) {
+		super(quantity);
+	}
+}
+
+package animals;
+import java.text.DecimalFormat;
+public abstract class Animal implements MakeSound, Eat{
+	private String name;
+	private String type;
+	private double weight;
+	private int foodEaten;
+	public Animal(String name, String type, double weight) {
+		this.name = name;
+		this.type = type;
+		this.weight = weight;
+		this.foodEaten = 0;
+	}
+	protected String getName() {
+		return this.name;
+	}
+	protected String getType() {
+		return this.type;
+	}
+	protected double getWeight() {
+		return this.weight;
+	}
+	protected int getFoodEaten() {
+		return this.foodEaten;
+	}
+	protected void incrementFoodEaten(int quantity) {
+		this.foodEaten += quantity;
+	}
+	@Override
+	public void eat(Food food) {
+		this.foodEaten += food.getQuantity();
+	}
+	@Override
+	public String toString() {
+		return String.format("[%s, %s, %d]", this.name, 
+				new DecimalFormat("##.##").format(this.weight), this.foodEaten);
+	}
+}
+
+package animals;
+public interface Eat {
+	void eat(Food food);
+}
+
+package animals;
+public interface MakeSound {
+	void makeSound();
+}
+
+package animals;
+public abstract class Mammal extends Animal{
+	private String livingRegion;
+	public Mammal(String name, String type, double weight, String livingRegion) {
+		super(name, type, weight);
+		this.livingRegion = livingRegion;
+	}
+	protected String getLivingRegion() {
+		return livingRegion;
+	}
+	@Override
+	public void eat(Food food) {
+		if(food.getClass().getSimpleName().equals("Meat")) {
+			String type = this.getType().equals("Mouse") ? "Mice" : "Zebras";
+			System.out.println(type + " are not eating that type of food!");
+		} else {
+			super.eat(food);
+		}
+	}
+	@Override
+	public String toString() {
+		StringBuilder base = new StringBuilder(super.toString());
+		base.insert(base.lastIndexOf(",") + 1, " " + this.livingRegion + ",");
+		return this.getClass().getSimpleName() + base.toString();
+	}
+}
+
+package animals;
+public class Mouse extends Mammal{
+	public Mouse(String name, String type, double weight, String livingRegion) {
+		super(name, type, weight, livingRegion);
+	}
+	@Override
+	public void makeSound() {
+		System.out.println("SQUEEEAAAK!");		
+	}
+}
+
+package animals;
+public class Zebra extends Mammal{
+	public Zebra(String name, String type, double weight, String livingRegion) {
+		super(name, type, weight, livingRegion);
+	}
+	@Override
+	public void makeSound() {
+		System.out.println("Zs");
+	}
+}
+
+package animals;
+public class Cat extends Felime{
+	private String breed;
+	public Cat(String name, String type, double weight, String livingRegion, String breed) {
+		super(name, type, weight, livingRegion);
+		this.breed = breed;
+	}
+	@Override
+	public void eat(Food food) {
+		this.incrementFoodEaten(food.getQuantity());
+	}
+	@Override
+	public void makeSound() {
+		System.out.println("Meowwww");
+	}
+	@Override
+	public String toString() {
+		StringBuilder base = new StringBuilder(super.toString());
+		base.insert(base.indexOf(",") + 1, " " + this.breed + ",");
+		return base.toString();
+	}
+}
+
+package animals;
+public class Tiger extends Felime{
+	public Tiger(String name, String type, double weight, String livingRegion) {
+		super(name, type, weight, livingRegion);
+	}
+	@Override
+	public void makeSound() {
+		System.out.println("ROAAR!!!");
+	}
+	@Override
+	public void eat(Food food) {
+		if(food.getClass().getSimpleName().equals("Vegetable")) {
+			System.out.println("Tigers are not eating that type of food!");
+		} else {
+			super.eat(food);
+		}
+	}
+}
+
+package animals;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+public class WildFarm {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		List<Animal> animals = new ArrayList<>();
+		String line = scan.nextLine();
+		while(!line.equals("End")) {
+			String[] animalInfo = line.split("\\s+");
+			String type = animalInfo[0];
+			String name = animalInfo[1];
+			Double weight = Double.parseDouble(animalInfo[2]);
+			String region = animalInfo[3];
+			Animal animal = null;
+			switch(type) {
+			case "Mouse" : animal = new Mouse(name, type, weight, region);break;
+			case "Zebra" : animal = new Zebra(name, type, weight, region);break;
+			case "Cat" : animal = new Cat(name, type, weight, region, animalInfo[4]);break;
+			case "Tiger" : animal = new Tiger(name, type, weight, region);break;
+			}
+			animal.makeSound();
+			animals.add(animal);
+			String[] foodInfo = scan.nextLine().split("\\s+");
+			int quantity = Integer.parseInt(foodInfo[1]);
+			Food food = foodInfo[0].equals("Meat") ? new Meat(quantity) : new Vegetable(quantity);
+			animal.eat(food);
+			line = scan.nextLine();
+		}
+		for(Animal animal : animals) {
+			System.out.println(animal.toString());
+		}
+	}
+}
