@@ -1,0 +1,108 @@
+/*Write a program that models 2 vehicles (Car and Truck) and will be able to simulate driving and refueling them in the summer. 
+Car and truck both have fuel quantity, fuel consumption in liters per km and can be driven given distance and refueled with given 
+liters. But in the summer both vehicles use air conditioner and their fuel consumption per km is increased by 0.9 liters for the 
+car and with 1.6 liters for the truck. Also the truck has a tiny hole in his tank and when it gets refueled it gets only 95% of 
+given fuel. The car has no problems when refueling and adds all given fuel to its tank. If vehicle cannot travel given distance 
+its fuel does not change.
+Input
+•	On the first line - information about the car in format "Car {fuel quantity} {liters per km}"
+•	On the second line – info about the truck in format "Truck {fuel quantity} {liters per km}"
+•	On third line - number of commands N that will be given on the next N lines
+•	On the next N lines – commands in format:
+o	Drive Car {distance}
+o	Drive Truck {distance}
+o	Refuel Car {liters}
+o	Refuel Truck {liters}
+Output
+After each Drive command print whether the Car/Truck was able to travel given distance in format if it’s successful. Print the 
+distance with two digits after the decimal separator except trailing zeros. Use the DecimalFormat class:
+"Car/Truck travelled {distance} km"
+Or if it is not:
+"Car/Truck needs refueling"
+Finally print the remaining fuel for both car and truck rounded 2 digits after floating point in format:
+"Car: {liters}
+Truck: {liters}"*/
+
+package zadachi;
+
+import java.text.DecimalFormat;
+
+public abstract class Vehicle {
+	private double fuelQuantity;
+	private double fuelConsumption;
+	public double getFuelQuantity() {
+		return this.fuelQuantity;
+	}
+	protected double getFuelConsumption() {
+		return this.fuelConsumption;
+	}
+	protected Vehicle(double fuelQuantity, double fuelConsumption) {
+		this.fuelQuantity = fuelQuantity;
+		this.fuelConsumption = fuelConsumption;
+	}
+	public void drive(double km) {
+		double fuelNeeded = this.fuelConsumption * km;
+		DecimalFormat format = new DecimalFormat("#0.##");
+		if(fuelNeeded > this.fuelQuantity) {
+			System.out.println(this.getClass().getSimpleName() + " needs refueling");
+		} else {
+			this.fuelQuantity -= fuelNeeded;
+			System.out.println(this.getClass().getSimpleName() + " travelled " + 
+					format.format(km) + " km");
+		}
+	}
+	public void refuel(double fuel) {
+		this.fuelQuantity += fuel;
+	}
+}
+
+package zadachi;
+public class Car extends Vehicle{
+	public Car(double fuelQuantity, double fuelConsumption) {
+		super(fuelQuantity, fuelConsumption + 0.9);
+	}
+}
+
+package zadachi;
+public class Truck extends Vehicle{
+	public Truck(double fuelQuantity, double fuelConsumption) {
+		super(fuelQuantity, fuelConsumption + 1.6);
+	}
+	@Override
+	public void refuel(double fuel) {
+		super.refuel(fuel * 0.95);
+	}
+}
+
+import java.util.Scanner;
+import zadachi.Car;
+import zadachi.Truck;
+public class zadachi {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		String[] carInfo = scan.nextLine().split("\\s+");
+		String[] truckInfo = scan.nextLine().split("\\s+");
+		Car car = new Car(Double.parseDouble(carInfo[1]), Double.parseDouble(carInfo[2]));
+		Truck truck = new Truck(Double.parseDouble(truckInfo[1]), Double.parseDouble(truckInfo[2]));
+		int numberOfCommands = Integer.parseInt(scan.nextLine());
+		for(int i = 0; i < numberOfCommands; i++) {
+			String[] command = scan.nextLine().split("\\s+");
+			String type = command[1];
+			double number = Double.parseDouble(command[2]);
+			switch(command[0]) {
+			case "Drive": if(type.equals("Car")) {
+							car.drive(number);
+							} else if(type.equals("Truck")) {
+								truck.drive(number);
+							}break;
+			case "Refuel": if(type.equals("Car")) {
+							car.refuel(number);
+							} else if(type.equals("Truck")) {
+								truck.refuel(number);
+							} break;
+			}
+		}
+		System.out.printf("Car: %.2f%n", car.getFuelQuantity());
+		System.out.printf("Truck: %.2f%n", truck.getFuelQuantity());
+	}
+}
