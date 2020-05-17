@@ -1,0 +1,62 @@
+/*Inside the skeleton you are given class BalancedParentheses and BalancedParenthesesTest. Your task is to
+implement the method solve () – which performs analysis of the parentheses filed and returns true or false
+whether the parentheses are balanced or not.
+A sequence of parentheses is balanced if every open parenthesis can be paired uniquely with a closed parenthesis
+that occurs after the former. Also, the interval between them must be balanced.
+You will be given three types of parentheses: (, {, and [.*/
+
+package implementations;
+import java.util.ArrayDeque;
+import interfaces.Solvable;
+public class BalancedParentheses implements Solvable {
+    private String parentheses;
+    private ArrayDeque<Character> left;
+    private ArrayDeque<Character> right;
+
+    public BalancedParentheses(String parentheses) {
+        this.parentheses = parentheses;
+        this.left = new ArrayDeque<>();
+        this.right = new ArrayDeque<>();
+    }
+
+    @Override
+    public Boolean solve() {
+    	boolean areBalanced = true;
+    	filling();
+    	if(this.left.size() == this.right.size()) {
+    		while(!this.left.isEmpty()) {
+    			char l = this.left.pop();
+    			char r = this.right.poll();
+    			boolean areEqual = comparing(l, r);
+    			if(!areEqual) {
+    				areBalanced = false;
+    				break;
+    			}
+    		}
+    	} else {
+    		areBalanced = false;
+    	}
+    	return areBalanced;
+    }
+    
+    private boolean comparing(char l, char r) {
+    	boolean areEqual = true;;
+    	switch(l) {
+    		case '(': if(r != ')') { areEqual = false;}break;
+    		case '[': if(r != ']') { areEqual = false;}break;
+    		case '{': if(r != '}') { areEqual = false;}break;
+    	}
+    	return areEqual;
+    }
+    
+    private void filling() {
+    	for(int i = 0; i < this.parentheses.length(); i++) {
+    		char ch = this.parentheses.charAt(i);
+    		if(ch == '(' || ch == '[' || ch == '{') {
+    			this.left.push(ch);
+    		} else {
+    			this.right.offer(ch);
+    		}
+    	}
+    }
+}
