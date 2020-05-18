@@ -1,0 +1,352 @@
+/*Write a logging library for logging messages. The interface for the end-user should be as follows:
+Logger logs data and time (String) and a message (String).
+Library Architecture
+The library should have the following components:
+•	Layouts - define the format in which messages should be appended (e.g. SimpleLayout displays logs in the format "<date-time> - 
+<report level> - <message>")
+•	Appenders - responsible for appending the messages somewhere (e.g. Console, File, etc.)
+•	Loggers - hold methods for various kinds of logging (warnings, errors, info, etc.)
+Whenever a logger is told to log something, it calls all of its appenders and tells them to append the message. In turn, the 
+appenders append the message (e.g. to the console or a file) according to the layout they have.
+Requirements Your library should correctly follow all SOLID principles:
+•	Single Responsibility Principle - no class or method should do more than one thing at once
+•	Open-Closed Principle - the library should be open for extension (i.e. its user should be able to create his own 
+layouts/appenders/loggers)
+•	Liskov Substitution Principle - children classes should not break the behavior of their parent
+•	Interface Segregation Principle - the library should provide simple interfaces for the client to implement
+•	Dependency Inversion - no class/method should directly depend on concretions (only on abstractions)
+Avoid code repetition. Name everything accordingly.
+Implementations
+The library should provide the following ready classes for the client:
+•	SimpleLayout - defines the format "<date-time> - <report level> - <message>"
+•	ConsoleAppender - appends a log to the console using the provided layout
+•	FileAppender - appends a log to a file (You need to implement a CustomFile class) using 
+the provided layout
+•	LogFile - a custom file class which logs messages in a string builder using a method write(). It should have a getter for its 
+size which is the sum of the ascii codes of all alphabet characters it contains (e.g. a-z and A-Z).
+•	Logger - a logger class which is used to log messages. Calls each of its appenders when something needs to be logged.
+Extensibility
+The end-user should be able to add his own layouts/appenders/loggers and use them. For example, he should be able to create 
+his own XmlLayout and make the appenders use it, without directly editing the library source code. 
+Report Threshold
+Implement a report level threshold in all appenders. The appender should append only messages with report level above or equal
+to its report level threshold (by default all messages are appended). The report level is in the order 
+Info > Warning > Error > Critical > Fatal.
+Only messages from error and above are appended.
+File
+A file should write all messages internally and it should keep information about its size.
+Size of a file is calculated by summing ASCII codes of all alphabet characters (a-Z). For example, a file appender with simple layout and a single message "3/31/2015 5:33:07 PM - ERROR - Error parsing request" has size 2606 (including all characters in PM, ERROR, Error, parsing, request). In case of Xml layout, the file would have size 6632, because of the extra characters within the tags.
+Controller
+Implement a Controller which reads all appenders that a Logger will have and input messages from the console. Every message should be evaluated by all the appenders and logged if they meet the report level. Console appenders should write directly on the console. File appenders write (save) the messages but do not print them.
+Input
+On the first line you will get N - the number of appenders. On the next N lines, you will get information about the appenders in one of the formats below:
+•	"<appender type> <layout type> <REPORT LEVEL>"
+•	"<appender type> <layout type>"
+If no report level is provided, the appender should be set to record all messages.
+If there is no report level, value is INFO.
+Next, until you get the "END" command you will receive messages containing report level, time and message separated by pipe "|":
+•	"<REPORT LEVEL>|<time>|<message>"
+Output
+Console appenders should print directly at the console in the layout they are provided:
+•	Simple layout example - "3/31/2015 5:33:07 PM - ERROR - Error parsing request"
+•	Xml layout example (date, level and message tags are indented by 1 tabulation):
+<log>
+<date>3/31/2015 5:33:07 PM</date>
+<level>ERROR</level>
+<message>Error parsing request</message>
+</log>
+After the "END" command you should print Logger info which includes statistics about every appender (its type, layout, report
+level, messages appended and file size for file appenders):
+"Logger info
+Appender type: <appender type>, Layout type: <layout type>, Report level: <REPORT LEVEL>, Messages appended: <count>, 
+File size: <size>"*/
+
+package solid;
+public interface Appender {
+	void append(String date, ReportLevel reportLevel, String message);
+	ReportLevel getReportLevel();
+	String getType();
+}
+
+package solid;
+public interface AppenderFactory {
+	Appender produce(String type, ReportLevel reportLevel, Layout layout);
+}
+
+package solid;
+public interface Layout {
+	String format(String date, ReportLevel reportLevel, String message);
+	String getType();
+}
+
+package solid;
+public interface LayoutFactory {
+	Layout produce(String type);
+}
+
+package solid;
+public interface Logger {
+	void logInfo(String date, String message);
+	void logWarning(String date, String message);
+	void logError(String date, String message);
+	void logCritical(String date, String message);
+	void logFatal(String date, String message);
+	void addAppender(Appender appender);
+}
+
+package solid;
+public interface File {
+	void write(String text);
+	public int getSize();
+}
+
+package solid;
+public abstract class AbstractAppender implements Appender{
+	private Layout layout;
+	private ReportLevel reportLevel;
+	private int appendCoount;
+	public AbstractAppender(ReportLevel reportLevel, Layout layout) {
+		this.layout = layout;
+		this.reportLevel = reportLevel;
+	}
+	protected Layout getLeyout() {
+		return this.layout;
+	}
+	@Override
+	public ReportLevel getReportLevel() {
+		return this.reportLevel;
+	}
+	
+	public abstract String getType();
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("Appender type: ");
+		builder.append(this.getType())
+			.append(", Layout type : ")
+			.append(this.layout.getType())
+			.append(", ")
+			.append(String.format("Report level: %s, ", this.getReportLevel().toString()))
+			.append("Messages appended: ")
+			.append(this.appendCoount);
+		return builder.toString();
+	}
+	protected void incrementAppendCount() {
+		this.appendCoount++;
+	}
+}
+
+package solid;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+public abstract class AbstractLogger implements Logger{
+	private List<Appender> appenders;
+	public AbstractLogger(Appender...appenders) {
+		this.appenders = new ArrayList<>(Arrays.asList(appenders));
+	}
+	@Override
+	public void logInfo(String date, String message) {
+		this.callAllAppenders(date, ReportLevel.INFO, message);
+	}
+	@Override
+	public void logWarning(String date, String message) {
+		this.callAllAppenders(date, ReportLevel.WARNING, message);
+	}
+	@Override
+	public void logError(String date, String message) {
+		this.callAllAppenders(date, ReportLevel.ERROR, message);
+	}
+	@Override
+	public void logCritical(String date, String message) {
+		this.callAllAppenders(date, ReportLevel.CRITICAL, message);
+	}
+	@Override
+	public void logFatal(String date, String message) {
+		this.callAllAppenders(date, ReportLevel.FATAL, message);
+	}
+	private void callAllAppenders(String date, ReportLevel reportLevel, String message) {
+		for(Appender appender : appenders) {
+			if(appender.getReportLevel().ordinal() <= reportLevel.ordinal()) {
+				appender.append(date, reportLevel, message);				
+			}
+		}
+	}
+	@Override
+	public void addAppender(Appender appender) {
+		this.appenders.add(appender);
+	}
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder("Logger info")
+				.append(System.lineSeparator());
+		builder.append(this.appenders.stream()
+				.map(Appender::toString)
+				.collect(Collectors.joining(System.lineSeparator())));
+		return builder.toString();
+	}
+}
+
+package solid;
+public enum ReportLevel {
+	INFO, WARNING, ERROR, CRITICAL, FATAL;
+}
+
+package solid;
+public class AppenderWorkshop implements AppenderFactory{
+	@Override
+	public Appender produce(String type, ReportLevel reportLevel, Layout layout) {
+		return switch(type) {
+		case "ConsoleAppender" -> new ConsoleAppender(reportLevel, layout);
+		case "FileAppender" -> new FileAppender(reportLevel, layout);
+		default -> throw new IllegalStateException("Not valid type for " + type + " param");
+		};
+	}
+}
+
+package solid;
+public class ConsoleAppender extends AbstractAppender{
+	public ConsoleAppender(ReportLevel reportLevel, Layout layout) {
+		super(reportLevel, layout);
+	}
+	@Override
+	public void append(String date, ReportLevel reportLevel, String message) {
+		System.out.println(this.getLeyout().format(date, reportLevel, message));
+		super.incrementAppendCount();
+	}
+	@Override
+	public String getType() {
+		return "ConsoleAppender";
+	}
+}
+
+package solid;
+public class FileAppender extends AbstractAppender{
+	private File file;
+	public FileAppender(ReportLevel reportLevel, Layout layout) {
+		super(reportLevel, layout);
+		this.file = new LogFile();
+	}
+	@Override
+	public void append(String date, ReportLevel reportLevel, String message) {
+		String formated = this.getLeyout().format(date, reportLevel, message);
+		this.file.write(formated);
+		super.incrementAppendCount();
+	}
+	@Override
+	public String getType() {
+		return "FileAppender";
+	}
+	@Override
+	public String toString() {
+		return super.toString() + ", File size: " + this.file.getSize();
+	}
+}
+
+package solid;
+public class LayoutWorkshop implements LayoutFactory{
+	@Override
+	public Layout produce(String type) {
+		return switch(type) {
+		case "SimpleLayout" -> new SimpleLayout();
+		case "XmlLayout" -> new XmlLayout();
+		default -> throw new IllegalStateException("Not valid type layout for " + type + " param");
+		};
+	}
+}
+
+package solid;
+public class LogFile implements File{
+	private StringBuilder builder;
+	public LogFile() {
+		this.builder = new StringBuilder();
+	}
+	@Override
+	public void write(String text) {
+		this.builder.append(text);
+	}
+	@Override
+	public int getSize() {
+		int sum = 0;
+		for(int i = 0 ; i < this.builder.length(); i++) {
+			char symbol = this.builder.charAt(i);
+			if(Character.isAlphabetic(symbol)) {
+				sum += symbol;
+			}
+		}
+		return sum;
+	}
+}
+
+package solid;
+public class MessageLogger extends AbstractLogger{
+	public MessageLogger(Appender...appenders) {
+		super(appenders);
+	}
+}
+
+package solid;
+public class SimpleLayout implements Layout{
+	@Override
+	public String format(String date, ReportLevel reportLevel, String message) {
+		return String.format("%s - %s - %s", date, reportLevel.toString(), message);
+	}
+	@Override
+	public String getType() {
+		return "SimpleLayout";
+	}
+}
+
+package solid;
+public class XmlLayout implements Layout{
+	@Override
+	public String format(String date, ReportLevel reportLevel, String message) {
+		return String.format("<log>%n" + 
+				"<date>%s</date>%n" + 
+				"<level>%s</level>%n" + 
+				"<message>%s</message>%n" + 
+				"</log>", date, reportLevel.toString(), message);
+	}
+
+	@Override
+	public String getType() {
+		return "XmlLayout";
+	}
+}
+
+package solid;
+import java.util.Scanner;
+public class Main {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		int n = Integer.parseInt(scan.nextLine());
+		AppenderFactory appenderFactory = new AppenderWorkshop();
+		LayoutFactory layoutFactory = new LayoutWorkshop();
+		Logger logger = new MessageLogger();
+		while(n-- > 0) {
+			String[] tokens = scan.nextLine().split("\\s+");
+			ReportLevel reportLevel = tokens.length == 3 
+					? ReportLevel.valueOf(tokens[2].toUpperCase()) : ReportLevel.INFO;
+			Appender appender = appenderFactory.produce(tokens[0], reportLevel, layoutFactory.produce(tokens[1]));
+			logger.addAppender(appender);
+		}
+		String input = scan.nextLine();
+		while(!input.equals("END")) {
+			String[] tokens = input.split("\\|");
+			ReportLevel reportLevel = ReportLevel.valueOf(tokens[0]);
+			String date = tokens[1];
+			String message = tokens[2];
+			switch(reportLevel) {
+			case INFO -> logger.logInfo(date, message);
+			case WARNING -> logger.logWarning(date, message);
+			case ERROR -> logger.logWarning(date, message);
+			case CRITICAL -> logger.logCritical(date, message);
+			case FATAL -> logger.logFatal(date, message);
+			default -> throw new IllegalStateException("Unknown ENUM value for " + reportLevel);
+			}
+			input = scan.nextLine();
+		}
+		System.out.println(logger.toString());
+	}
+}
