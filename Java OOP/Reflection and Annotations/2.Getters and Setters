@@ -1,0 +1,31 @@
+/*Using reflection to get all Reflection methods. Then prepare an algorithm that will recognize, which methods are getters and
+setters. Sort each collection alphabetically by methods names. Print to console each getter on new line in format:
+•	"{name} will return class {Return Type}"
+Then print all setters in format:
+•	"{name} and will set field of class {Parameter Type}"
+Do this without changing anything in "Reflection.java"*/
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+public class zadachi {
+	public static void main(String[] args) throws NoSuchMethodException, SecurityException, 
+	InstantiationException, IllegalAccessException, IllegalArgumentException, 
+	InvocationTargetException {
+		Class<Reflection> clazz = Reflection.class;
+		Method[] methods = clazz.getDeclaredMethods();
+		Arrays.stream(methods)
+		.filter(method -> method.getName().startsWith("get"))
+		.sorted((f,s) -> f.getName().compareTo(s.getName()))
+		.forEach(method -> System.out.println(
+				String.format("%s will return class %s", method.getName(),
+						method.getReturnType().getName())));
+		Arrays.stream(methods)
+		.filter(method -> method.getName().startsWith("set"))
+		.filter(method -> method.getParameters().length == 1)
+		.sorted((f,s) -> f.getName().compareTo(s.getName()))
+		.forEach(method -> System.out.println(
+				String.format("%S and will set field of class %s", method.getName(),
+						method.getParameterTypes()[0].getName())));
+	}
+}
