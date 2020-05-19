@@ -1,0 +1,42 @@
+/*You are already expert of High Quality Code, so you know what kind of access modifiers must be set to members of class. Time 
+for revenge has come. Now you have to check code produced by your "Beautiful and Smart" trainers in class Reflection. Check all
+fields and methods access modifiers. Sort each category of members alphabetically. Print on console all mistakes in format:
+•	Fields
+{fieldName} must be private!
+•	Getters
+{methodName} have to be public!
+•	Setters
+{methodName} have to be private!*/
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+public class zadachi {
+	public static void main(String[] args) throws NoSuchMethodException, SecurityException, 
+	InstantiationException, IllegalAccessException, IllegalArgumentException, 
+	InvocationTargetException {
+		Class<Reflection> clazz = Reflection.class;
+		Field[] fields = clazz.getDeclaredFields();
+		Arrays.stream(fields)
+		.filter(field -> !Modifier.isPrivate(field.getModifiers()))
+		.sorted((f,s) -> f.getName().compareTo(s.getName()))
+		.forEach(field -> System.out.println(
+				String.format("%s have to be private!", field.getName())));
+		Method[] methods = clazz.getDeclaredMethods();
+		Arrays.stream(methods)
+		.filter(method -> method.getName().startsWith("get"))
+		.filter(method -> !Modifier.isPublic(method.getModifiers()))
+		.sorted((f,s) -> f.getName().compareTo(s.getName()))
+		.forEach(method -> System.out.println(
+				String.format("%s have to be public!", method.getName())));
+		Arrays.stream(methods)
+		.filter(method -> method.getName().startsWith("set"))
+		.filter(method -> method.getParameters().length == 1)
+		.filter(method -> !Modifier.isPrivate(method.getModifiers()))
+		.sorted((f,s) -> f.getName().compareTo(s.getName()))
+		.forEach(method -> System.out.println(
+				String.format("%s have to be private!", method.getName())));
+	}
+}
