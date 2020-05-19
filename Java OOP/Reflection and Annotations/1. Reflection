@@ -15,5 +15,7 @@ public class zadachi {
 		for(Class<?> iface : interfaces) {
 			System.out.println(iface);
 		}
+		Constructor<?> ctor = clazz.getDeclaredConstructor();
+		System.out.println(ctor.newInstance());
 	}
 }
