@@ -1,0 +1,84 @@
+/*You are given the binary tree. Print the top view of the binary tree. More info can be fund here.
+Top view means when you look the tree from the top the nodes, what you will see will be called the top view of the tree.*/
+package solutions;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+public class BinaryTree {
+	private int value;
+	private BinaryTree left;
+	private BinaryTree right;	
+    public BinaryTree(int key, BinaryTree first, BinaryTree second) {
+    	this.value = key;
+    	this.left =first;
+    	this.right = second;
+    }
+    public Integer findLowestCommonAncestor(int first, int second) {
+        List<Integer> firstPath = findPath(first);
+        List<Integer> secondPath = findPath(second);
+        int smallerSize = Math.min(firstPath.size(), secondPath.size());
+    	int i = 0;
+    	for(; i < smallerSize; i++) {
+    		if(!firstPath.get(i).equals(secondPath.get(i))) {
+    			break;
+    		}
+    	}
+    	return firstPath.get(i - 1);
+    }
+    private List<Integer> findPath(int element) {
+		List<Integer> result = new ArrayList<>();
+		findNodePath(this, element, result);
+		return result;
+	}
+	private boolean findNodePath(BinaryTree tree, int element, List<Integer> currentPath) {
+		if(tree == null) {
+			return false;
+		}
+		if(tree.value == element) {
+			return false;
+		}
+		currentPath.add(tree.value);
+		boolean leftResult = findNodePath(tree.left, element, currentPath);
+		if(leftResult) {
+			return true;
+		}
+		boolean rightResult = findNodePath(tree.right, element, currentPath);
+		if(rightResult) {
+			return true;
+		}
+		currentPath.remove(Integer.valueOf(tree.value));
+		return false;
+	}
+	public List<Integer> topView() {
+        Map<Integer, Pair<Integer, Integer>> offsetTo = new TreeMap<>();
+        traverseTree(this, 0, 1, offsetTo);
+        return offsetTo.values().stream().map(Pair::getKey).collect(Collectors.toList());
+    }	
+	private void traverseTree(BinaryTree tree, int offset, int level, Map<Integer, Pair<Integer, Integer>> offsetTo) {
+		if(tree == null) {
+			return;
+		}
+		Pair<Integer, Integer> currentValueLevel = offsetTo.get(offset);
+		if(currentValueLevel == null || level < currentValueLevel.getValue()) {
+			offsetTo.put(offset, new Pair<>(tree.value, level));
+		}
+		traverseTree(tree.left, offset - 1, level + 1, offsetTo);
+		traverseTree(tree.right, offset + 1, level + 1, offsetTo);
+	}
+	public class Pair<K, V>{
+		private K key;
+		private V value;
+		public Pair(K key, V value) {
+			this.key = key;
+			this.value = value;
+		}
+		public K getKey() {
+			return key;
+		}
+		public V getValue() {
+			return value;
+		}
+	}
+}
