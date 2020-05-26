@@ -1,0 +1,121 @@
+/*You are given a simple class - Database. It stores Integers. Your task is to test the class. Write tests, so you are sure
+its methods are working as intended.
+Constraints
+- Storing array&#39;s capacity must be exactly 16 integers.
+- If the size of the array is not 16 integers long, throw OperationNotSupportedException.
+- Add operation, should add an element at the next free cell. (just like a stack)
+- If passed element is null throw OperationNotSupportedException.
+- Remove operation, should support only removing an element at the last index. (just like a stack)
+- If you try to remove element from empty Database throw OperationNotSupportedException
+- Constructors should take integers only, and store them in array.
+- Fetch method should return the elements as array.
+Hint
+Do not forget to test the constructor(s). They are methods too!*/
+
+package p01_Database;
+import javax.naming.OperationNotSupportedException;
+public class Database {
+    private Integer[] elements;
+    private int elementsCount = 0;
+    private int index;
+    public Database(Integer... elements) throws OperationNotSupportedException {
+        this.elementsCount = elements.length;
+        this.setElements(elements);
+        this.index = elementsCount - 1;
+    }
+    public void add(Integer element) throws OperationNotSupportedException {
+        if (element == null) {
+            throw new OperationNotSupportedException();
+        }
+        this.elements[++index] = element;
+        this.elementsCount++;
+    }
+    public void remove() throws OperationNotSupportedException {
+		try {
+			this.elements[index--] = null;
+			this.elementsCount--;			
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			throw new OperationNotSupportedException();
+		}
+    }
+    public Integer[] getElements() {
+        Integer[] buffer = new Integer[elementsCount];
+        int bufferIndex = 0;
+
+        for (Integer element : elements) {
+            if (element != null) {
+                buffer[bufferIndex++] = element;
+            }
+        }
+        return buffer;
+    }
+    private void setElements(Integer... elements) throws OperationNotSupportedException {
+        if (elements.length > 16 ||
+                elements.length < 1) {
+            throw new OperationNotSupportedException();
+        }
+        this.elements = new Integer[16];
+        int bufferIndex = 0;
+        for (Integer element : elements) {
+            this.elements[bufferIndex++] = element;
+        }
+        this.index = elements.length - 1;
+    }
+}
+
+package p01_Database;
+import javax.naming.OperationNotSupportedException;
+import org.junit.Assert;
+import org.junit.Test;
+public class DatabaseTest {
+	@Test
+	public void testConstructorValid() throws OperationNotSupportedException {
+		Integer[] toConstruct = {12, 320, 15, 78};
+		Database database = new Database(toConstruct);
+		Integer[] elements = database.getElements();
+		Assert.assertEquals(toConstruct.length, elements.length);
+		for(int i = 0; i < toConstruct.length - 1; i++) {
+			Assert.assertEquals(toConstruct[i], elements[i]);
+		}
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenmoreThanSixteenElements() throws OperationNotSupportedException{
+		Integer[] numbers = new Integer[17];
+		Database database = new Database(numbers);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenZeroElements() throws OperationNotSupportedException{
+		Integer[] numbers = new Integer[0];
+		Database database = new Database(numbers);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenAddNull() throws OperationNotSupportedException{
+		Database database = new Database();
+		database.add(null);
+	}
+	@Test
+	public void testAddFirstFreeIndex() throws OperationNotSupportedException {
+		Integer[] toConstruct = {12, 320, 15, 78};
+		Database database = new Database(toConstruct);
+		database.add(50);
+		Integer[] elements = database.getElements();
+		Assert.assertEquals(Integer.valueOf(50), elements[4]);
+	}
+	@Test
+	public void testRemoveLastElement() throws OperationNotSupportedException{
+		Integer[] toConstruct = {12, 320, 15, 78};
+		Database database = new Database(toConstruct);
+		database.remove();
+		Integer[] elements = database.getElements();
+		Integer[] expected = {12, 320, 15};
+		for( int i = 0; i < expected.length; i++) {
+			Assert.assertEquals(expected[i], elements[i]);
+		}
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsEmptyDatabase() throws OperationNotSupportedException{
+		Database database = new Database(4);
+		database.remove();
+		database.remove();
+	}
+}
