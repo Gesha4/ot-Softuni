@@ -1,0 +1,239 @@
+/*You already have a class - Database. This time it is extended. There are the following provided methods: adding, removing and
+finding People. In other words, it should store People. There should be two types of finding methods - first: findById (long id)
+and the second one: findByUsername (String username). As you may guess, each person should have its own unique id, and unique
+username. Your task is to test these functions.
+Constraints
+Database should have methods:
+= add
+- If there are multiple users with this id, throw OperationNotSupportedException.
+- If negative nor null ids are present, throw OperationNotSupportedException.
+= remove
+= findByUsername
+- If no user is present by this username, throw OperationNotSupportedException.
+- If username parameter is null, throw OperationNotSupportedException.
+= findById
+- If no user is present by this id, throw OperationNotSupportedException.*/
+
+package p02_ExtendedDatabase;
+public class Person {
+    private int id;
+    private String name;
+    public Person(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    public int getId() {
+        return this.id;
+    }
+    public String getUsername() {
+        return this.name;
+    }
+}
+
+package p02_ExtendedDatabase;
+import javax.naming.OperationNotSupportedException;
+import java.util.ArrayList;
+import java.util.List;
+public class Database {
+    private Person[] elements;
+    private int elementsCount = 0;
+    private int index;
+    public Database(Person... people) throws OperationNotSupportedException {
+        this.elementsCount = people.length;
+        this.setElements(people);
+        this.index = elementsCount - 1;
+    }
+    public void add(Person person) throws OperationNotSupportedException {
+        if (person == null) {
+            throw new OperationNotSupportedException();
+        }
+        this.elements[++index] = person;
+        this.elementsCount++;
+    }
+    public void remove() throws OperationNotSupportedException {
+        try {
+			this.elements[index--] = null;
+			this.elementsCount--;			
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			throw new OperationNotSupportedException();
+		}
+    }
+    public Person[] getElements() {
+        Person[] buffer = new Person[elementsCount];
+        int bufferIndex = 0;
+        for (Person person : elements) {
+            if (person != null) {
+                buffer[bufferIndex++] = person;
+            }
+        }
+        return buffer;
+    }
+    public Person findByUsername(String username) throws OperationNotSupportedException {
+        List<Person> people = new ArrayList<>();
+        if (username == null) {
+            throw new OperationNotSupportedException();
+        }
+        for (Person person : elements) {
+
+            if (person == null) {
+                continue;
+            }
+            if (person.getUsername().equals(username)) {
+                people.add(person);
+            }
+        }
+        if (people.size() != 1) {
+            throw new OperationNotSupportedException();
+        }
+        return people.get(0);
+    }
+    public Person findById(long id) throws OperationNotSupportedException {
+        List<Person> people = new ArrayList<>();
+        for (Person person : elements) {
+            if (person == null) {
+                continue;
+            }
+            if (person.getId() == id) {
+                people.add(person);
+            }
+        }
+        if (people.size() != 1) {
+            throw new OperationNotSupportedException();
+        }
+        return people.get(0);
+    }
+    private void setElements(Person... elements) throws OperationNotSupportedException {
+        if (elements.length > 16 ||
+                elements.length < 1) {
+            throw new OperationNotSupportedException();
+        }
+        this.elements = new Person[16];
+        int bufferIndex = 0;
+
+        for (Person person : elements) {
+            this.elements[bufferIndex++] = person;
+        }
+        this.index = elements.length - 1;
+    }
+}
+
+package p02_ExtendedDatabase;
+import javax.naming.OperationNotSupportedException;
+import org.junit.Assert;
+import org.junit.Test;
+import p02_ExtendedDatabase.Database;
+public class ExtendedDatabaseTest {
+	@Test
+	public void testConstructorValid() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		Person[] persons = database.getElements();
+		Assert.assertEquals(input.length, persons.length);
+		for(int i = 0; i < input.length; i++) {
+			Assert.assertEquals(input[i].getId(), persons[i].getId());
+			Assert.assertEquals(input[i].getUsername(), persons[i].getUsername());
+		}
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenmoreThanSixteenElements() throws OperationNotSupportedException{
+		Person[] persons = new Person[17];
+		Database database = new Database(persons);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenZeroElements() throws OperationNotSupportedException{
+		Person[] persons = new Person[0];
+		Database database = new Database(persons);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenAddNull() throws OperationNotSupportedException{
+		Database database = new Database();
+		database.add(null);
+	}
+	@Test
+	public void testAddFirstFreeIndex() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		Person p3 = new Person(9, "Pesho");
+		database.add(p3);
+		Person[] persons = database.getElements();
+		Assert.assertEquals(p3.getId(), persons[2].getId());
+		Assert.assertEquals(p3.getUsername(), persons[2].getUsername());
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testAddThrowsWhenPersonExist() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		Person p3 = new Person(12, "Goshu");
+		database.add(p3);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testAddThrowsWhenPersonIdIsNull() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		int id = (Integer) null;
+		Person p3 = new Person(id, "Pesho");
+		database.add(p3);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testAddThrowsWhenPersonIdIsNegativel() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		Person p3 = new Person(-5, "Pesho");
+		database.add(p3);
+	}
+	@Test
+	public void testRemoveLastElement() throws OperationNotSupportedException{
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person p3 = new Person(9, "Pesho");
+		Person[] input = {p1, p2, p3};
+		Database database = new Database(input);
+		database.remove();
+		Person[] expected = {p1, p2};
+		Person[] persons = database.getElements();
+		for( int i = 0; i < expected.length; i++) {
+			Assert.assertEquals(expected[i].getId(), persons[i].getId());
+			Assert.assertEquals(expected[i].getUsername(), persons[i].getUsername());
+		}
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenSeachNoSuchUsername() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		database.findByUsername("Pesho");
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsWhenSearhByUsernameGivenNull() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		database.findByUsername(null);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowWhenNoSuchIdFound() throws OperationNotSupportedException {
+		Person p1 = new Person(12, "Goshu");
+		Person p2 = new Person(3, "Mimi");
+		Person[] input = {p1, p2};
+		Database database = new Database(input);
+		database.findById(1);
+	}
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowsEmptyDatabase() throws OperationNotSupportedException{
+		Database database = new Database(new Person(12, "Goshu"));
+		database.remove();
+		database.remove();
+	}
+}
