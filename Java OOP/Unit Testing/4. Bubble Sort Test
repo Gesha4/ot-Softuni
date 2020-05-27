@@ -1,0 +1,39 @@
+/*There is a sorting algorithm - Bubble Sort. You could read this article, to get better the idea: Bubble Sort. Bubble sort, 
+sometimes referred to as sinking sort, is a simple sorting algorithm that repeatedly steps through the list to be sorted, 
+compares each pair of adjacent items and swaps them if they are in the wrong order. The pass through the list is repeated until 
+no swaps are needed, which indicates that the list is sorted. The algorithm, which is a comparison sort, is named for the way
+smaller elements &quot;bubble&quot; to the top of the list. Although the algorithm is simple, it is too slow and impractical
+for most problems even when compared to insertion sort. It can be practical if the input is usually in sorted order but may
+occasionally have some out-of-order elements nearly in position. You are given a simple class "Bubble". Create a Test class and
+test, is it working as intended. Think about the border cases.*/
+
+package p04_BubbleSortTest;
+public class Bubble {
+    public static void sort(int[] arr) {
+        int n = arr.length;
+        for (int k = 0; k < n - 1; k++) {
+            for (int i = 0; i < n - k - 1; i++) {
+                if (arr[i] > arr[i + 1]) {
+                    int temp = arr[i];
+                    arr[i] = arr[i + 1];
+                    arr[i + 1] = temp;
+                }
+            }
+        }
+    }
+}
+
+package p04_BubbleSortTest;
+import org.junit.Assert;
+import org.junit.Test;
+public class BubbleTest {
+	@Test
+	public void testSort() {
+		int[] arr = {13, -1, 98, 43, 0};
+		int[] expected = {-1, 0, 13, 43, 98};
+		Bubble.sort(arr);
+		for(int i = 0; i < expected.length; i++) {
+			Assert.assertEquals(expected[i], arr[i]);
+		}
+	}
+}
