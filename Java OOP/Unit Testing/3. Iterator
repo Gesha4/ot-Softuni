@@ -1,0 +1,132 @@
+/*You are given a simple class "ListIterator", it should receive the collection (Strings) which it will iterate, through its
+constructor. You should store the elements in a List and get them initially through its constructor. If there is null
+passed to the constructor, throw new OperationNotSupportedException. The class should have three main
+functions:
+- Move - should move an internal index position to the next index in the list, the method should return true if it successfully
+moved and false if there is no next index.
+- HasNext - should return true if there is a next index and false if the index is already at the last element of the list.
+- Print - should print the element at the current internal index, calling Print on a collection without elements should throw
+an appropriate exception with the message "Invalid Operation!".
+Command Return Type Description
+=Move - boolean This command should move the internal index to the next index.
+=Print - void This command should return the element at the current internal index.
+=HasNext - boolean Returns whether the collection has a next element.
+Test
+Create tests, so you are sure all methods in the class ListIterator are working as intended.*/
+
+package p03_IteratorTest;
+import javax.naming.OperationNotSupportedException;
+import java.util.Arrays;
+import java.util.List;
+public class ListIterator {
+    private List<String> elements;
+    private int currentIndex;
+    public ListIterator(String... elements) throws OperationNotSupportedException {
+        if (elements == null) {
+            throw new OperationNotSupportedException();
+        }
+        this.elements = Arrays.asList(elements);
+        this.currentIndex = 0;
+    }
+    public boolean move(){
+        if(hasNext()){
+            this.currentIndex++;
+            return true;
+        }
+        return false;
+    }
+    public boolean hasNext(){
+        if(currentIndex < elements.size() - 1){
+            return true;
+        }
+        return false;
+    }
+    public String print(){
+        if(this.elements.size() == 0){
+            throw new IllegalStateException("Invalid Operation!");
+        }
+        return this.elements.get(this.currentIndex);
+    }
+}
+
+package p03_IteratorTest;
+import javax.naming.OperationNotSupportedException;
+import org.junit.Assert;
+import org.junit.Test;
+public class IteratorTests {
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowWhenConstructWithNullInput() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator(null);
+	}
+	@Test
+	public void testHasNextToBeTrue() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator("Lqlq");
+		Assert.assertEquals(true, iterator.hasNext());
+	}
+	@Test
+	public void testToBeFalse() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator();
+		Assert.assertEquals(false, iterator.hasNext());
+	}
+	@Test
+	public void testPrintReturnsString() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator("Lqlq");
+		Assert.assertEquals("Lqlq", iterator.print());
+	}
+	@Test (expected = IllegalStateException.class)
+	public void testPrintThrowWhenNoElements() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator();
+		iterator.print();
+	}
+	@Test
+	public void testDidNotMoveInex() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator();
+		Assert.assertEquals(false, iterator.move());
+	}
+	@Test
+	public void testMoveIndex() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator("Lqlq", "Oreo");
+		Assert.assertEquals(true, iterator.move());
+	}
+}
+package p03_IteratorTest;
+import javax.naming.OperationNotSupportedException;
+
+import org.junit.Assert;
+import org.junit.Test;
+public class IteratorTests {
+	@Test (expected = OperationNotSupportedException.class)
+	public void testThrowWhenConstructWithNullInput() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator(null);
+	}
+	@Test
+	public void testHasNextToBeTrue() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator("Lqlq");
+		Assert.assertEquals(true, iterator.hasNext());
+	}
+	@Test
+	public void testToBeFalse() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator();
+		Assert.assertEquals(false, iterator.hasNext());
+	}
+	@Test
+	public void testPrintReturnsString() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator("Lqlq");
+		Assert.assertEquals("Lqlq", iterator.print());
+	}
+	@Test (expected = IllegalStateException.class)
+	public void testPrintThrowWhenNoElements() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator();
+		iterator.print();
+	}
+	@Test
+	public void testDidNotMoveInex() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator();
+		Assert.assertEquals(false, iterator.move());
+	}
+	@Test
+	public void testMoveIndex() throws OperationNotSupportedException {
+		ListIterator iterator = new ListIterator("Lqlq", "Oreo");
+		Assert.assertEquals(true, iterator.move());
+	}
+}
