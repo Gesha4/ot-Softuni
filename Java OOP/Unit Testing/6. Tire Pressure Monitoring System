@@ -1,0 +1,70 @@
+/*You are given a small project for a system which monitors the pressure in car tires. Your task is to write unit tests for
+the system. You will need to use mocking in order to pass dependencies. Think about the corner cases of the project.*/
+
+package p06_TirePressureMonitoringSystem;
+import java.util.Random;
+public class Sensor {
+    // The reading of the pressure value from the sensor is simulated in this implementation.
+    // Because the focus of the exercise is on the other class.
+    private static final double OFFSET = 16;
+    private static Random randomPressureSampleSimulator = new Random();
+    public double popNextPressurePsiValue() {
+        double pressureTelemetryValue = readPressureSample();
+        return OFFSET + pressureTelemetryValue;
+    }
+    private double readPressureSample() {
+        // Simulate info read from a real sensor in a real tire
+        return 6 * randomPressureSampleSimulator.nextDouble() * randomPressureSampleSimulator.nextDouble();
+    }
+}
+
+package p06_TirePressureMonitoringSystem;
+public class Alarm {
+    private static final double LOW_PRESSURE_THRESHOLD = 17;
+    private static final double HIGH_PRESSURE_THRESHOLD = 21;
+    private Sensor sensor;
+    private boolean alarmOn = false;
+    public Alarm(Sensor sensor) {
+        this.sensor = sensor;
+    }
+    public void check() {
+        double psiPressureValue = sensor.popNextPressurePsiValue();
+        if (psiPressureValue < LOW_PRESSURE_THRESHOLD || HIGH_PRESSURE_THRESHOLD < psiPressureValue) {
+            alarmOn = true;
+        }
+    }
+    public boolean getAlarmOn() {
+        return this.alarmOn;
+    }
+}
+
+package p06_TirePressureMonitoringSystem;
+import static org.junit.Assert.*;
+import org.junit.Test;
+import org.mockito.Mockito;
+public class AlarmTest {
+	@Test
+	public void testGetAlarmOnWhitLowerValue() {
+		Sensor sensor = Mockito.mock(Sensor.class);
+		Mockito.when(sensor.popNextPressurePsiValue()).thenReturn(16.9);
+		Alarm alarm = new Alarm(sensor);
+		alarm.check();
+		assertTrue(alarm.getAlarmOn());
+	}
+	@Test
+	public void testGetAlarmOnWhitHigherValue() {
+		Sensor sensor = Mockito.mock(Sensor.class);
+		Mockito.when(sensor.popNextPressurePsiValue()).thenReturn(21.1);
+		Alarm alarm = new Alarm(sensor);
+		alarm.check();
+		assertTrue(alarm.getAlarmOn());
+	}
+	@Test
+	public void testGetAlarmOnWhitNormalValue() {
+		Sensor sensor = Mockito.mock(Sensor.class);
+		Mockito.when(sensor.popNextPressurePsiValue()).thenReturn(18D);
+		Alarm alarm = new Alarm(sensor);
+		alarm.check();
+		assertTrue(alarm.getAlarmOn());
+	}
+}
