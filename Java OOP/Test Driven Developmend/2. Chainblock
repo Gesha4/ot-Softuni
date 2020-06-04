@@ -41,3 +41,755 @@ and hi (exclusive) ordered by amount descending then by id. If there are no such
 - getAllInAmountRange(lo, hi) – returns all transactions within a range by insertion order (the range is inclusive). Returns 
 an empty collection if no such transactions were found.*/
 
+public interface Chainblock extends Iterable<Transaction> {
+    int getCount();
+    void add(Transaction transaction);
+    boolean contains(Transaction transaction);
+    boolean contains(int id);
+    void changeTransactionStatus(int id, TransactionStatus newStatus);
+    void removeTransactionById(int id);
+    Transaction getById(int id);
+    Iterable<Transaction> getByTransactionStatus(TransactionStatus status);
+    Iterable<String> getAllSendersWithTransactionStatus(TransactionStatus status);
+    Iterable<String> getAllReceiversWithTransactionStatus(TransactionStatus status);
+    Iterable<Transaction> getAllOrderedByAmountDescendingThenById();
+    Iterable<Transaction> getBySenderOrderedByAmountDescending(String sender);
+    Iterable<Transaction> getByReceiverOrderedByAmountThenById(String receiver);
+    Iterable<Transaction> getByTransactionStatusAndMaximumAmount(TransactionStatus status, double amount);
+    Iterable<Transaction> getBySenderAndMinimumAmountDescending(String sender, double amount);
+    Iterable<Transaction> getByReceiverAndAmountRange(String receiver, double lo, double hi);
+    Iterable<Transaction> getAllInAmountRange(double lo, double hi);
+}
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+public class ChainblockImpl implements Chainblock{
+    private Map<Integer, Transaction> transactionsById;
+    public ChainblockImpl() {
+    	this.transactionsById = new LinkedHashMap<>();
+    }
+	public int getCount() {
+        return this.transactionsById.size();
+    }
+    public void add(Transaction transaction) {
+    	if(!contains(transaction)) {
+    		this.transactionsById.put(transaction.getId(), transaction);
+    	}
+    }
+    public boolean contains(Transaction transaction) {
+        return contains(transaction.getId());
+    }
+    public boolean contains(int id) {
+        return this.transactionsById.containsKey(id);
+    }
+    public void changeTransactionStatus(int id, TransactionStatus newStatus) {
+    	if(this.contains(id)) {
+    		this.transactionsById.get(id).setStatus(newStatus);
+    	} else {
+    		throw new IllegalArgumentException();
+    	}
+    }
+    public void removeTransactionById(int id) {
+    	if(!contains(id)) {
+    		throw new IllegalArgumentException();
+    	} else {
+    		this.transactionsById.remove(id);
+    	}
+    }
+    public Transaction getById(int id) {
+    	if(!contains(id)) {
+    		throw new IllegalArgumentException();
+    	} else {
+    		return this.transactionsById.get(id);
+    	}
+    }
+    public Iterable<Transaction> getByTransactionStatus(TransactionStatus status) {
+        List<Transaction> trList = new ArrayList<>();
+        for(Transaction t : this.transactionsById.values()) {
+        	if(t.getStatus() == status) {
+        		trList.add(t);
+        	}
+        }
+        if(trList.size() == 0) {
+        	throw new IllegalArgumentException();
+        }
+        return trList;
+    }
+    public Iterable<String> getAllSendersWithTransactionStatus(TransactionStatus status) {
+        List<Transaction> senders = new ArrayList<>();
+        for(Transaction tr : this.transactionsById.values()) {
+        	if(tr.getStatus() == status) {
+        		senders.add(tr);
+        	}
+        }
+        if(senders.size() == 0) {
+        	throw new IllegalArgumentException();
+        }
+        senders.sort(Comparator.comparing(Transaction::getAmount).reversed());
+        return senders.stream().map(Transaction::getFrom).collect(Collectors.toList());
+    }
+    public Iterable<String> getAllReceiversWithTransactionStatus(TransactionStatus status) {
+    	List<Transaction> receivers = new ArrayList<>();
+        for(Transaction tr : this.transactionsById.values()) {
+        	if(tr.getStatus() == status) {
+        		receivers.add(tr);
+        	}
+        }
+        if(receivers.size() == 0) {
+        	throw new IllegalArgumentException();
+        }
+        receivers.sort(Comparator.comparing(Transaction::getAmount).reversed());
+        return receivers.stream().map(Transaction::getFrom).collect(Collectors.toList());
+    }
+    public Iterable<Transaction> getAllOrderedByAmountDescendingThenById() {
+        return this.transactionsById.values().stream().sorted(Comparator.comparing(Transaction::getAmount).reversed()
+        		.thenComparing(Comparator.comparing(Transaction::getId)))
+        		.collect(Collectors.toList());
+    }
+    public Iterable<Transaction> getBySenderOrderedByAmountDescending(String sender) {
+        List<Transaction> transactions = new ArrayList<>();
+        for(Transaction transaction : this.transactionsById.values()) {
+        	if(transaction.getFrom().equals(sender)) {
+        		transactions.add(transaction);
+        	}
+        }
+        if(transactions.isEmpty()) {
+        	throw new IllegalArgumentException();
+        }
+        return transactions.stream()
+        		.sorted(Comparator.comparing(Transaction::getAmount).reversed())
+        		.collect(Collectors.toList());
+    }
+    public Iterable<Transaction> getByReceiverOrderedByAmountThenById(String receiver) {
+    	List<Transaction> transactions = new ArrayList<>();
+        for(Transaction transaction : this.transactionsById.values()) {
+        	if(transaction.getTo().equals(receiver)) {
+        		transactions.add(transaction);
+        	}
+        }
+        if(transactions.isEmpty()) {
+        	throw new IllegalArgumentException();
+        }
+        return transactions.stream()
+        		.sorted(Comparator.comparing(Transaction::getAmount).reversed()
+        				.thenComparing(Transaction::getId))
+        		.collect(Collectors.toList());
+    }
+    public Iterable<Transaction> getByTransactionStatusAndMaximumAmount(TransactionStatus status, double amount) {
+        List<Transaction> transactions = new ArrayList<>();
+        try{
+        	this.getByTransactionStatus(status).forEach(transactions::add);
+        }catch(IllegalArgumentException e) {
+        	return new ArrayList<>();
+        }
+    	return transactions.stream().filter(t -> t.getAmount() <= amount).collect(Collectors.toList());
+    }
+
+    public Iterable<Transaction> getBySenderAndMinimumAmountDescending(String sender, double amount) {
+    	List<Transaction> transactions = new ArrayList<>();
+        this.getBySenderOrderedByAmountDescending(sender).forEach(transactions::add);
+    	return transactions.stream().filter(t -> t.getAmount() >= amount).collect(Collectors.toList());
+    }
+    public Iterable<Transaction> getByReceiverAndAmountRange(String receiver, double lo, double hi) {
+        List<Transaction> transactions = new ArrayList<>();
+        this.getByReceiverOrderedByAmountThenById(receiver).forEach(transactions::add);
+        return transactions.stream().filter(t -> t.getAmount() >= lo)
+        		.filter(t -> t.getAmount() < hi).collect(Collectors.toList());
+    }
+    public Iterable<Transaction> getAllInAmountRange(double lo, double hi) {
+        List<Transaction> transactions = new ArrayList<>();
+        this.transactionsById.values().forEach(transactions::add);
+        return transactions.stream().filter(t -> t.getAmount() >= lo)
+        		.filter(t -> t.getAmount() < hi).collect(Collectors.toList());
+    }
+    public Iterator<Transaction> iterator() {
+        List<Transaction> transactions = new ArrayList<>();
+        this.transactionsById.entrySet().forEach(tr -> transactions.add(tr.getValue()));
+        return transactions.iterator();
+    }
+}
+
+public interface Transaction {
+	int getId();
+	TransactionStatus getStatus();
+	void setStatus(TransactionStatus newStatus);
+	double getAmount();
+	String getFrom();
+	String getTo();
+}
+
+import java.util.Objects;
+public class TransactionImpl implements Comparable<TransactionImpl>, Transaction{
+    private int id;
+    private TransactionStatus status;
+    private String from;
+    private String to;
+    private double amount;
+    public TransactionImpl(int id, TransactionStatus status, String from, String to, double amount) {
+        this.id = id;
+        this.status = status;
+        this.from = from;
+        this.to = to;
+        this.amount = amount;
+    }
+    public int compareTo(TransactionImpl o) {
+        return 0;
+    }
+	@Override
+	public int getId() {
+		return this.id;
+	}
+	@Override
+	public TransactionStatus getStatus() {
+		return this.status;
+	}
+	@Override
+	public void setStatus(TransactionStatus newStatus) {
+		this.status = newStatus;
+	}
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) {
+			return true;
+		}
+		if(o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		TransactionImpl that = (TransactionImpl) o;
+		return id == that.id &&
+				Double.compare(that.amount, amount) == 0 &&
+				status == that.status &&
+				Objects.equals(from, that.from) &&
+				Objects.equals(to, that.to);
+	}
+	@Override
+	public double getAmount() {
+		return this.amount;
+	}
+	@Override
+	public String getFrom() {
+		return this.from;
+	}
+	@Override
+	public String getTo() {
+		return this.to;
+	}
+}
+
+public enum TransactionStatus {
+    FAILED,
+    SUCCESSFUL,
+    ABORTED,
+    UNAUTHORIZED
+}
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+public class ChainblockImplTest {
+	private Chainblock chainblock;
+	private Transaction transaction;
+	@Before
+	public void setUp() {
+		this.chainblock = new ChainblockImpl();
+		this.transaction = new TransactionImpl(1, TransactionStatus.SUCCESSFUL, "from", "to", 14.5);
+	}
+	@Test
+	public void testAddShoudIncreaseCountOfTransactions() {
+		chainblock.add(transaction);
+		Assert.assertEquals(1, chainblock.getCount());
+	}
+	@Test
+	public void testAddShoudNotIncreaseCountWHenTransactionIdIsPreviouslyAdded() {
+		chainblock.add(transaction);
+		chainblock.add(transaction);
+		Assert.assertEquals(1, chainblock.getCount());
+	}
+	@Test
+	public void testContainsByIdShoudRturnCorrectBooleanValue() {
+		Assert.assertFalse(chainblock.contains(transaction.getId()));
+		chainblock.add(transaction);
+		Assert.assertTrue(chainblock.contains(transaction.getId()));
+	}
+	@Test
+	public void testChangeTransactionStatusShoudChanceTheStatus() {
+		chainblock.add(transaction);
+		chainblock.changeTransactionStatus(transaction.getId(), TransactionStatus.FAILED);
+		Assert.assertEquals(TransactionStatus.FAILED, transaction.getStatus());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testChangeTransactionStatusShoudTrowIfNoSuchTransaction() {
+		chainblock.changeTransactionStatus(transaction.getId(), TransactionStatus.FAILED);
+	}
+	@Test
+	public void testRemoveByIdShoudRemoveCorrecTransaction() {
+		chainblock.add(transaction);
+		chainblock.removeTransactionById(transaction.getId());
+		Assert.assertFalse(chainblock.contains(transaction));
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void testRemoveByIdShoudThrowIfTransactionIsNotPressont() {
+		chainblock.add(transaction);
+		chainblock.removeTransactionById(transaction.getId() + 1);
+	}
+	@Test
+	public void testGetByIdShoudReturnCorrectTransaction() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5));
+		Assert.assertEquals(this.transaction, chainblock.getById(transaction.getId()));
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetByIdShoudThrowIfArgumentIsNotPressent() {
+		chainblock.add(transaction);
+		chainblock.getById(this.transaction.getId() + 10);
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetTransactionByStatusShoudThrowWhenStatusNotPresent() {
+		chainblock.add(transaction);
+		chainblock.getByTransactionStatus(TransactionStatus.ABORTED);
+	}
+	@Test
+	public void testGetTransactionsByStatusShoudReturnOnlyTransactionsWhitCorrectStatus() {
+		chainblock.add(transaction);
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "from", "to", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		List<Transaction> trans = new ArrayList<>();
+		trans.add(transaction);
+		trans.add(tr2);
+		trans.add(tr3);
+		Iterable<Transaction> byTrStatus = chainblock.getByTransactionStatus(TransactionStatus.SUCCESSFUL);
+		List<Transaction> actual = new ArrayList<>();
+		byTrStatus.forEach(actual::add);
+		Assert.assertEquals(trans.size(), actual.size());
+		for(Transaction t : actual) {
+			Assert.assertEquals(TransactionStatus.SUCCESSFUL, t.getStatus());
+		}
+	}
+	@Test
+	public void testGetTransactionsByStatusShoudReturnOnlyTransactionsWhitCorrectStatusInCorrectOrder() {
+		chainblock.add(transaction);
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "from", "to", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		List<Transaction> trans = new ArrayList<>();
+		trans.add(transaction);
+		trans.add(tr2);
+		trans.add(tr3);
+		trans.sort(Comparator.comparing(Transaction::getAmount).reversed());
+		Iterable<Transaction> byTrStatus = chainblock.getByTransactionStatus(TransactionStatus.SUCCESSFUL);
+		List<Transaction> actual = new ArrayList<>();
+		byTrStatus.forEach(actual::add);
+		Assert.assertEquals(trans.size(), actual.size());
+		Assert.assertEquals(trans, actual);
+	}
+	@Test
+	public void testGetAllSendersByStatusShoudReturncorrectSenders() {
+		List<String> senders = new ArrayList<>();
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "Misho", "to", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "Misho", "to", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		senders.add(transaction.getFrom());
+		senders.add(tr2.getFrom());
+		senders.add(tr3.getFrom());
+		Iterable<String> byStatus = chainblock.getAllSendersWithTransactionStatus(TransactionStatus.SUCCESSFUL);
+		List<String> actual = new ArrayList<>();
+		byStatus.forEach(actual::add);
+		Assert.assertEquals(senders.size(), actual.size());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetSendersByTransactionStatusShoudTrowWhenNoSuchStatusPresend() {
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "Misho", "to", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "Misho", "to", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		chainblock.getAllSendersWithTransactionStatus(TransactionStatus.ABORTED);
+	}
+	@Test
+	public void testGetSendersByTransactionStatusShoudReturnInCorrectOrder() {
+		List<String> senders = new ArrayList<>();
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "Misho", "to", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "Misho", "to", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		senders.add(tr3.getFrom());
+		senders.add(tr2.getFrom());
+		senders.add(transaction.getFrom());
+		Iterable<String> byStatus = chainblock.getAllReceiversWithTransactionStatus(TransactionStatus.SUCCESSFUL);
+		List<String> actual = new ArrayList<>();
+		byStatus.forEach(actual::add);
+		Assert.assertEquals(senders, actual);
+	}
+	@Test
+	public void testGetAllReceiversByStatusShoudReturncorrectRecievers() {
+		List<String> receivers = new ArrayList<>();
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "from", "Misho", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "Misho", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		receivers.add(transaction.getTo());
+		receivers.add(tr2.getTo());
+		receivers.add(tr3.getTo());
+		Iterable<String> byStatus = chainblock.getAllReceiversWithTransactionStatus(TransactionStatus.SUCCESSFUL);
+		List<String> actual = new ArrayList<>();
+		byStatus.forEach(actual::add);
+		Assert.assertEquals(receivers.size(), actual.size());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetReceiversByTransactionStatusShoudTrowWhenNoSuchStatusPresend() {
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "from", "Misho", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "Misho", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		chainblock.getAllReceiversWithTransactionStatus(TransactionStatus.ABORTED);
+	}
+	@Test
+	public void testGetReceiversByTransactionStatusShoudReturnInCorrectOrder() {
+		List<String> receivers = new ArrayList<>();
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "from", "Misho", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "Misho", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		receivers.add(tr3.getTo());
+		receivers.add(tr2.getTo());
+		receivers.add(transaction.getTo());
+		Iterable<String> byStatus = chainblock.getAllReceiversWithTransactionStatus(TransactionStatus.SUCCESSFUL);
+		List<String> actual = new ArrayList<>();
+		byStatus.forEach(actual::add);
+		Assert.assertEquals(receivers, actual);
+	}
+	@Test
+	public void testGetAllByAmountShoudReturnCorrectOrder() {
+		List<Transaction> all = new ArrayList<>();
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.SUCCESSFUL, "from", "Misho", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "Misho", 18);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.UNAUTHORIZED, "from", "to", 12.5);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		all.add(tr3);
+		all.add(transaction);
+		all.add(tr2);
+		all.add(tr4);
+		Iterable<Transaction> byStatus = chainblock.getAllOrderedByAmountDescendingThenById();
+		List<Transaction> actual = new ArrayList<>();
+		byStatus.forEach(actual::add);
+		Assert.assertEquals(all, actual);
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetBySenderOrderedShoudThrowWhenSenderIsMissing() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5));
+		chainblock.getBySenderOrderedByAmountDescending("missing one");
+	}
+	@Test
+	public void testGetBySenderOrderedShoudReturnCorrectSender() {
+		chainblock.add(transaction);
+		String sender = "correct sender";
+		for(int i = 0; i < 10; i++) {
+			chainblock.add(new TransactionImpl(100 + i, 
+					TransactionStatus.UNAUTHORIZED, sender, "to", 1000 + 10 * i));
+		}
+		Iterable<Transaction> t = chainblock.getBySenderOrderedByAmountDescending(sender);
+		Assert.assertNotNull(t);
+		List<Transaction> transactions = new ArrayList<>();
+		t.forEach(transactions::add);
+		Assert.assertEquals(10, transactions.size());
+		for(Transaction transaction : transactions) {
+			Assert.assertEquals(sender, transaction.getFrom());
+		}
+	}
+	@Test
+	public void testGetBySenderOrderedShoudReturnCorrectSenderWhitCorrectOrder() {
+		chainblock.add(transaction);
+		String sender = "correct sender";
+		for(int i = 0; i < 10; i++) {
+			chainblock.add(new TransactionImpl(100 + i, 
+					TransactionStatus.UNAUTHORIZED, sender, "to", 1000 + 10 * i));
+		}
+		Iterable<Transaction> t = chainblock.getBySenderOrderedByAmountDescending(sender);
+		Assert.assertNotNull(t);
+		List<Transaction> transactions = new ArrayList<>();
+		t.forEach(transactions::add);
+		Assert.assertEquals(10, transactions.size());
+		double expectedAmount = 1090;
+		for(Transaction transaction : transactions) {
+			Assert.assertEquals(expectedAmount, transaction.getAmount(), 0.0);
+			expectedAmount -= 10;
+		}
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetByReceiverOrderedShoudThrowWhenReceiverIsMissing() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5));
+		chainblock.getByReceiverOrderedByAmountThenById("missing one");
+	}
+	@Test
+	public void testGetByReceiverOrderedShoudReturnCorrectReceiver() {
+		chainblock.add(transaction);
+		String receiver = "correct receiver";
+		for(int i = 0; i < 10; i++) {
+			chainblock.add(new TransactionImpl(100 + i, 
+					TransactionStatus.UNAUTHORIZED, "from", receiver, 1000 + 10 * i));
+		}
+		Iterable<Transaction> t = chainblock.getByReceiverOrderedByAmountThenById(receiver);
+		Assert.assertNotNull(t);
+		List<Transaction> transactions = new ArrayList<>();
+		t.forEach(transactions::add);
+		Assert.assertEquals(10, transactions.size());
+		for(Transaction transaction : transactions) {
+			Assert.assertEquals(receiver, transaction.getTo());
+		}
+	}
+	@Test
+	public void testGetByReceiverOrderedShoudReturnCorrectReceiverWhitCorrectOrder() {
+		chainblock.add(transaction);
+		String receiver = "correct receiver";
+		List<Transaction> expected = new ArrayList<>();
+		for(int i = 0; i < 10; i++) {
+			TransactionImpl transaction = new TransactionImpl(100 + i, 
+					TransactionStatus.UNAUTHORIZED, "from", receiver, 1000 + 10 * i);
+			expected.add(transaction);
+			chainblock.add(transaction);
+		}
+		for(int i = 0; i < 10; i++) {
+			TransactionImpl transaction = new TransactionImpl(200 + i, 
+					TransactionStatus.UNAUTHORIZED, "from", receiver, 1000 + 10 * i);
+			expected.add(transaction);
+			chainblock.add(transaction);
+		}
+		Iterable<Transaction> t = chainblock.getByReceiverOrderedByAmountThenById(receiver);
+		Assert.assertNotNull(t);
+		List<Transaction> actual = new ArrayList<>();
+		t.forEach(actual::add);
+		expected.sort(Comparator.comparing(Transaction::getAmount).reversed().thenComparing(Transaction::getId));
+		Assert.assertEquals(expected.size(), actual.size());
+		Assert.assertEquals(expected, actual);
+	}
+	@Test
+	public void testGetByTransactionStatusAndMaximumAmountShoudReturnEmptyCollectionIfNoSuchTransaction() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5));
+		Iterable<Transaction> result = chainblock.getByTransactionStatusAndMaximumAmount(TransactionStatus.FAILED, -100);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(0, counter);
+	}
+	@Test
+	public void testGetByTransactionStatusAndMaximumAmountShoudReturnCorrectValues() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5));
+		chainblock.add(new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25));
+		chainblock.add(new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10));
+		Iterable<Transaction> result = chainblock.getByTransactionStatusAndMaximumAmount(TransactionStatus.SUCCESSFUL, 20);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(2, counter);
+		for(Transaction t : result) {
+			Assert.assertEquals(TransactionStatus.SUCCESSFUL, t.getStatus());
+			Assert.assertTrue(Double.compare(20, t.getAmount()) >= 0);
+		}
+	}
+	@Test
+	public void testGetByTransactionStatusAndMaximumAmountShoudReturnCorrectTransactionsInCorrectOrder() {
+		List<Transaction> expected = new ArrayList<>();
+		Transaction t2 = new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5);
+		Transaction t3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25);
+		Transaction t4 = new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10);
+		chainblock.add(transaction);
+		chainblock.add(t2);
+		chainblock.add(t3);
+		chainblock.add(t4);
+		expected.add(transaction);
+		expected.add(t4);
+		Iterable<Transaction> result = chainblock.getByTransactionStatusAndMaximumAmount(TransactionStatus.SUCCESSFUL, 20);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(2, counter);
+		Assert.assertEquals(expected, result);
+	}@Test
+	public void testGetBySenderAndMinimumAmountShoudReturnEmptyCollectionIfNoSuchTransaction() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "from", "to", 12.5));
+		Iterable<Transaction> result = chainblock.getBySenderAndMinimumAmountDescending("from", 20);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(0, counter);
+	}
+	@Test
+	public void testGetBySenderAndMinimumAmountShoudReturnCorrectValues() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "lqlq", "to", 12.5));
+		chainblock.add(new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25));
+		chainblock.add(new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10));
+		Iterable<Transaction> result = chainblock.getBySenderAndMinimumAmountDescending("from", 11);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(2, counter);
+		for(Transaction t : result) {
+			Assert.assertEquals(TransactionStatus.SUCCESSFUL, t.getStatus());
+			Assert.assertTrue(Double.compare(20, t.getAmount()) >= 0);
+		}
+	}
+	@Test
+	public void testGetBySenderAndMMinimumAmountShoudReturnCorrectTransactionsInCorrectOrder() {
+		List<Transaction> expected = new ArrayList<>();
+		Transaction t2 = new TransactionImpl(2, TransactionStatus.ABORTED, "lqlq", "to", 12.5);
+		Transaction t3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25);
+		Transaction t4 = new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10);
+		chainblock.add(transaction);
+		chainblock.add(t2);
+		chainblock.add(t3);
+		chainblock.add(t4);
+		expected.add(t3);
+		expected.add(transaction);
+		Iterable<Transaction> result = chainblock.getBySenderAndMinimumAmountDescending("from", 11);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(2, counter);
+		Assert.assertEquals(expected, result);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetByReceiverAndAmountRangeShoudThrowWhenNoSuchReceiverFound() {
+		chainblock.add(transaction);
+		chainblock.getByReceiverAndAmountRange("lqlq", 5, 10);
+	}
+	@Test
+	public void testGetByReceiverAndAmountRangeReturnCorrectValues() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "lqlq", "lqlq", 12.5));
+		chainblock.add(new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25));
+		chainblock.add(new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10));
+		chainblock.add(new TransactionImpl(5, TransactionStatus.SUCCESSFUL, "from", "to", 15));
+		Iterable<Transaction> trans = chainblock.getByReceiverAndAmountRange("to", 11, 20);
+		List<Transaction> actual = new ArrayList<>();
+		trans.forEach(actual::add);
+		Assert.assertEquals(2, actual.size());
+	}
+	@Test
+	public void testGetByReceiverAndAmountRangeReturnCorrectValuesInRightOrder() {
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.ABORTED, "lqlq", "lqlq", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10);
+		Transaction tr5 = new TransactionImpl(5, TransactionStatus.SUCCESSFUL, "from", "to", 15);
+		Transaction tr6 = new TransactionImpl(6, TransactionStatus.SUCCESSFUL, "from", "to", 15);
+		chainblock.add(transaction);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		chainblock.add(tr5);
+		chainblock.add(tr6);
+		List<Transaction> expected = new ArrayList<>();
+		expected.add(tr6);
+		expected.add(tr5);
+		expected.add(transaction);
+		Iterable<Transaction> trans = chainblock.getByReceiverAndAmountRange("to", 11, 20);
+		List<Transaction> actual = new ArrayList<>();
+		trans.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+	@Test
+	public void testGetAllInAmountRangeShoudReturnEmptyCollectionIfNoTransactionInThisRangeIsFound() {
+		chainblock.add(transaction);
+		Iterable<Transaction> result = chainblock.getAllInAmountRange(20, 100);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(0, counter);
+	}
+	@Test
+	public void testGetAllInAmountRangeShoudReturnCorrectValues() {
+		chainblock.add(transaction);
+		chainblock.add(new TransactionImpl(2, TransactionStatus.ABORTED, "lqlq", "lqlq", 12.5));
+		chainblock.add(new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25));
+		chainblock.add(new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10));
+		chainblock.add(new TransactionImpl(5, TransactionStatus.SUCCESSFUL, "from", "to", 15));
+		Iterable<Transaction> result = chainblock.getAllInAmountRange(14.5, 100);
+		Assert.assertNotNull(result);
+		int counter = 0;
+		for(Iterator<Transaction> iter = result.iterator(); iter.hasNext(); iter.next()) {
+			counter++;
+		}
+		Assert.assertEquals(4, counter);
+	}
+	@Test
+	public void testGetAllInAmountRangeShoudReturnCorrectValuesInCorrectOrder() {
+		chainblock.add(transaction);
+		Transaction tr2 = new TransactionImpl(2, TransactionStatus.ABORTED, "lqlq", "lqlq", 12.5);
+		Transaction tr3 = new TransactionImpl(3, TransactionStatus.SUCCESSFUL, "from", "to", 25);
+		Transaction tr4 = new TransactionImpl(4, TransactionStatus.SUCCESSFUL, "from", "to", 10);
+		Transaction tr5 = new TransactionImpl(5, TransactionStatus.SUCCESSFUL, "from", "to", 15);
+		chainblock.add(tr2);
+		chainblock.add(tr3);
+		chainblock.add(tr4);
+		chainblock.add(tr5);
+		List<Transaction> expected = new ArrayList<>();
+		expected.add(this.transaction);
+		expected.add(tr2);
+		expected.add(tr3);
+		expected.add(tr5);
+		Iterable<Transaction> result = chainblock.getAllInAmountRange(14.5, 100);
+		Assert.assertNotNull(result);
+		List<Transaction> actual = new ArrayList<>();
+		result.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+}
