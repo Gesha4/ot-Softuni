@@ -23,3 +23,468 @@ quantity, return empty collection.
 Duplicates of the product class are allowed. That means that the price and quantity of multiple objects might be the same (It 
 is acceptable for the quantity to be 0). There will be no duplicate references or labels. The input will always be valid.*/
 
+import java.util.Comparator;
+public class Product implements Comparable<Product> {
+    public String label;
+    public double price;
+    public int quantity;
+    public Product(String label, double price, int quantity) {
+        this.label = label;
+        this.price = price;
+        this.quantity = quantity;
+    }
+    public String getLabel() {
+        return this.label;
+    }
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    public double getPrice() {
+        return this.price;
+    }
+    public void setPrice(double price) {
+        this.price = price;
+    }
+    public int getQuantity() {
+        return this.quantity;
+    }
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+	@Override
+	public int compareTo(Product p) {
+		return Comparator.comparing(Product::getLabel)
+				.thenComparing(Product::getPrice)
+				.thenComparing(Product::getQuantity)
+				.compare(this, p);
+	}
+}
+
+public interface ProductStock extends Iterable<Product> {
+    //getter
+    int getCount();
+    //Validations
+    boolean contains(Product product);
+    //Modifications
+    void add(Product product);
+    void changeQuantity(String product, int quantity);
+    //Retrievals
+    Product find(int index);
+    Product findByLabel(String label);
+    Iterable<Product> findFirstByAlphabeticalOrder(int count);
+    //Querying
+    Iterable<Product> findAllInRange(double lo, double hi);
+    Iterable<Product> findAllByPrice(double price);
+    Iterable<Product> findFirstMostExpensiveProducts(int count);
+    Iterable<Product> findAllByQuantity(int quantity);
+}
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+public class InstockTest {
+	private Instock stock;
+	private Product product;
+	@Before
+	public void setUp() throws Exception {
+		this.stock = new Instock();
+		this.product = new Product("lqlq", 2.3, 4);
+	}
+	@Test
+	public void testContains() {
+		this.stock.add(product);
+		this.stock.add(new Product("blqblq", 3.2, 5));
+		assertTrue(stock.contains(product));
+	}
+	@Test
+	public void testGetCount() {
+		this.stock.add(product);
+		this.stock.add(new Product("blqblq", 3.2, 5));
+		Assert.assertEquals(2, this.stock.getCount());
+	}
+	@Test
+	public void testAddCorrectly() {
+		this.stock.add(product);
+		this.stock.add(product);
+		this.stock.add(new Product("blqblq", 3.2, 5));
+		Assert.assertEquals(2, this.stock.getCount());
+	}
+	@Test (expected = IndexOutOfBoundsException.class)
+	public void testFindThrowWhenIndexIsNotCorrect() {
+		this.stock.add(product);
+		this.stock.find(5);
+	}
+	@Test
+	public void testFindReturnCorrectProduct() {
+		this.stock.add(new Product("blqblq", 3.2, 5));
+		this.stock.add(product);
+		Assert.assertEquals(this.product, this.stock.find(2));
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testChangeQuantityThrowsWhenNoSuchProduct() {
+		this.stock.add(product);
+		this.stock.changeQuantity("mushu", 5);
+	}
+	@Test
+	public void testChangeQuantityWorkWell() {
+		this.stock.add(product);
+		this.stock.add(new Product("blqblq", 3.2, 5));
+		this.stock.changeQuantity("lqlq", 7);
+		Assert.assertEquals(7, this.stock.find(1).getQuantity());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testFindByLebelThrowsWhenNoSuchLabel() {
+		this.stock.add(product);
+		this.stock.findByLabel("blabla");
+	}
+	@Test
+	public void testFindByLabelReturnsRightProduct() {
+		this.stock.add(product);
+		this.stock.add(new Product("blqblq", 3.2, 5));
+		Assert.assertEquals(product, this.stock.findByLabel(this.product.getLabel()));
+	}
+	@Test
+	public void testFindFirstByAlphabeticalOrderReturnEmptyList() {
+		Iterable<Product> iter = this.stock.findFirstByAlphabeticalOrder(5);
+		List<Product> products = new ArrayList<>();
+		iter.forEach(products::add);
+		Assert.assertEquals(0, products.size());
+	}
+	@Test
+	public void testFindFirstByAlphabeticalOrderShoudReturnCorrectProducts() {
+		Product pr2 = new Product("aaa", 2.3, 4);
+		Product pr3 = new Product("bbb", 2.3, 4);
+		Product pr4 = new Product("qqq", 2.3, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		this.stock.add(pr4);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr3);
+		expected.add(product);
+		Iterable<Product> iter = this.stock.findFirstByAlphabeticalOrder(3);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected.size(), actual.size());
+	}
+	@Test
+	public void testFindFirstByAlphabeticalOrderShoudReturnCorrectProductsInCorrectOrder() {
+		Product pr2 = new Product("aaa", 2.3, 4);
+		Product pr3 = new Product("bbb", 2.3, 4);
+		Product pr4 = new Product("qqq", 2.3, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		this.stock.add(pr4);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr3);
+		expected.add(product);
+		Iterable<Product> iter = this.stock.findFirstByAlphabeticalOrder(3);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+	@Test
+	public void testFindAllInPriceRangeReturnEmptyList() {
+		this.stock.add(product);
+		List<Product> actual = new ArrayList<>();
+		Iterable<Product> iter = this.stock.findAllInRange(10, 20.5);
+		iter.forEach(actual::add);
+		Assert.assertEquals(0, actual.size());
+	}
+	@Test
+	public void testFindAllInPriceRangeShoudReturnCorrectProducts() {
+		Product pr2 = new Product("aaa", 5.6, 4);
+		Product pr3 = new Product("bbb", 30, 4);
+		Product pr4 = new Product("qqq", 26.4, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		this.stock.add(pr4);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr4);
+		expected.add(pr3);
+		Iterable<Product> iter = this.stock.findAllInRange(2.3, 30);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected.size(), actual.size());
+	}
+	@Test
+	public void testFindAllInPriceRangeShoudReturnCorrectProductsInCorrectOrder() {
+		Product pr2 = new Product("aaa", 5.6, 4);
+		Product pr3 = new Product("bbb", 30, 4);
+		Product pr4 = new Product("qqq", 26.4, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		this.stock.add(pr4);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr4);
+		expected.add(pr3);
+		Iterable<Product> iter = this.stock.findAllInRange(2.3, 30);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+	@Test
+	public void testFindAllByPriceReturnEmptyCollection() {
+		this.stock.add(product);
+		List<Product> actual = new ArrayList<>();
+		Iterable<Product> iter = this.stock.findAllByPrice(5);
+		iter.forEach(actual::add);
+		Assert.assertEquals(0, actual.size());
+	}
+	@Test
+	public void testFindAllByPriceShoudRetrunCorrectProducts() {
+		Product pr2 = new Product("aaa", 5, 4);
+		Product pr3 = new Product("bbb", 5, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr3);
+		Iterable<Product> iter = this.stock.findAllByPrice(5);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected.size(), actual.size());
+	}
+	@Test
+	public void testFindAllByPriceShoudRetrunCorrectProductsInCorrectOrder() {
+		Product pr2 = new Product("aaa", 5, 4);
+		Product pr3 = new Product("bbb", 5, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr3);
+		Iterable<Product> iter = this.stock.findAllByPrice(5);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testFindFirstMostExpensiveProductsThrowWhenNothingFound() {
+		this.stock.add(product);
+		this.stock.findFirstMostExpensiveProducts(5);
+	}
+	@Test
+	public void testFindFirstMostExpensiveProductsShoudReturnCorrectProducts() {
+		Product pr2 = new Product("aaa", 5.6, 4);
+		Product pr3 = new Product("bbb", 30, 4);
+		Product pr4 = new Product("qqq", 26.4, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		this.stock.add(pr4);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr3);
+		expected.add(pr4);
+		expected.add(pr2);
+		Iterable<Product> iter = this.stock.findFirstMostExpensiveProducts(3);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected.size(), actual.size());
+	}
+	@Test
+	public void testFindFirstMostExpensiveProductsShoudReturnCorrectProductsInCorrectOrder() {
+		Product pr2 = new Product("aaa", 5.6, 4);
+		Product pr3 = new Product("bbb", 30, 4);
+		Product pr4 = new Product("qqq", 26.4, 4);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		this.stock.add(pr4);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr3);
+		expected.add(pr4);
+		expected.add(pr2);
+		Iterable<Product> iter = this.stock.findFirstMostExpensiveProducts(3);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+	@Test
+	public void testFindAllByQuantityReturnEmptyCollection() {
+		this.stock.add(product);
+		List<Product> actual = new ArrayList<>();
+		Iterable<Product> iter = this.stock.findAllByQuantity(10);
+		iter.forEach(actual::add);
+		Assert.assertEquals(0, actual.size());
+	}
+	@Test
+	public void testFindAllByQuantityShoudRetrunCorrectProducts() {
+		Product pr2 = new Product("aaa", 5, 15);
+		Product pr3 = new Product("bbb", 5, 15);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr3);
+		Iterable<Product> iter = this.stock.findAllByPrice(5);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected.size(), actual.size());
+	}
+	@Test
+	public void testFindAllByQuantityShoudRetrunCorrectProductsInCorrectOrder() {
+		Product pr2 = new Product("aaa", 5, 15);
+		Product pr3 = new Product("bbb", 5, 15);
+		this.stock.add(product);
+		this.stock.add(pr2);
+		this.stock.add(pr3);
+		List<Product> expected = new ArrayList<>();
+		expected.add(pr2);
+		expected.add(pr3);
+		Iterable<Product> iter = this.stock.findAllByPrice(5);
+		List<Product> actual = new ArrayList<>();
+		iter.forEach(actual::add);
+		Assert.assertEquals(expected, actual);
+	}
+}
+
+import jdk.jshell.spi.ExecutionControl;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+public class Instock implements ProductStock {
+	private Map<String, Product> stock;
+	public Instock() {
+		this.stock = new LinkedHashMap<>();
+	}
+    @Override
+    public int getCount() {
+        return this.stock.size();
+    }
+    @Override
+    public boolean contains(Product product) {
+        return this.stock.containsKey(product.getLabel());
+    }
+    @Override
+    public void add(Product product) {
+        if(!this.stock.containsKey(product.getLabel())) {
+        	this.stock.put(product.getLabel(), product);
+        }
+    }
+    @Override
+    public void changeQuantity(String product, int quantity) {
+        if(!this.stock.containsKey(product)) {
+        	throw new IllegalArgumentException();
+        } else {
+        	this.stock.get(product).setQuantity(quantity);
+        }
+    }
+    @Override
+    public Product find(int index) {
+        if(index < 0 || index > this.stock.size()) {
+        	throw new IndexOutOfBoundsException();
+        } else {
+        	Product finded = null;
+        	int num = 1;
+        	for(Entry<String, Product> p : this.stock.entrySet()) {
+        		if(index == num) {
+        			finded = p.getValue();
+        			break;
+        		} else {
+        			num++;
+        		}
+        	}
+        	return finded;
+        }
+    }
+    @Override
+    public Product findByLabel(String label) {
+        if(!this.stock.containsKey(label)) {
+        	throw new IllegalArgumentException();
+        } else {
+        	return this.stock.get(label);
+        }
+    }
+    @Override
+    public Iterable<Product> findFirstByAlphabeticalOrder(int count) {
+        if(count < 0 || count > this.stock.size()) {
+        	return new ArrayList<>();
+        } else {
+        	List<Product> byAlphabetical = new ArrayList<>();
+        	int counting = 1;
+        	for(Entry<String, Product> product : stock.entrySet()) {
+        		byAlphabetical.add(product.getValue());
+        		counting++;
+        		if(counting > count) break;
+        	}
+        	return byAlphabetical.stream().sorted((f,s) -> f.getLabel().compareTo(s.getLabel()))
+        			.collect(Collectors.toList());
+        }
+    }
+    @Override
+    public Iterable<Product> findAllInRange(double lo, double hi) {
+        List<Product> products = new ArrayList<>();
+        for(Entry<String, Product> product : this.stock.entrySet()) {
+        	if(product.getValue().getPrice() > lo && product.getValue().getPrice() <= hi) {
+        		products.add(product.getValue());
+        	}
+        }
+        return products.stream().sorted((f,s) -> Double.compare(f.getPrice(), s.getPrice()))
+        		.collect(Collectors.toList());
+    }
+    @Override
+    public Iterable<Product> findAllByPrice(double price) {
+    	List<Product> products = new ArrayList<>();
+    	 for(Entry<String, Product> product : this.stock.entrySet()) {
+         	if(product.getValue().getPrice() == price) {
+         		products.add(product.getValue());
+         	}
+         }
+    	 return products;
+    }
+    @Override
+    public Iterable<Product> findFirstMostExpensiveProducts(int count) {
+        if(count <= 0 || count > this.stock.size()) {
+        	throw new IllegalArgumentException();
+        } else {
+        	List<Product> products = new ArrayList<>();
+        	for(Entry<String, Product> product : this.stock.entrySet()) {
+        		products.add(product.getValue());
+        	}
+        	products.sort((f,s) -> Double.compare(s.getPrice(), f.getPrice()));
+        	while(products.size() > count) {
+        		products.remove(products.size() - 1);
+        	}
+        	return products;
+        }
+    }
+    @Override
+    public Iterable<Product> findAllByQuantity(int quantity) {
+    	List<Product> products = new ArrayList<>();
+   	 for(Entry<String, Product> product : this.stock.entrySet()) {
+        	if(product.getValue().getQuantity() == quantity) {
+        		products.add(product.getValue());
+        	}
+        }
+   	 return products;
+    }
+    @Override
+    public Iterator<Product> iterator() {
+    	List<Product> products = new ArrayList<>();
+    	for(Entry<String, Product> product : this.stock.entrySet()) {
+    		products.add(product.getValue());
+    	}
+    	return products.iterator();
+    }
+}
