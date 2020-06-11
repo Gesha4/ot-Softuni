@@ -1,0 +1,194 @@
+package model;
+public interface GameObject {
+	void update();
+	void render();
+}
+
+package model;
+
+import java.util.concurrent.ThreadLocalRandom;
+import Core.Main;
+import shared.Factory;
+import shared.StoneFactory;
+public class Player implements GameObject{
+	private int health;
+	private int damage;
+	private Factory factory;
+	public Player(int health, int damage) {
+		this.health = health;
+		this.damage = damage;
+		this.factory = new StoneFactory();
+	}
+	@Override
+	public void update() {
+		int chanse = ThreadLocalRandom.current().nextInt(1000);
+		if(chanse % 3 == 0) {
+			Main.gameObjects.add(this.factory.produce());
+		} else if(chanse % 7 == 0) {
+			Main.gameObjects.removeIf(g -> g.getClass().getSimpleName().equals("Stone"));
+		}
+		System.out.println("Player updated");
+	}
+	@Override
+	public void render() {
+		System.out.println("Player rendered");
+	}
+}
+
+package model;
+public class Enemy implements GameObject{
+	private int health;
+	private int damage;
+	public Enemy(int health, int damaga) {
+		this.health = health;
+		this.damage = damage;
+	}
+	@Override
+	public void update() {
+		System.out.println("Enemy updated");
+	}
+	@Override
+	public void render() {
+		System.out.println("Enemy rendered");
+	}
+}
+
+package model;
+public class Stone implements GameObject{
+	@Override
+	public void update() {
+		System.out.println("I am stone and I do nothing");
+	}
+
+	@Override
+	public void render() {
+		System.out.println("See stone");
+	}
+}
+
+package model;
+import java.util.ArrayList;
+import java.util.List;
+import data.DataStorage;
+import shared.EnemyFactory;
+import shared.Factory;
+import shared.InitialGameObjects;
+import shared.PlayerFactory;
+import shared.ProduceMultiple;
+public class Initilizer {
+	public static DataStorage dataStorage = new DataStorage();
+	public static ProduceMultiple multiple = new InitialGameObjects();
+	public static List<Factory> objectFactory = new ArrayList<>();
+	public static List<GameObject> init(){
+		objectFactory.add(new PlayerFactory());
+		objectFactory.add(new EnemyFactory());
+		multiple.setFactories(objectFactory);
+		return multiple.produce();
+	}
+}
+
+package shared;
+import model.GameObject;
+public interface Factory {
+	GameObject produce();
+}
+
+package shared;
+import java.util.List;
+import model.GameObject;
+public interface ProduceMultiple {
+	List<GameObject> produce();
+	void setFactories(List<Factory> objectFactory);
+}
+
+package shared;
+import model.GameObject;
+import model.Initilizer;
+import model.Player;
+public class PlayerFactory implements Factory{
+	@Override
+	public GameObject produce() {
+		int[] params = Initilizer.dataStorage.load(Player.class);
+		return new Player(params[0], params[1]);
+	}
+}
+
+package shared;
+import model.Enemy;
+import model.GameObject;
+import model.Initilizer;
+public class EnemyFactory implements Factory{
+	@Override
+	public GameObject produce() {
+		int[] params = Initilizer.dataStorage.load(Enemy.class);
+		return new Enemy(params[0], params[1]);
+	}
+}
+
+package shared;
+import model.GameObject;
+import model.Stone;
+public class StoneFactory implements Factory{
+	@Override
+	public GameObject produce() {
+		return new Stone();
+	}
+}
+
+package shared;
+import java.util.ArrayList;
+import java.util.List;
+import model.GameObject;
+public class InitialGameObjects implements ProduceMultiple{
+	private List<Factory> objectFactories;
+	public InitialGameObjects() {
+		this.objectFactories = new ArrayList<>();
+	}
+	@Override
+	public List<GameObject> produce() {
+		List<GameObject> gameObjects = new ArrayList<>();
+		for(Factory objectFactory : objectFactories) {
+			gameObjects.add(objectFactory.produce());
+		}
+		return gameObjects;
+	}
+
+	@Override
+	public void setFactories(List<Factory> objectFactories) {
+		this.objectFactories = objectFactories;
+	}
+}
+
+package data;
+import java.util.Map;
+import model.Enemy;
+import model.Player;
+public class DataStorage {
+	private Map<Class<?>, int[]> objectsData = Map.of(
+			Player.class, new int[] {100, 24},
+			Enemy.class, new int[] {240, 12});
+	public int[] load(Class<?> clazz) {
+		return this.objectsData.get(clazz);
+	}
+}
+
+package Core;
+import java.util.ArrayList;
+import java.util.List;
+import model.GameObject;
+import model.Initilizer;
+public class Main {
+	public static List<GameObject> gameObjects;
+	public static void main(String[] args) throws InterruptedException {
+		gameObjects = Initilizer.init();
+		boolean gameOver = false;
+		while(!gameOver) {
+			ArrayList<GameObject> copy = new ArrayList<>(Main.gameObjects);
+			for(GameObject gameObject : gameObjects) {
+				gameObject.update();
+				gameObject.render();
+			}
+			Thread.sleep(2000);
+		}
+	}
+}
