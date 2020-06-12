@@ -1,0 +1,376 @@
+/*You are given 4 interfaces, and you have to implement their functionality in the correct classes.
+There are 4 types of entities in the application: Player, Gun, Neighbourhood and GunRepository:
+BasePlayer
+BasePlayer is a base class or any type of player and it should not be able to be instantiated.
+Data
+•	name – String
+o	If the name is null or whitespace, throw a NullPointerException	with message 
+"Player's name cannot be null or a whitespace!"
+o	All names are unique
+•	lifePoints –  int
+o	The health of а player
+o	If the health is below 0, throw an IllegalArgumentException with message 
+"Player life points cannot be below zero!"
+•	gunRepository - Repository<Gun>
+o	Generic repository of all player's guns
+Behavior
+void takeLifePoints(int points)
+The takeLifePoints method decreases players' life points.
+•	Player's life points should not drop below zero
+Constructor
+A BasePlayer should take the following values upon initialization:
+String name, int lifePoints
+Child Classes
+There are several concrete types of players:
+MainPlayer
+Has 100 initial life points and the main player has only one name "Tommy Vercetti". The constructor should not take name and
+life points values upon initialization.
+CivilPlayer
+Has 50 initial life points.
+Constructor should take the following values upon initialization:
+String name
+BaseGun
+The BaseGun is a base class for any type of gun and it should not be able to be instantiated.
+Data
+•	name – String
+o	If the gun name is null or empty, throw a NullPointerException with message 
+"Name cannot be null or whitespace!"
+o	All names are unique
+•	bulletsPerBarrel – int
+o	If the bullets are below zero, throw an IllegalArgumentException with message 
+"Bullets cannot be below zero!"
+o	The initial BulletsInBarrel count is the actual capacity of the barrel!
+•	totalBullets - int 
+o	If the total bullets are below zero, throw an IllegalArgumentException with message 
+"Total bullets cannot be below zero!"
+Behavior
+int fire()
+The Fire method acts different in all child classes. It shoots bullets and returns the number of bullets that were shot. Here
+is how it works: 
+•	Your guns have a barrel, which have a certain capacity for bullets and you shoot a different count of bullets when you pull
+the trigger. 
+•	If your barrel becomes empty, you need to reload before you can shoot again.
+•	Reloading is done by refilling the whole barrel of the gun (Keep in mind, that every barrel has capacity).
+•	The bullets you take for reloading are taken from the gun's total bullets stock. 
+Keep in mind, that every type of gun shoots different count of bullets, when you pull the trigger!
+Constructor
+A BaseGun should take the following values upon initialization:
+String name, int bulletsPerBarrel, int totalBullets
+Child Classes
+There are several concrete types of guns:
+Pistol
+Has 10 bullets per barrel and 100 total bullets.
+Behavior
+int fire()
+The pistol shoots only one bullet.
+Constructor
+Constructor should take the following values upon initialization:
+String name
+Rifle
+Has 50 bullets per barrel and 500 total bullets.
+Behavior
+int fire()
+The rifle can shoot with 5 bullets.
+Constructor
+Constructor should take the following values upon initialization:
+String name
+GangNeighbourhood
+The gang neighbourhood is the place where the shooting happens. It should inherit the Neighbourhood interface.
+Behavior
+void action(Player mainPlayer, Collection<Player> civilPlayers)
+That's the most interesting method. 
+The main player starts shooting at all the civil players. When he starts shooting at a civil player, the following rules apply:
+•	He takes a gun from his guns.
+•	Every time he shoots, he takes life points from the civil player, which are equal to the bullets that the current gun shoots 
+when the trigger is pulled.
+•	If the barrel of his gun becomes empty, he reloads from his bullets stock and continues shooting with the current gun, until 
+he uses all of its bullets.
+•	If his gun runs out of total bullets, he takes the next gun he has and continues shooting.
+•	He shoots at the current civil player until he / she is alive. 
+•	If the civil player dies, he starts shooting at the next one.
+•	The main player stops shooting only if he runs out of guns or until all the civil players are dead.
+The civil players (the ones that have stayed alive after the main player's attack) attack second. They start shooting at him 
+one after another and the following rules apply:
+•	A civil player takes one of his guns and starts shooting at the main player.
+•	Every time he shoots, he takes life points from the main player, which are equal to the bullets that the current gun shoots 
+when the trigger is pulled.
+•	If the barrel of his gun becomes empty, he reloads from his bullets stock and continues shooting with the current gun, until
+he uses all of its bullets.
+•	If his current gun runs out of all its bullets, he takes the next gun he has and continues shooting.
+•	If a civil player runs out of guns, the next civil player begins shooting.
+•	If the main player dies, the whole action ends.
+GunRepository
+The gun repository holds information about a player's guns.
+Data
+•	models – collection of guns (unmodifiable)
+Behavior
+void add(Gun model)
+Adds a gun in the collection.
+•	If the gun already exists in the player's collection of guns, don't add it. Every gun is unique.
+boolean remove(Gun model)
+Removes a gun from the collection.
+Gun find(String name)
+Returns a gun with that name. It is guaranteed that the guns exists in the collection.*/
+
+package viceCity.models.players;
+import viceCity.models.guns.Gun;
+import viceCity.repositories.interfaces.Repository;
+public interface Player {
+    String getName();
+    int getLifePoints();
+    boolean isAlive();
+    Repository<Gun> getGunRepository();
+    void takeLifePoints(int points);
+}
+
+package viceCity.models.players;
+import viceCity.models.guns.Gun;
+import viceCity.repositories.interfaces.GunRepository;
+import viceCity.repositories.interfaces.Repository;
+class BasePlayer implements Player{
+	private String name;
+	private int lifePoints;
+	private Repository<Gun> gunRepository;
+	protected BasePlayer(String name, int lifePoints) {
+		this.setName(name);
+		this.setLifePoints(lifePoints);
+		this.gunRepository = new GunRepository();
+	}
+	private void setName(String name) {
+		if(name.isBlank()) {
+			throw new NullPointerException("Player's name cannot be null or a whitespace!");
+		} else {
+			this.name = name;
+		}
+	}
+	private void setLifePoints(int lifePoints) {
+		if(lifePoints < 0) {
+			throw new IllegalArgumentException("Player life points cannot be below zero!");
+		} else {
+			this.lifePoints = lifePoints;
+	
+		}
+	}
+	@Override
+	public String getName() {
+		return this.name;
+	}
+	@Override
+	public int getLifePoints() {
+		return this.lifePoints;
+	}
+	@Override
+	public boolean isAlive() {
+		return this.lifePoints > 0 ? true : false;
+	}
+	@Override
+	public Repository<Gun> getGunRepository() {
+		return this.gunRepository;
+	}
+	@Override
+	public void takeLifePoints(int points) {
+		int woundedLP = this.lifePoints - points;
+		if(woundedLP <= 0) {
+			woundedLP = 0;
+		}
+		this.lifePoints = woundedLP;
+	}
+}
+
+package viceCity.models.players;
+public class MainPlayer extends BasePlayer{
+	protected MainPlayer() {
+		super("Tommy Vercetti", 100);
+	}
+}
+
+package viceCity.models.players;
+public class CivilPlayer extends BasePlayer{
+	protected CivilPlayer(String name) {
+		super(name, 50);
+	}
+}
+
+package viceCity.models.guns;
+public interface Gun {
+    String getName();
+    int getBulletsPerBarrel();
+    boolean canFire();
+    int getTotalBullets();
+    int fire();
+}
+
+package viceCity.models.guns;
+abstract class BaseGun implements Gun{
+	private String name;
+	protected int bulletsPerBarrel;
+	protected int totalBullets;
+	protected BaseGun(String name, int bulletsPerBarrel, int totalBullets) {
+		this.setName(name);
+		this.setBulletsPerBarrel(bulletsPerBarrel);
+		this.setTotalBullets(totalBullets);
+	}
+	private void setName(String name) {
+		if(name.isBlank()) {
+			throw new NullPointerException("Name cannot be null or whitespace!");
+		} else {
+			this.name = name;			
+		}
+	}
+	private void setBulletsPerBarrel(int bulletsPerBarrel) {
+		if(bulletsPerBarrel < 0) {
+			throw new IllegalArgumentException("Bullets cannot be below zero!");
+		} else {
+			this.bulletsPerBarrel = bulletsPerBarrel;			
+		}
+	}
+	private void setTotalBullets(int totalBullets) {
+		if(totalBullets < 0) {
+			throw new IllegalArgumentException("Total bullets cannot be below zero!");
+		} else {
+		this.totalBullets = totalBullets;
+		}
+	}
+	@Override
+	public String getName() {
+		return this.name;
+	}
+	@Override
+	public int getBulletsPerBarrel() {
+		return this.bulletsPerBarrel;
+	}
+	@Override
+	public int getTotalBullets() {
+		return this.totalBullets;
+	}
+}
+
+package viceCity.models.guns;
+public class Pistol extends BaseGun{
+	protected Pistol(String name) {
+		super(name, 10, 100);
+	}
+	@Override
+	public int fire() {
+		if(this.bulletsPerBarrel == 0) {
+			this.reload();
+		}
+		this.bulletsPerBarrel--;
+		return 1;
+	}
+	@Override
+	public boolean canFire() {
+		return this.totalBullets > 0 || this.bulletsPerBarrel > 0;
+	}
+	private void reload() {
+		this.totalBullets -= 10;
+		this.bulletsPerBarrel = 10;
+	}
+}
+
+package viceCity.models.guns;
+public class Rifle extends BaseGun{
+	protected Rifle(String name) {
+		super(name, 50, 500);
+	}
+	@Override
+	public boolean canFire() {
+		return this.totalBullets >= 50 || this.bulletsPerBarrel >= 50;
+	}
+	@Override
+	public int fire() {
+		if(!this.canFire()) {
+			this.reload();
+		}
+		this.bulletsPerBarrel -= 5;
+		return 5;
+	}
+	private void reload() {
+		this.totalBullets -= 50;
+		this.bulletsPerBarrel = 50;
+	}
+}
+
+package viceCity.repositories.interfaces;
+import java.util.Collection;
+public interface Repository<Gun> {
+    Collection<Gun> getModels();
+    void add(Gun model);
+    boolean remove(Gun model);
+    Gun find(String name);
+}
+
+package viceCity.repositories.interfaces;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import viceCity.models.guns.Gun;
+public class GunRepository implements Repository<Gun>{
+	Set<Gun> models;
+	public GunRepository() {
+		this.models = new HashSet<>();
+	}
+	@Override
+	public Collection<Gun> getModels() {
+		return new HashSet<>(this.models);
+	}
+	@Override
+	public void add(Gun model) {
+		this.models.add(model);
+	}
+	@Override
+	public boolean remove(Gun model) {
+		return this.models.remove(model);
+	}
+	@Override
+	public Gun find(String name) {
+		Gun finded = null;
+		for(Gun gun : models) {
+			if(gun.getName().equals(name)) {
+				finded = gun;
+				break;
+			}
+		}
+		return finded;
+	}
+}
+
+package viceCity.models.neighbourhood;
+import viceCity.models.players.Player;
+import java.util.Collection;
+public interface Neighbourhood {
+    void action(Player mainPlayer, Collection<Player> civilPlayers);
+}
+
+package viceCity.models.neighbourhood;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import viceCity.models.guns.Gun;
+import viceCity.models.players.Player;
+public class GangNeighbourhood implements Neighbourhood{
+	@Override
+	public void action(Player mainPlayer, Collection<Player> civilPlayers) {
+		Collection<Gun> mainGuns = mainPlayer.getGunRepository().getModels();
+		List<Player> civils = new ArrayList<>();
+		civilPlayers.forEach(civils::add);
+		for(Gun gun : mainGuns) {
+			while(gun.canFire() && !civils.isEmpty()) {
+				civils.get(0).takeLifePoints(gun.fire());
+				if(civils.get(0).getLifePoints() == 0) {
+					civils.remove(0);
+				}
+			}
+		}
+		if(!civils.isEmpty()) {
+			for(Player civil : civils) {
+				for(Gun gun : civil.getGunRepository().getModels()) {
+					while(mainPlayer.isAlive() && gun.canFire()) {
+						mainPlayer.takeLifePoints(gun.fire());
+					}
+				}
+			}
+		}
+	}
+}
