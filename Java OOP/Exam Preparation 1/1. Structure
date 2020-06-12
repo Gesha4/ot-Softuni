@@ -179,14 +179,14 @@ class BasePlayer implements Player{
 
 package viceCity.models.players;
 public class MainPlayer extends BasePlayer{
-	protected MainPlayer() {
+	public MainPlayer() {
 		super("Tommy Vercetti", 100);
 	}
 }
 
 package viceCity.models.players;
 public class CivilPlayer extends BasePlayer{
-	protected CivilPlayer(String name) {
+	public CivilPlayer(String name) {
 		super(name, 50);
 	}
 }
@@ -344,27 +344,21 @@ public interface Neighbourhood {
 }
 
 package viceCity.models.neighbourhood;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import viceCity.models.guns.Gun;
 import viceCity.models.players.Player;
 public class GangNeighbourhood implements Neighbourhood{
 	@Override
 	public void action(Player mainPlayer, Collection<Player> civilPlayers) {
 		Collection<Gun> mainGuns = mainPlayer.getGunRepository().getModels();
-		List<Player> civils = new ArrayList<>();
-		civilPlayers.forEach(civils::add);
 		for(Gun gun : mainGuns) {
-			while(gun.canFire() && !civils.isEmpty()) {
-				civils.get(0).takeLifePoints(gun.fire());
-				if(civils.get(0).getLifePoints() == 0) {
-					civils.remove(0);
-				}
+			while(gun.canFire() && !civilPlayers.isEmpty()) {
+				((Player) civilPlayers.toArray()[0]).takeLifePoints(gun.fire());
+				civilPlayers.removeIf(p -> p.getLifePoints() == 0);
 			}
 		}
-		if(!civils.isEmpty()) {
-			for(Player civil : civils) {
+		if(!civilPlayers.isEmpty()) {
+			for(Player civil : civilPlayers) {
 				for(Gun gun : civil.getGunRepository().getModels()) {
 					while(mainPlayer.isAlive() && gun.canFire()) {
 						mainPlayer.takeLifePoints(gun.fire());
