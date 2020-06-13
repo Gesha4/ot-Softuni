@@ -47,8 +47,8 @@ Behavior
 int fire()
 The Fire method acts different in all child classes. It shoots bullets and returns the number of bullets that were shot. Here
 is how it works: 
-•	Your guns have a barrel, which have a certain capacity for bullets and you shoot a different count of bullets when you pull
-the trigger. 
+•	Your guns have a barrel, which have a certain capacity for bullets and you shoot a different count of bullets when you 
+pull the trigger. 
 •	If your barrel becomes empty, you need to reload before you can shoot again.
 •	Reloading is done by refilling the whole barrel of the gun (Keep in mind, that every barrel has capacity).
 •	The bullets you take for reloading are taken from the gun's total bullets stock. 
@@ -81,10 +81,10 @@ void action(Player mainPlayer, Collection<Player> civilPlayers)
 That's the most interesting method. 
 The main player starts shooting at all the civil players. When he starts shooting at a civil player, the following rules apply:
 •	He takes a gun from his guns.
-•	Every time he shoots, he takes life points from the civil player, which are equal to the bullets that the current gun shoots 
-when the trigger is pulled.
-•	If the barrel of his gun becomes empty, he reloads from his bullets stock and continues shooting with the current gun, until 
-he uses all of its bullets.
+•	Every time he shoots, he takes life points from the civil player, which are equal to the bullets that the current gun 
+shoots when the trigger is pulled.
+•	If the barrel of his gun becomes empty, he reloads from his bullets stock and continues shooting with the current gun, 
+until he uses all of its bullets.
 •	If his gun runs out of total bullets, he takes the next gun he has and continues shooting.
 •	He shoots at the current civil player until he / she is alive. 
 •	If the civil player dies, he starts shooting at the next one.
@@ -92,10 +92,10 @@ he uses all of its bullets.
 The civil players (the ones that have stayed alive after the main player's attack) attack second. They start shooting at him 
 one after another and the following rules apply:
 •	A civil player takes one of his guns and starts shooting at the main player.
-•	Every time he shoots, he takes life points from the main player, which are equal to the bullets that the current gun shoots 
-when the trigger is pulled.
-•	If the barrel of his gun becomes empty, he reloads from his bullets stock and continues shooting with the current gun, until
-he uses all of its bullets.
+•	Every time he shoots, he takes life points from the main player, which are equal to the bullets that the current gun 
+shoots when the trigger is pulled.
+•	If the barrel of his gun becomes empty, he reloads from his bullets stock and continues shooting with the current gun,
+until he uses all of its bullets.
 •	If his current gun runs out of all its bullets, he takes the next gun he has and continues shooting.
 •	If a civil player runs out of guns, the next civil player begins shooting.
 •	If the main player dies, the whole action ends.
@@ -247,7 +247,7 @@ abstract class BaseGun implements Gun{
 
 package viceCity.models.guns;
 public class Pistol extends BaseGun{
-	protected Pistol(String name) {
+	public Pistol(String name) {
 		super(name, 10, 100);
 	}
 	@Override
@@ -270,7 +270,7 @@ public class Pistol extends BaseGun{
 
 package viceCity.models.guns;
 public class Rifle extends BaseGun{
-	protected Rifle(String name) {
+	public Rifle(String name) {
 		super(name, 50, 500);
 	}
 	@Override
@@ -304,7 +304,6 @@ package viceCity.repositories.interfaces;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import viceCity.models.guns.Gun;
 public class GunRepository implements Repository<Gun>{
 	Set<Gun> models;
