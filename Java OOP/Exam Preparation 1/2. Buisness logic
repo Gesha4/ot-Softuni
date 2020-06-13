@@ -1,0 +1,213 @@
+/*The Controller Class
+The business logic of the program should be concentrated around several commands. You are given interfaces, which you have 
+to implement in the correct classes.Note: The Controller class SHOULD NOT handle exceptions! The tests are designed to expect 
+exceptions, not messages!
+The first interface is Controller. You must create a ControllerImpl class, which implements the interface and implements all 
+of its methods. The constructor of ControllerImpl does not take any arguments. When a controller is initialized, the main player
+is created. The given methods should have the following logic:
+Commands
+There are several commands, which control the business logic of the application. They are stated below.
+AddPlayer Command
+Parameters
+•	name – String
+Functionality
+Creates a civil player with the given name.
+The method should return the following message:
+•	"Successfully added civil player: {player name}!"
+AddGun Command
+Parameters
+•	type - String
+•	name - String
+Functionality
+Creates a gun with the provided type and name.
+If the gun type is invalid, the method should return the following message:
+•	"Invalid gun type!"
+If the gun type is correct, keep the gun and return the following message:
+•	"Successfully added {gun name} of type: {gun type}"
+AddGunToPlayer Command
+Parameters
+•	name – String (player's name)
+Functionality
+Adds the first added gun to the player's gun repository.
+•	If there no guns in the queue, return the following message:
+"There are no guns in the queue!"
+•	If the name of the player is "Vercetti", you need to add the gun to the main player's repository and return the following
+message:
+"Successfully added {gun name} to the Main Player: Tommy Vercetti"
+•	If you receive a name which doesn't exist, you should return the following message:
+"Civil player with that name doesn't exists!"
+•	If everything is successful, you should add the gun to the player's repository and return the following message:
+"Successfully added {gun name} to the Civil Player: {player name}"
+Fight Command
+Functionality
+When the fight command is called, the action happens. You should start the action between the main player and all the civil
+players. When a civil player is killed, it should be removed from the repository.
+•	If the main player still has all of his points and no one is dead or harmed from the civil players, you should return the 
+following messages:
+"Everything is okay!"
+•	If any of the players has different life points, you should return the following message:
+"A fight happened:"
+"Tommy live points: {main player life points}!"
+"Tommy has killed: {dead civil players} players!"
+"Left Civil Players: {civil players count}!"*/
+
+package viceCity.core.interfaces;
+public interface Engine extends Runnable {
+}
+
+package viceCity.core;
+import viceCity.common.Command;
+import viceCity.core.interfaces.Controller;
+import viceCity.core.interfaces.Engine;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+public class EngineImpl implements Engine {
+    private Controller controller;
+    private BufferedReader reader;
+    public EngineImpl(Controller controller) {
+        this.controller = controller;
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
+    }
+    @Override
+    public void run() {
+        while (true) {
+            String result = null;
+            try {
+                result = processInput();
+                if (result.equals(Command.Exit.name())) {
+                    break;
+                }
+            } catch (NullPointerException | IllegalArgumentException | IOException e) {
+                result = e.getMessage();
+            }
+            System.out.println(result);
+        }
+    }
+    private String processInput() throws IOException {
+        String input = this.reader.readLine();
+        String[] tokens = input.split("\\s+");
+        Command command = Command.valueOf(tokens[0]);
+        String result = null;
+        String[] data = Arrays.stream(tokens).skip(1).toArray(String[]::new);
+        switch (command) {
+            case AddPlayer: result = this.controller.addPlayer(data[0]);
+                break;
+            case AddGun: result = this.controller.addGun(data[0], data[1]);
+                break;
+            case AddGunToPlayer: result = this.controller.addGunToPlayer(data[0]);
+                break;
+            case Fight: result = this.controller.fight();
+                break;
+            case Exit:
+                result = Command.Exit.name();
+                break;
+        }
+        return result;
+    }
+}
+
+package viceCity.core.interfaces;
+public interface Controller {
+    String addPlayer(String name);
+    String addGun(String type, String name);
+    String addGunToPlayer(String name);
+    String fight();
+}
+
+package viceCity.core;
+import java.lang.reflect.Constructor;
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+import viceCity.core.interfaces.Controller;
+import viceCity.models.guns.Gun;
+import viceCity.models.guns.Pistol;
+import viceCity.models.guns.Rifle;
+import viceCity.models.neighbourhood.GangNeighbourhood;
+import viceCity.models.players.CivilPlayer;
+import viceCity.models.players.MainPlayer;
+import viceCity.models.players.Player;
+public class ControllerImpl implements Controller{
+	private Player mainPlayer;
+	private Map<String, Player> civilPlayers;
+	private Queue<Gun> guns;
+	private GangNeighbourhood neighbourhood;
+	public ControllerImpl() {
+		this.mainPlayer = new MainPlayer();
+		this.civilPlayers = new HashMap<>();
+		this.guns = new ArrayDeque<>();
+		this.neighbourhood = new GangNeighbourhood();
+	}
+	@Override
+	public String addPlayer(String name) {
+		civilPlayers.put(name, new CivilPlayer(name));
+		return String.format("Successfully added civil player: %s!", name);
+	}
+	@Override
+	public String addGun(String type, String name) {
+		Gun gun = null;
+		switch(type) {
+		case "Pistol" : gun = new Pistol(name);
+						guns.offer(gun);break;
+		case "Rifle" : gun = new Rifle(name);
+						guns.offer(gun);break;
+		}
+		return String.format("Successfully added %s of type: %s", name, type);
+	}
+	@Override
+	public String addGunToPlayer(String name) {
+		if(guns.isEmpty()) {
+			return "There are no guns in the queue!";
+		} else if(name.equals("Vercetti")){
+			String gunName = guns.peek().getName();
+			this.mainPlayer.getGunRepository().add(guns.poll());
+			return String.format("Successfully added %s to the Main Player: Tommy Vercetti", gunName);
+		} else {
+			if(!civilPlayers.containsKey(name)) {
+				return "Civil player with that name doesn't exists!";
+			} else {
+				String gunName = guns.peek().getName();
+				civilPlayers.get(name).getGunRepository().add(guns.poll());
+				return String.format("Successfully added %s to the Civil Player: %s", gunName, name);
+			}
+		}
+	}
+	@Override
+	public String fight() {
+		int civilPlayersCount = this.civilPlayers.size();
+		this.neighbourhood.action(mainPlayer, this.civilPlayers.values());
+		boolean allCivilsAreOk = false;
+		for(Entry<String, Player> civil : this.civilPlayers.entrySet()) {
+			if(civil.getValue().getLifePoints() != 50) {
+				allCivilsAreOk = true;
+				break;
+			}
+		}
+		if(this.mainPlayer.getLifePoints() == 100 && allCivilsAreOk) {
+			return "Everything is okay!";
+		} else {
+			return String.format("A fight happened:%n"
+					+ "Tommy live points: %d!%n"
+					+ "Tommy has killed: %d players!%n"
+					+ "Left Civil Players: %d!", this.mainPlayer.getLifePoints(), 
+					civilPlayersCount - this.civilPlayers.size(), this.civilPlayers.size());
+		}
+	}
+}
+
+package viceCity;
+import viceCity.core.ControllerImpl;
+import viceCity.core.EngineImpl;
+import viceCity.core.interfaces.Controller;
+import viceCity.core.interfaces.Engine;
+public class Main {
+    public static void main(String[] args) {
+        Controller controller = new ControllerImpl();
+        Engine engine = new EngineImpl(controller);
+        engine.run();
+    }
+}
