@@ -1,0 +1,163 @@
+package aquarium;
+public class Fish {
+    private String name;
+    private boolean available;
+    public Fish(String name){
+        this.setName(name);
+        this.setAvailable(true);
+    }
+    public String getName() {
+        return name;
+    }
+    private void setName(String name) {
+        this.name = name;
+    }
+    public boolean isAvailable() {
+        return available;
+    }
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+
+package aquarium;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.stream.Collectors;
+public class Aquarium {
+    private String name;
+    private int capacity;
+    private Collection<Fish> fish;
+    public Aquarium(String name, int capacity){
+        this.setCapacity(capacity);
+        this.setName(name);
+        this.fish = new ArrayList<>();
+    }
+    public String getName() {
+        return name;
+    }
+    private void setName(String name) {
+        if (name == null || name.trim().isEmpty()){
+            throw new NullPointerException("Invalid aquarium name!");
+        }
+        this.name = name;
+    }
+    public int getCapacity() {
+        return capacity;
+    }
+    private void setCapacity(int capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Invalid aquarium capacity!");
+        }
+        this.capacity = capacity;
+    }
+    public int getCount() {
+        return this.fish.size();
+    }
+    public void add(Fish fish){
+        if (this.fish.size() == this.capacity){
+            throw new IllegalArgumentException("Aquarium is full!");
+        }
+        this.fish.add(fish);
+    }
+    public void remove(String name) {
+        Fish fishToRemove = this.fish.stream()
+                .filter(f -> name.equals(f.getName()))
+                .findAny()
+                .orElse(null);
+        if (fishToRemove == null){
+            throw new IllegalArgumentException(String.format("Fish with name %s doesn't exist", name));
+        }
+        this.fish.remove(fishToRemove);
+    }
+    public Fish sellFish(String name){
+        Fish requestedFish = this.fish.stream()
+                .filter(f -> name.equals(f.getName()))
+                .findAny()
+                .orElse(null);
+        if (requestedFish == null){
+            throw new IllegalArgumentException(String.format("Fish with name %s doesn't exist", name));
+        }
+        requestedFish.setAvailable(false);
+        return requestedFish;
+    }
+    public String report(){
+        String names = this.fish.stream().map(Fish::getName).collect(Collectors.joining(", "));
+        return String.format("Fish available at %s: %s", this.name, names);
+    }
+}
+
+package aquarium;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+public class AquariumTests {
+    private Fish fish;
+    private Aquarium aquarium;
+	@Before
+    public void setup() {
+		this.fish = new Fish("Loly");
+		this.aquarium = new Aquarium("Name", 5);
+	}
+	@Test (expected = NullPointerException.class)
+	public void testConstructorThrowWhenWrongNameIsApplied() {
+		Aquarium aquarium2 = new Aquarium("", 10);
+	}
+	@Test
+	public void testGetNameReturnCorrectName() {
+		Assert.assertEquals("Name", this.aquarium.getName());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testConstructorThrowsWhenInvalidCapacityIsApplied() {
+		Aquarium aquarium2 = new Aquarium("lqlq", -10);
+	}
+	@Test
+	public void testGetCapacityReturnRightCapacity() {
+		Assert.assertEquals(5, this.aquarium.getCapacity());
+	}
+	@Test
+	public void testGetCountReturnCorrectCountOfFishes() {
+		this.aquarium.add(fish);
+		this.aquarium.add(new Fish("Lqlq"));
+		Assert.assertEquals(2, this.aquarium.getCount());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testAddThrowsWhenAddingFishInFullAquarium() {
+		this.aquarium.add(fish);
+		this.aquarium.add(new Fish("Lqlq"));
+		this.aquarium.add(new Fish("Chochko"));
+		this.aquarium.add(new Fish("Goldie"));
+		this.aquarium.add(new Fish("Ugly"));
+		this.aquarium.add(new Fish("Tz"));
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testRemoveThrowsWhenNoSuchFishFound() {
+		this.aquarium.add(fish);
+		this.aquarium.remove("Lqlq");
+	}
+	@Test
+	public void testRemoveCorrectlyRemoveFish() {
+		this.aquarium.add(fish);
+		this.aquarium.add(new Fish("Chochko"));
+		this.aquarium.remove("Chochko");
+		Assert.assertEquals(1, this.aquarium.getCount());
+	}
+	@Test (expected = IllegalArgumentException.class)
+	public void testSellFishThrowsWhenNoSuchFishFound() {
+		this.aquarium.add(fish);
+		this.aquarium.sellFish("Chochko");
+	}
+	@Test
+	public void testSellFishCOrrectlySetFishStatus() {
+		this.aquarium.add(fish);
+		this.aquarium.sellFish("Loly");
+		Assert.assertFalse(this.fish.isAvailable());
+	}
+	@Test
+	public void testReportReturnsCorrectData() {
+		String expected = "Fish available at Name: Loly, Chochko";
+		this.aquarium.add(fish);
+		this.aquarium.add(new Fish("Chochko"));
+		Assert.assertEquals(expected, this.aquarium.report());
+	}
+}
