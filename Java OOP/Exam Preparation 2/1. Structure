@@ -1,0 +1,396 @@
+/*You are given interfaces, and you have to implement their functionality in the correct classes.
+There are 3 types of entities in the application: Aquarium, Fish, Decoration. 
+There should also be DecorationRepository.
+
+BaseDecoration
+BaseDecoration is a base class of any type of decoration and it should not be able to be instantiated.
+Data
+•	comfort - int 
+•	price - double
+o	The price of the decoration
+Constructor
+A Decoration should take the following values upon initialization: 
+(int comfort, double price)
+Child Classes
+There are two concrete types of Decoration:
+Ornament
+Has 1 comfort and its price is 5.
+Constructor should take no values upon initialization.
+Plant
+Has 5 comfort and its price is 10.
+Constructor should take no values upon initialization.
+BaseFish
+BaseFish is a base class of any type of fish and it should not be able to be instantiated.
+Data
+•	name - String 
+o	If the name is null or whitespace, throw an NullPointerException with message: 
+"Fish name cannot be null or empty."
+o	All names are unique
+•	species -  String
+o	If the species is null or whitespace, throw an NullPointerException with message: 
+"Fish species cannot be null or empty."
+•	size -  int
+o	The size of the Fish
+•	price - double
+o	The price of the Fish
+o	If the price is below or equal 0, throw an IllegalArgumentException with message:
+ "Fish price cannot be below or equal to 0."
+Behavior
+void eat()
+The eat() method increases the Fish's size. Keep in mind that some types of Fish can implement the method in a different way. 
+•	The method increases the fish’s size by 5.
+Constructor
+A Fish should take the following values upon initialization: 
+(String name, String species, double price)
+Child Classes
+There are several concrete types of Fish:
+FreshwaterFish
+Has 3 initial size.
+Can only live in FreshwaterAquarium!
+Constructor should take the following values upon initialization:
+(String name, String species, double price)
+
+Behavior
+void еat()
+•	The method increases the fish’s size by 3.
+SaltwaterFish	
+Has 5 initial size.
+Can only live in SaltwaterAquarium!
+Constructor should take the following values upon initialization:
+(String name, String species, double price)
+Behavior
+void eat()
+•	The method increases the fish’s size by 2.
+BaseAquarium
+BaseAquarium is a base class of any type of Aquarium and it should not be able to be instantiated.
+Data
+•	name - String 
+o	If the name is null or whitespace, throw an NullPointerException with message: 
+"Aquarium name cannot be null or empty."
+o	All names are unique
+•	capacity -  int
+o	The number of Fish аn Aquarium can have
+•	decorations - Collection<Decoration>
+•	fish - Collection<Fish>
+
+Behavior
+Constructor
+An Aquarium should take the following values upon initialization: 
+(String name, int capacity)
+int calculateComfort()
+Returns the sum of each decoration’s comfort in the Aquarium
+
+void addFish(Fish fish)
+Adds a Fish in the Aquarium if there is capacity for it 
+if there is not enough capacity to add the Fish in the Aquarium throw an IllegalStateException with the following message:
+•	"Not enough capacity."
+
+void removeFish(Fish fish)
+Removes a Fish from the Aquarium.
+void addDecoration(Decoration decoration)
+Adds a Decoration in the Aquarium.
+void feed()
+The feed() method feeds all fishes in the aquarium.
+String getInfo()
+Returns a String with information about the Aquarium in the format below. If the Aquarium doesn't have fish, print "none" instead.
+"{aquariumName} ({aquariumType}):
+Fish: {fishName1} {fishName2} {fishName3} (…) / none
+Decorations: {decorationsCount}
+Comfort: {aquariumComfort}"
+Child Classes
+There are 2 concrete types of Aquarium:
+FreshwaterAquarium
+Has 50 capacity
+Constructor should take the following values upon initialization:
+String name
+SaltwaterAquarium
+Has 25 capacity
+Constructor should take the following values upon initialization:
+String name
+DecorationRepository
+The decoration repository is a repository for the decorations that are in the AquaShop.
+Data
+•	decorations - Collection<Decoration> (unmodifiable)
+Behavior
+void add(Decoration decoration)
+•	Adds a decoration in the collection.
+boolean remove(Decoration decoration)
+•	Removes a decoration from the collection. Returns true if the deletion was sucessful, otherwise - false.
+Decoration findByType(String type)
+•	Returns the first decoration of the given type, if there is. Otherwise, returns null.*/
+
+package aquarium.models.decorations;
+public interface Decoration {
+    int getComfort();
+    double getPrice();
+}
+
+package aquarium.models.decorations;
+class BaseDecoration implements Decoration{
+	private int comfort;
+	private double price;
+	protected BaseDecoration(int comfort, double price) {
+		this.comfort = comfort;
+		this.price = price;
+	}
+	@Override
+	public int getComfort() {
+		return this.comfort;
+	}
+	@Override
+	public double getPrice() {
+		return this.price;
+	}
+}
+
+package aquarium.models.decorations;
+public class Ornament extends BaseDecoration{
+	protected Ornament() {
+		super(1, 5);
+	}
+}
+
+package aquarium.models.decorations;
+public class Plant extends BaseDecoration{
+	protected Plant() {
+		super(5, 10);
+	}
+}
+
+package aquarium.models.fish;
+public interface Fish {
+    void setName(String name);
+    void eat();
+    int getSize();
+    String getName();
+    double getPrice();
+}
+
+package aquarium.models.fish;
+class BaseFish implements Fish{
+	private String name;
+	private String species;
+	private int size;
+	private double price;
+	protected BaseFish(String name, String species, double price) {
+		this.setName(name);
+		this.setSpecies(species);
+		this.setPrice(price);
+	}
+	@Override
+	public void setName(String name) {
+		if(name.isBlank()) {
+			throw new NullPointerException("Fish name cannot be null or empty.");
+		} else {
+			this.name = name;
+		}
+	}
+	@Override
+	public void eat() {
+		this.size += 5;
+	}
+	@Override
+	public int getSize() {
+		return this.size;
+	}
+	@Override
+	public String getName() {
+		return this.name;
+	}
+	@Override
+	public double getPrice() {
+		return this.price;
+	}
+	private void setSpecies(String species) {
+		if(species.isBlank()) {
+			throw new NullPointerException("Fish species cannot be null or empty.");
+		} else {
+			this.species = species;
+		}
+	}
+	protected void setSize(int size) {
+		this.size = size;
+	}
+	private void setPrice(double price) {
+		if(price <= 0) {
+			throw new IllegalArgumentException("Fish price cannot be below or equal to 0.");
+		} else {
+			this.price = price;
+		}
+	}
+}
+
+package aquarium.models.fish;
+public class FreshwaterFish extends BaseFish{
+	protected FreshwaterFish(String name, String species, double price) {
+		super(name, species, price);
+		this.setSize(3);
+	}
+	@Override
+	public void eat() {
+		this.setSize(this.getSize() + 3);
+	}
+}
+
+package aquarium.models.fish;
+public class SaltwaterFish extends BaseFish{
+	protected SaltwaterFish(String name, String species, double price) {
+		super(name, species, price);
+		this.setSize(5);
+	}
+	@Override
+	public void eat() {
+		this.setSize(getSize() + 2);
+	}
+}
+
+package aquarium.repositories;
+import aquarium.models.decorations.Decoration;
+public interface Repository  {
+    void add(Decoration decoration);
+    boolean remove(Decoration decoration);
+    Decoration findByType(String type);
+}
+
+package aquarium.repositories;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import aquarium.models.decorations.Decoration;
+public class DecorationRepository implements Repository{
+	private List<Decoration> data;
+	public DecorationRepository() {
+		this.data = new ArrayList<>();
+	}
+	@Override
+	public void add(Decoration decoration) {
+		this.data.add(decoration);
+	}
+	@Override
+	public boolean remove(Decoration decoration) {
+		return this.data.remove(decoration);
+	}
+	@Override
+	public Decoration findByType(String type) {
+		Decoration decoration = null;
+		for(Decoration decor : this.data) {
+			if(decor.getClass().getSimpleName().equals(type)) {
+				decoration = decor;
+				break;
+			}
+		}
+		return decoration;
+	}
+	public Collection<Decoration> getData(){
+		return this.data;
+	}
+}
+
+package aquarium.models.aquariums;
+import aquarium.models.decorations.Decoration;
+import aquarium.models.fish.Fish;
+import java.util.Collection;
+public interface Aquarium {
+    int calculateComfort();
+    String getName();
+    void addFish(Fish fish);
+    void removeFish(Fish fish);
+    void addDecoration(Decoration decoration);
+    void feed();
+    String getInfo();
+    Collection<Fish> getFish();
+    Collection<Decoration> getDecorations();
+}
+
+package aquarium.models.aquariums;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import aquarium.models.decorations.Decoration;
+import aquarium.models.fish.Fish;
+import aquarium.repositories.DecorationRepository;
+class BaseAquarium implements Aquarium{
+	private String name;
+	private int capacity;
+	private DecorationRepository decorations;
+	private List<Fish> fish;
+	protected BaseAquarium(String name, int capacity) {
+		this.setName(name);
+		this.capacity = capacity;
+		this.decorations = new DecorationRepository();
+		this.fish = new ArrayList<>();
+	}
+	@Override
+	public int calculateComfort() {
+		int allComfort = 0;
+		for(Decoration decor : this.decorations.getData()) {
+			allComfort += decor.getComfort();
+		}
+		return allComfort;
+	}
+	@Override
+	public String getName() {
+		return this.name;
+	}
+	@Override
+	public void addFish(Fish fish) {
+		this.fish.add(fish);
+	}
+	@Override
+	public void removeFish(Fish fish) {
+		this.fish.remove(fish);
+	}
+	@Override
+	public void addDecoration(Decoration decoration) {
+		this.decorations.add(decoration);
+	}
+	@Override
+	public void feed() {
+		for(Fish fish : this.fish) {
+			fish.eat();
+		}
+	}
+	@Override
+	public String getInfo() {
+		StringBuilder fishInfo = new StringBuilder();
+		if(this.fish.isEmpty()) {
+			fishInfo.append("none");
+		} else {
+			for(Fish fish : this.fish) {
+				fishInfo.append(fish.getName() + " ");
+			}
+		}
+		return String.format("%s %s:%nFish: %s%nDecorations: %d%nComfort: ", this.name, 
+				this.getClass().getSimpleName(), fishInfo.toString(), this.decorations.getData().size(), 
+				this.calculateComfort());
+	}
+	@Override
+	public Collection<Fish> getFish() {
+		return this.fish;
+	}
+	@Override
+	public Collection<Decoration> getDecorations() {
+		return this.decorations.getData();
+	}
+	private void setName(String name) {
+		if(name.trim().isBlank()) {
+			throw new NullPointerException("Aquarium name cannot be null or empty.");
+		} else {
+			this.name = name;
+		}
+	}
+}
+
+package aquarium.models.aquariums;
+public class FreshwaterAquarium extends BaseAquarium{
+	protected FreshwaterAquarium(String name) {
+		super(name, 50);
+	}
+}
+
+package aquarium.models.aquariums;
+public class SaltwaterAquarium extends BaseAquarium{
+	protected SaltwaterAquarium(String name) {
+		super(name, 25);
+	}
+}
