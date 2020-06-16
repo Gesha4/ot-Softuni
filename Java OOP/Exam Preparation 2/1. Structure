@@ -318,7 +318,7 @@ class BaseAquarium implements Aquarium{
 		this.setName(name);
 		this.capacity = capacity;
 		this.decorations = new DecorationRepository();
-		this.fish = new ArrayList<>();
+		this.fish = new ArrayList<>(capacity);
 	}
 	@Override
 	public int calculateComfort() {
@@ -334,7 +334,11 @@ class BaseAquarium implements Aquarium{
 	}
 	@Override
 	public void addFish(Fish fish) {
-		this.fish.add(fish);
+		if(this.capacity == this.fish.size()) {
+			throw new IllegalStateException ("Not enough capacity.");
+		} else {
+			this.fish.add(fish);
+		}
 	}
 	@Override
 	public void removeFish(Fish fish) {
@@ -360,7 +364,7 @@ class BaseAquarium implements Aquarium{
 				fishInfo.append(fish.getName() + " ");
 			}
 		}
-		return String.format("%s %s:%nFish: %s%nDecorations: %d%nComfort: ", this.name, 
+		return String.format("%s (%s):%nFish: %s%nDecorations: %d%nComfort: %d", this.name, 
 				this.getClass().getSimpleName(), fishInfo.toString(), this.decorations.getData().size(), 
 				this.calculateComfort());
 	}
