@@ -1,0 +1,380 @@
+/*The Controller Class
+The business logic of the program should be concentrated around several commands. You are given interfaces, which you have to
+implement in the correct classes.
+Note: The ControllerImpl class SHOULD NOT handle exceptions! The tests are designed to expect exceptions, not messages!
+The first interface is Controller. You must create a ControllerImpl class, which implements the interface and implements all 
+its methods. The constructor of ControllerImpl does not take any arguments. The given methods should have the following logic:
+Data
+You need to keep track of some things, this is why you need some private fields in your controller class:
+•	decorations - DecorationRepository 
+•	aquariums - collection of Aquarium
+Commands
+There are several commands, which control the business logic of the application. They are stated below. The Aquarium name 
+passed to the methods will always be valid!
+AddAquarium Command
+Parameters
+•	aquariumType - String
+•	aquariumName - String
+Functionality
+Adds an Aquarium. Valid types are: "FreshwaterAquarium" and "SaltwaterAquarium".
+If the Aquarium type is invalid, you have to throw an IllegalArgumentException with the following message:
+•	"Invalid aquarium type."
+If the Aquarium is added successfully, the method should return the following String:
+•	"Successfully added {aquariumType}."
+AddDecoration Command
+Parameters
+•	type - String
+Functionality
+Creates a decoration of the given type and adds it to the DecorationRepository. Valid types are: "Ornament" and "Plant". If the
+decoration type is invalid, throw an IllegalArgumentException with message:
+•	"Invalid decoration type."
+The method should return the following string if the operation is successful:
+•	"Successfully added {decorationType}."
+
+InsertDecoration Command
+Parameters
+•	aquariumName - String
+•	decorationType - String
+Functionality
+Adds the desired Decoration to the Aquarium with the given name. You have to remove the Decoration from the DecorationRepository
+if the insert is successful.
+If there is no such decoration, you have to throw an IllegalArgumentException with the following message:
+•	"There isn't a decoration of type {decorationType}."
+If no exceptions are thrown return the String:
+•	"Successfully added {decorationType} to {aquariumName}."
+AddFish Command
+Parameters
+•	aquariumName - String
+•	fishType - String
+•	fishName - String
+•	fishSpecies - String
+•	price - double
+Functionality
+Adds the desired Fish to the Aquarium with the given name. Valid Fish types are: "FreshwaterFish", "SaltwaterFish". 
+If the Fish type is invalid, you have to throw an IllegalArgumentException with the following message:
+•	"Invalid fish type." - if the Fish type is invalid
+If no errors are thrown, return one of the following strings:
+•	"Not enough capacity." - if there is not enough capacity to add the Fish in the Aquarium
+•	"Water not suitable." - if the Fish cannot live in the Aquarium
+•	"Successfully added {fishType} to {aquariumName}." - if the Fish is added successfully in the Aquarium
+
+FeedFish Command
+Parameters
+•	aquariumName - String
+Functionality
+Feeds all Fish in the Aquarium with the given name.
+Returns a string with information about how many fish were successfully fed, in the following format:
+•	"Fish fed: {fedCount}"
+CalculateValue Command
+Parameters
+•	aquariumName - String
+Functionality
+Calculates the value of the Aquarium with the given name. It is calculated by the sum of all Fish’s and Decorations’ prices in 
+the Aquarium.
+Return a string in the following format:
+•	"The value of Aquarium {aquariumName} is {value}."
+o	The value should be formatted to the 2nd decimal place!
+Report Command
+Functionality
+Returns information about each aquarium. You can use the overridden .getInfo Aquarium method.
+"{aquariumName} ({aquariumType}):
+Fish: {fishName1} {fishName2} {fishName3} (…) / none
+Decorations: {decorationsCount}
+Comfort: {aquariumComfort}
+{aquariumName} ({aquariumType}):
+Fish: {fishName1} {fishName2} {fishName3} (…) / none
+Decorations: {decorationsCount}
+Comfort: {aquariumComfort}
+(…)"
+Note: Use \n or System.lineSeparator() for a new line.
+Exit Command
+Functionality
+Ends the program.
+Input / Output
+You are provided with one interface, which will help you with the correct execution process of your program. The interface is
+Engine and the class implementing this interface should read the input and when the program finishes, this class should print 
+the output.
+Input
+Below, you can see the format in which each command will be given in the input:
+•	AddAquarium {aquariumType} {aquariumName}
+•	AddDecoration {decorationType}
+•	InsertDecoration {aquariumName} {decorationType}
+•	AddFish {aquariumName} {fishType} {fishName} {fishSpecies} {price}
+•	FeedFish {aquariumName}
+•	CalculateValue {aquariumName}
+•	Report
+•	Exit
+Output
+Print the output from each command when issued. If an exception is thrown during any of the commands' execution, print the
+exception message.*/
+
+package aquarium.common;
+public enum Command {
+    AddAquarium,
+    AddDecoration,
+    InsertDecoration,
+    AddFish,
+    FeedFish,
+    CalculateValue,
+    Report,
+    Exit
+}
+
+package aquarium.common;
+public class ConstantMessages {
+    public static final String NOT_ENOUGH_CAPACITY = "Not enough capacity.";
+    public static final String WATER_NOT_SUITABLE = "Water not suitable.";
+    public static final String SUCCESSFULLY_ADDED_FISH_IN_AQUARIUM = "Successfully added %s to %s.";
+    public static final String SUCCESSFULLY_ADDED_DECORATION_IN_AQUARIUM = "Successfully added %s to %s.";
+    public static final String FISH_FED = "Fish fed: %d";
+    public static final String SUCCESSFULLY_ADDED_AQUARIUM_TYPE = "Successfully added %s.";
+    public static final String SUCCESSFULLY_ADDED_DECORATION_TYPE = "Successfully added %s.";
+    public static final String VALUE_AQUARIUM = "The value of Aquarium %s is %.2f.";
+}
+
+package aquarium.common;
+public class ExceptionMessages {
+    public static final String FISH_NAME_NULL_OR_EMPTY = "Fish name cannot be null or empty.";
+    public static final String SPECIES_NAME_NULL_OR_EMPTY = "Fish species cannot be null or empty.";
+    public static final String FISH_PRICE_BELOW_OR_EQUAL_ZERO = "Fish price cannot be below or equal to 0.";
+    public static final String AQUARIUM_NAME_NULL_OR_EMPTY = "Aquarium name cannot be null or empty.";
+    public static final String INVALID_AQUARIUM_TYPE = "Invalid aquarium type.";
+    public static final String INVALID_DECORATION_TYPE = "Invalid decoration type.";
+    public static final String INVALID_FISH_TYPE = "Invalid fish type.";
+    public static final String NO_DECORATION_FOUND = "There isn't a decoration of type %s.";
+}
+
+package aquarium.core;
+public interface Engine extends Runnable {
+}
+
+package aquarium.core;
+import aquarium.common.Command;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+public class EngineImpl implements Engine {
+    private Controller controller;
+    private BufferedReader reader;
+    public EngineImpl() {
+    	this.controller = new ControllerImpl();
+        this.reader = new BufferedReader(new InputStreamReader(System.in));
+    }
+    @Override
+    public void run() {
+        while (true) {
+            String result = null;
+            try {
+                result = processInput();
+                if (result.equals("Exit")) {
+                    break;
+                }
+            } catch (NullPointerException | IllegalArgumentException | IllegalStateException | IOException e) {
+                result = e.getMessage();
+            }
+            System.out.println(result);
+        }
+    }
+    private String processInput() throws IOException {
+        String input = this.reader.readLine();
+        String[] tokens = input.split("\\s+");
+        Command command = Command.valueOf(tokens[0]);
+        String result = null;
+        String[] data = Arrays.stream(tokens).skip(1).toArray(String[]::new);
+        switch (command) {
+            case AddAquarium:
+                result = addAquarium(data);
+                break;
+            case AddDecoration:
+                result = addDecoration(data);
+                break;
+            case InsertDecoration:
+                result = insertDecoration(data);
+                break;
+            case AddFish:
+                result = addFish(data);
+                break;
+            case FeedFish:
+                result = feedFish(data);
+                break;
+            case CalculateValue:
+                result = calculateValue(data);
+                break;
+            case Report:
+                result = report();
+                break;
+            case Exit:
+                result = Command.Exit.name();
+                break;
+        }
+        return result;
+    }
+    private String addAquarium(String[] data) {
+        return this.controller.addAquarium(data[0], data[1]);
+    }
+    private String addDecoration(String[] data) {
+        return this.controller.addDecoration(data[0]);
+    }
+    private String insertDecoration(String[] data) {
+        return this.controller.insertDecoration(data[0], data[1]);
+    }
+    private String addFish(String[] data) {
+        return this.controller.addFish(data[0], data[1], data[2], data[3], Double.parseDouble(data[4]));
+    }
+    private String feedFish(String[] data) {
+        return this.controller.feedFish(data[0]);
+    }
+    private String calculateValue(String[] data) {
+        return this.controller.calculateValue(data[0]);
+    }
+    private String report() {
+        return this.controller.report();
+    }
+}
+
+package aquarium.core;
+public interface Controller {
+    String addAquarium(String aquariumType, String aquariumName);
+    String addDecoration(String type);
+    String insertDecoration(String aquariumName, String decorationType);
+    String addFish(String aquariumName, String fishType, String fishName, String fishSpecies, double price);
+    String feedFish(String aquariumName);
+    String calculateValue(String aquariumName);
+    String report();
+}
+
+package aquarium.core;
+import java.util.ArrayList;
+import java.util.List;
+import aquarium.models.aquariums.Aquarium;
+import aquarium.models.aquariums.FreshwaterAquarium;
+import aquarium.models.aquariums.SaltwaterAquarium;
+import aquarium.models.decorations.Decoration;
+import aquarium.models.decorations.Ornament;
+import aquarium.models.decorations.Plant;
+import aquarium.models.fish.Fish;
+import aquarium.models.fish.FreshwaterFish;
+import aquarium.models.fish.SaltwaterFish;
+import aquarium.repositories.DecorationRepository;
+public class ControllerImpl implements Controller{
+	private DecorationRepository decorations;
+	private List<Aquarium> aquariums;
+	public ControllerImpl () {
+		this.decorations = new DecorationRepository();
+		this.aquariums = new ArrayList<>();
+	}
+	@Override
+	public String addAquarium(String aquariumType, String aquariumName) {
+		switch(aquariumType) {
+		case "FreshwaterAquarium" : this.aquariums.add(new FreshwaterAquarium(aquariumName));break;
+		case "SaltwaterAquarium" : this.aquariums.add(new SaltwaterAquarium(aquariumName));break;
+		default : throw new IllegalArgumentException ("Invalid aquarium type.");
+		}
+		return String.format("Successfully added %s.", aquariumType);
+	}
+	@Override
+	public String addDecoration(String type) {
+		switch(type) {
+		case "Ornament" : this.decorations.add(new Ornament());break;
+		case "Plant" : this.decorations.add(new Plant());break;
+		default : throw new IllegalArgumentException ("Invalid decoration type.");
+		}
+		return String.format("Successfully added %s.", type);
+	}
+	@Override
+	public String insertDecoration(String aquariumName, String decorationType) {
+		Decoration decor = null;
+		for(Decoration decoration : this.decorations.getData()) {
+			if(decoration.getClass().getSimpleName().equals(decorationType)) {
+				decor = decoration;
+				this.decorations.remove(decoration);
+				break;
+			}
+		}
+		if(decor == null) {
+			throw new IllegalArgumentException ("There isn't a decoration of type " + decorationType);
+		} else {
+			for(Aquarium aquarium : this.aquariums) {
+				if(aquarium.getName().equals(aquariumName)) {
+					aquarium.addDecoration(decor);
+				}
+			}
+		}
+		return String.format("Successfully added %s to %s.", decorationType, aquariumName);
+	}
+	@Override
+	public String addFish(String aquariumName, String fishType, String fishName, String fishSpecies, double price) {
+		Fish fish = null;
+		switch(fishType) {
+		case "FreshwaterFish" : fish = new FreshwaterFish(fishName, fishSpecies, price);break;
+		case "SaltwaterFish" : fish = new SaltwaterFish(fishName, fishSpecies, price);break;
+		default : throw new IllegalArgumentException ("Invalid fish type.");
+		}
+		Aquarium aquarium = null;
+		for(Aquarium aqua : this.aquariums) {
+			if(aqua.getName().equals(aquariumName)) {
+				aquarium = aqua;
+				break;
+			}
+		}
+		String waterType = fishType.substring(0, fishType.length() - 4);
+		if(!aquarium.getClass().getSimpleName().contains(waterType)) {
+			return "Water not suitable.";
+		}
+		try {
+			aquarium.addFish(fish);
+			return String.format("Successfully added %s to %s.", fishType, aquariumName);
+		} catch(IllegalStateException e) {
+			return e.getMessage();
+		}
+	}
+	@Override
+	public String feedFish(String aquariumName) {
+		Aquarium aqua = null;
+		for(Aquarium aquarium : this.aquariums) {
+			if(aquarium.getName().equals(aquariumName)) {
+				aqua = aquarium;
+				break;
+			}
+		}
+		aqua.feed();
+		return "Fish fed: " + aqua.getFish().size();
+	}
+	@Override
+	public String calculateValue(String aquariumName) {
+		Aquarium aqua = null;
+		for(Aquarium aquarium : this.aquariums) {
+			if(aquarium.getName().equals(aquariumName)) {
+				aqua = aquarium;
+				break;
+			}
+		}
+		double value = 0;
+		for(Fish fish : aqua.getFish()) {
+			value += fish.getPrice();
+		}
+		for(Decoration decor : aqua.getDecorations()) {
+			value += decor.getPrice();
+		}
+		return String.format("The value of Aquarium %s is %.2f.", aquariumName, value);
+	}
+	@Override
+	public String report() {
+		StringBuilder report = new StringBuilder();
+		for(Aquarium aquarium : this.aquariums) {
+			report.append(aquarium.getInfo()).append(System.lineSeparator());
+		}
+		return report.toString();
+	}
+}
+
+package aquarium;
+import aquarium.core.Engine;
+import aquarium.core.EngineImpl;
+public class Main {
+    public static void main(String[] args) {
+        Engine engine = new EngineImpl();
+        engine.run();
+    }
+}
