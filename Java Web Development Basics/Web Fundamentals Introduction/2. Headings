@@ -1,0 +1,19 @@
+/*Create a Web page like the screenshot:
+ File name: headings.html
+ Title: Headings
+ Large heading: Headings Exercise
+ Smaller headings: First through Fourth*/
+
+<!DOC TYPE HTML>
+<html>
+    <head>
+        <title>Headings</title>
+    </head>
+    <body>
+        <h1>Actual site Heading</h1>
+        <h2>Sub-heading</h2>
+        <h3>Inside sub-heading</h3>
+        <h4>Smaller heading</h4>
+        <h5>The smallest heading</h5>
+    </body>
+</html>
