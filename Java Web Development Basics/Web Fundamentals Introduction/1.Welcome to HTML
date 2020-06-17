@@ -1,0 +1,14 @@
+/*Create a Web page like at the screenshot:
+ File name: welcome.html
+ Title: Welcome
+ Paragraph of text: I am learning HTML and CSS!*/
+
+<!DOC TYPE HTML>
+<html>
+    <head>
+        <title>Welcome</title>
+    </head>
+    <body>
+        <h1>I am learning HTML and CSS!</h1>
+    </body>
+</html>
