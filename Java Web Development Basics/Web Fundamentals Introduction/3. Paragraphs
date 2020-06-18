@@ -1,0 +1,21 @@
+/*Create a Web page like the screenshot:
+
+ File name: paragraphs.html
+ Title: Paragraphs
+ Large heading: Paragraphs
+ Emphasized text: First, Second and Third
+ Empty line: Between second and third paragraph*/
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Paragraphs</title>
+        </head>
+        <body>
+            <h1>Paragraphs</h1>
+            <p><em>First paragraph</em></p>
+            <p><em>Second paragraph</em></p>
+            </br>
+            <p><em>Third paragraph</em></p>
+        </body>
+    </html>
