@@ -1,0 +1,23 @@
+/*Create a Web page like the screenshot:
+
+ File name: todo.html
+ Title: TODO List
+ Large heading: My TODO List
+ Unordered list: <ul>…</ul>
+ Three list elements: <li>…</li>*/
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>TODO List</title>
+        </head>
+        <body>
+            <h1>My TODO List</h1>
+            <ul>
+                <li>Make coffee</li>
+                <li>Learn some coding</li>
+                <li>Go to the beach</li>
+                <li>See friends</li>
+            </ul>
+        </body>
+    </html>
