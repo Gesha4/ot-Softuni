@@ -1,0 +1,22 @@
+/*Create a Web page like the screenshot:
+Use the fruit images given in assets:
+ images\apple.png
+ images\banana.png
+ images\kiwi.png
+ images\orange.png*/
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Fruits</title>
+        </head>
+        <body>
+            <h1>Fruits</h1>
+            <p><img src= "images\banana.png"/><img src= "images\orange.png"/><img src= "images\kiwi.png"/>
+            <img src= "images\kiwi.png"/><img src= "images\apple.png"/></p>
+            <p><img src= "images\apple.png"/><img src= "images\apple.png"/><img src= "images\banana.png"/>
+            <img src= "images\kiwi.png"/><img src= "images\orange.png"/></p>
+            <p><img src= "images\orange.png"/><img src= "images\banana.png"/><img src= "images\orange.png"/>
+            <img src= "images\orange.png"/><img src= "images\apple.png"/></p>
+        </body>
+    </html>
