@@ -1,0 +1,18 @@
+/* Create a Web page like the screenshot:
+ File name: hello.html
+ Title: Hello HTML
+ Large heading: Hello HTML!
+ Paragraph of text: I am <your name (bold)>. I am from <your town as link to your town`s Web site>.
+ Paragraph of text: I study <specialty (italic)> at <link to SoftUni>.*/
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Hello HTML</title>
+        </head>
+        <body>
+            <h1>Hello HTML!</h1>
+            <p>I am <b>Georgi</b>. I am from <a href= "https://www.burgas.bg/">Burgas</a></p>
+            <p>I study <i>Java Web Development Basics</i> at <a href="https://softuni.bg">SoftUni</a></p>
+        </body>
+    </html>
