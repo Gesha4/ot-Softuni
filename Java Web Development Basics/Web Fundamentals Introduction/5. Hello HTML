@@ -14,5 +14,7 @@
             <h1>Hello HTML!</h1>
             <p>I am <b>Georgi</b>. I am from <a href= "https://www.burgas.bg/">Burgas</a></p>
             <p>I study <i>Java Web Development Basics</i> at <a href="https://softuni.bg">SoftUni</a></p>
+            </br>
+            <p>back to <a href= "home.html">Home</a></p>
         </body>
     </html>
