@@ -1,0 +1,56 @@
+/*Design a Web page like the screenshot:
+
+Hints
+ Create a HTML page named “receipt.html” titled “SoftUni Store”.
+ Use <table>, <tr>, <th>, <td> tags and the colspan attribute.
+ Use &copy; for the copyright sign.*/
+
+<!DOCTYPE HTML>
+    <html>
+        <head>
+            <title>SoftUni Store</title>
+            <style>table, th, td {
+                border: 1px solid black;
+            }
+            </style>
+        </head>
+        <body>
+            <h2>Receipt</h2>
+            <table>
+                <tr>
+                    <th>Name / Description</th>
+                    <th>Qty.</th>
+                    <th>Price</th>
+                    <th>Cost</th>
+                </tr>
+                <tr>
+                    <td>Paperclips</td>
+                    <td>1000</td>
+                    <td>0.01</td>
+                    <td>10.00</td>
+                </tr>
+                <tr>
+                    <td>Staples (box)</td>
+                    <td>100</td>
+                    <td>1.00</td>
+                    <td>100.00</td>
+                </tr>
+                <tr>
+                    <th colspan="3">Subtotal</th>
+                    <td>5110.00</td>
+                </tr>
+                <tr>
+                    <th colspan="2">Tax</th>>
+                    <td>8%</td>
+                    <td>58.80</td>
+                </tr>
+                <tr>
+                    <th colspan="3">Grand Total</th>
+                    <td>5118.80</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><i>&copy 2017 - SoftUni Store</i></td>
+                </tr>
+            </table>
+        </body>
+    </html>
