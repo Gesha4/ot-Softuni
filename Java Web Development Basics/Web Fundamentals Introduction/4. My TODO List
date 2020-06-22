@@ -19,5 +19,7 @@
                 <li>Go to the beach</li>
                 <li>See friends</li>
             </ul>
+            </br>
+            <p>back to <a href= "home.html">Home</a></p>
         </body>
     </html>
