@@ -1,0 +1,21 @@
+/*Create three web pages connected to each other by local links like the screenshot below:
+
+ File names: home.html, todo.html, hello.html
+ Titles: Home, TODO List, Hello
+ Large headings: Home, My TODO List, Hello HTML!
+ Unordered lists: home.html and todo.html
+ Hyperlinks: home.html - links to todo.html and hello.html
+ Home hyperlinks: todo.html and hello.html*/
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Home</title>
+    </head>
+    <body>
+        <h1>Home</h1>
+        <ul>
+            <li><a href= "hello.html">hello.html</a></li>
+            <li><a href= "todo.html">todo.html</a></li>
+        </ul>
+    </body>
+</html>
