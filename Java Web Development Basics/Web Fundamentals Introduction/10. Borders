@@ -1,0 +1,27 @@
+/*Create a Web page like the screenshot:
+
+Hints
+ Use three paragraphs <p>…</p> to hold the text
+ Use <p style="">…</p> to style the paragraphs
+ Use <span style="…">text</span> for the colored text*/
+
+<!DOCTYPE HTML>
+    <html>
+        <head>
+            <title>Borders</title>
+        </head>
+        <body>
+            <p style="border: 2px solid red;
+            text-align: center;
+            border-radius: 10px;
+            background: lightgrey;"><span style="color: red">Red</span> Border</p>
+            <p style="border: 2px solid green;
+            text-align: center;
+            border-radius: 10px;
+            background: lightgrey;"><span style="color: Green">Green</span> Border</p>
+            <p style="border: 2px solid blue;
+            text-align: center;
+            border-radius: 10px;
+            background: lightgrey;"><span style="color: blue">Blue</span> Border</p>
+        </body>
+    </html>
