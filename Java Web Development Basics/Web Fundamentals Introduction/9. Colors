@@ -6,20 +6,10 @@ Hints
 <!DOCTYPE HTML>
     <html>
         <head>
-            <title>Borders</title>
+            <title>Colors</title>
         </head>
         <body>
-            <p style="border: 2px solid red;
-            text-align: center;
-            border-radius: 10px;
-            background: lightgrey;"><span style="color: red">Red</span> Border</p>
-            <p style="border: 2px solid green;
-            text-align: center;
-            border-radius: 10px;
-            background: lightgrey;"><span style="color: Green">Green</span> Border</p>
-            <p style="border: 2px solid blue;
-            text-align: center;
-            border-radius: 10px;
-            background: lightgrey;"><span style="color: blue">Blue</span> Border</p>
+            <p>Once the <span style="color: blue;">blue plum</span> met the <span style="color: red;">red tomato</span>
+            playing with the <span style="color: green;">green cucumber.</span></p>
         </body>
     </html>
