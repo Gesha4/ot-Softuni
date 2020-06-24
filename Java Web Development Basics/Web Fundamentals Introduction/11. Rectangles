@@ -1,0 +1,29 @@
+/*Create a Web page like the screenshot:
+
+Hints
+ Use 3 nested &lt;div&gt; elements
+ Outside div: blue dotted border + border-radius + padding
+ Middle div: red dashed border + border-radius + padding
+ Inner div: green solid border + border-radius + padding + text-align + font-size
+ Use &lt; and &gt; to escape the < and > characters in the text…*/
+
+<!DOCTYPE HTML>
+    <html>
+        <head>
+            <title>Rectangles</title>
+        </head>
+        <body>
+            <p>
+                <div style="border: blue dotted;
+                        border-radius: 10px;">
+                    <div style="border: red dotted;
+                            border-radius: 10px;
+                            margin: 20px;
+                            padding: 20px;">
+                       <div style="border: solid green;
+                            text-align: center;">I am heavily packed &lt;DIV&gt;</div>
+                   </div>
+                </div>
+            </p>
+        </body>
+    </html>
