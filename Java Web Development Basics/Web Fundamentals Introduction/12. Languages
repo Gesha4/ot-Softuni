@@ -1,0 +1,38 @@
+/*Create a Web page like the screenshot:
+
+Hints
+ Create HTML file langs.html.
+o Put the text in paragraphs and <span>…</span> tags.
+ Create CSS file langs.css.
+ Link the CSS file in the HTML header:
+o <link rel="…" href="langs.css">
+ In the body CSS selector in the CSS class define:
+o background:#EEE; font-size:24pt;
+ Define and use a CSS class .lang for styling the languages:
+o Specify border:1px #AAA, border-radius, background:#CCC, padding*/
+
+<!DOCTYPE HTML>
+    <html>
+        <head>
+            <title>languages.html</title>
+            <link rel="stylesheet" type="text/css" href="langs.css">
+        </head>
+        <body>
+            <p>Programming languages like</p>
+            <p><span class="language">PHP</span>, <span class="language">JavaScript</span>,
+                <span class="language">C#</span> and</p>
+            <p><span class="language">Java</span> are general-purpose.</p>
+        </body>
+    </html>
+    
+    
+    #content{
+    background: #EEE;
+    font-size: 24pt;
+}
+.language{
+    border: 1px #AAA;
+    border-radius: 5px;
+    background: #CCC;
+    padding: 5px;
+}
