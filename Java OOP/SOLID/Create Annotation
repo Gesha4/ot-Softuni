@@ -1,0 +1,55 @@
+/*Create annotation Subject with a String[] element called categories, that: 
+•	Should be available at runtime
+•	Can be placed only on types
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface Subject {
+	String[] categories();
+}
+
+Coding Tracker
+Create annotation Author with a String element called name, that:
+•	Should be available at runtime
+•	Can be placed only on methods
+Create a class Tracker with a method:
+•	public static void printMethodsByAuthor() */
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+@Retention(RUNTIME)
+@Target(METHOD)
+public @interface Author {
+ String name();
+}
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+public class Tracker {
+	public static void printMethodsByAuthor(Class<?> c1) {
+		Map<String, List<String>> methodsByAuthor = new HashMap<>();
+		Method[] methods = c1.getDeclaredMethods();
+		for(Method method : methods) {
+			Author annotation = method.getAnnotation(Author.class);
+			if(annotation != null) {
+				methodsByAuthor.putIfAbsent(annotation.name(), new ArrayList<>());
+				methodsByAuthor.get(annotation.name()).add(method.getName() + "()");
+			}
+		}
+		for(Entry<String, List<String>> str : methodsByAuthor.entrySet()) {
+			for(String clazz : str.getValue()) {
+				System.out.println(str.getKey() + ": " + clazz);
+			}
+		}
+	}
+}
