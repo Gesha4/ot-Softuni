@@ -1,0 +1,21 @@
+/*Write a program that reads an integer number and calculates and prints its square root. If the number is invalid, print
+ "Invalid number". In all cases finally print "Good bye". Use try-catch-finally.*/
+
+import java.util.Scanner;
+public class zadachi {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		try {
+			int number = Integer.parseInt(scan.nextLine());
+			if(number < 0) {
+				throw new IllegalArgumentException();
+			} else {
+				System.out.println(Math.sqrt(number));
+			}
+		} catch(IllegalArgumentException e) {
+			System.out.println("Invalid Number");
+		} finally {
+			System.out.println("Good bye");
+		}
+	}
+}
