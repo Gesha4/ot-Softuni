@@ -1,0 +1,37 @@
+/*Create a Web page like the screenshot:
+
+Hints
+1. Create an HTML file contact-us-form.html, put appropriate title, put “Contact Us” heading.
+2. Create the HTML code to display the form and its fields.
+3. In the CSS file put some styling to make the for look like at the above screenshot. First define the form
+background styling.
+4. Style the labels before each form field. They stay in a <span>…</span> tags.
+5. Now style the <input>…</input> and <select>…</select> fields.
+6. Finally, style the “Submit” button.*/
+
+<!DOCTYPE HTML>
+    <html>
+        <head>
+            <title>Contact form</title>
+            <link rel="stylesheet" type="text/css" href="forms.css">
+        </head>
+        <body>
+            <h1>Contact Us</h1>
+            <form>
+                <span>First name:</span>
+                <input type="text" name="firstname"><br>
+                <span>Last name:</span>
+                <input type="text" name="lastname"><br>
+                <span>Email:</span>
+                <input type="text" name="email"><br>
+                <span>Town:</span>
+                <select name="town">
+                    <option value="1">Sofia</option>
+                    <option value="2">Plovdiv</option>
+                    <option value="3">Varna</option>
+                    <option value="4">Burgas</option>
+                </select>
+                <input type="submit" value="Submit">
+            </form>
+        </body>
+    </html>
