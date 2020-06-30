@@ -1,0 +1,153 @@
+/*Implement a simple java application which parses HTTP Requests and returns an appropriate response based on the Request.
+You will receive an input of several lines. The first input line will contain several URL paths, separated by spaces.
+Example: /path /register /login /products/create /admin/users/all
+You should store these paths, they are the valid URLs.
+The next several input lines will contain information about a simple HTTP Request.
+Example:
+POST /url HTTP/1.1
+Date: 17/01/2019
+Host: localhost:8000
+Content-Type: application/xml
+Authorization: Basic UGVzaG8=
+name=Yum&amp;quantity=50&amp;price=10
+You must implement a simple parser, which parses specific information, from the given request data, and returns a well-formatted 
+HTTP Response in text format.You must process the Request Line.
+ Check if the URL is present in the valid URLs. You may be given any header, but you must only process the Date, Host, 
+Content-Type headers.
+ Attach the headers to the HTTP Response’s headers
+ If any of the headers is missing you don’t need to do anything.
+ Skip the Authorization header for this. You must also process the Request Body.
+ Split the body parameters
+In the end you should return a Response which contains the processed data from the request in an aggregated format.
+HTTP/1.1 200 OK
+Date: 17/01/2019
+Host: localhost:8000
+Content-Type: application/xml
+Greetings Pesho! You have successfully created Yum with quantity – 50, price – 10.
+As you can see the Response’s Headers are the same as the Request’s Headers. The Response Body is the only new thing. It is created 
+in the following format. Greetings {username}! You have successfully created {firstRequestBodyParameterValue} with 
+{secondRequestBodyParameterName} – {secondRequestBodyParameterValue}, {thirdRequestBodyParameterName} – 
+{thirdRequestBodyParameterValue}. The username is extracted by decoding with Binary64Decoder the Authorization Header’s value 
+(after the Basic credential key).
+Example: Authorization: Basic UGVzaG8= -> Pesho
+Then you must format the Request’s body parameters and place them in the Response content.
+NOTE: If the URL is invalid (not present in valid URLs given on the first line), you should return an HTTP Response in
+the same format but this time with:
+ Status - 404 Not Found
+ Response Body – "The requested functionality was not found."
+NOTE: If the Authorization header is missing, you should return an HTTP Response in the same format, but with:
+ Status - 401 Unauthorized
+ Response Body – "You are not authorized to access the requested functionality."
+NOTE: If the Request’s Method is POST and there is NO body parameters, you should return an HTTP Response in
+the same format but with:
+ Status – 400 Unauthorized
+ Response Body – &quot;There was an error with the requested functionality due to malformed request.&quot;
+If the Request’s Method is GET just print "Greetings {username}!" as Response body.*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+public class zadachi {
+	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	public static void main(String[] args) throws IOException {
+		List<String> validUrls = getValidUrls();
+		List<String> request = getRequest();
+		String method = getMethod(request.get(0));
+		String url = getUrl(request.get(0));
+		Map<String, String> headers = getHeaders(request);
+		Map<String, String> bodyParameters = getBodyParams(request);
+		StringBuilder response = new StringBuilder();
+		if(!validUrls.contains(url)) {
+			response.append("HTTP/1.1 404 Not Found").append(System.lineSeparator());
+			getResponseHeaders(headers, response);
+			response.append(System.lineSeparator());
+			response.append("The requested functionality was not found.");
+		} else if(!headers.keySet().contains("Authorization")) {
+			response.append("HTTP/1.1 401 Unauthorized").append(System.lineSeparator());
+			getResponseHeaders(headers, response);
+			response.append(System.lineSeparator());
+			response.append("You are not authorized to access the requested functionality.");
+		} else if (method.equals("POST") && bodyParameters.size() == 0) {
+			response.append("HTTP/1.1 400 Bad Request").append(System.lineSeparator());
+			getResponseHeaders(headers, response);
+			response.append(System.lineSeparator());
+			response.append("There was an error with the requested functionality due to malformed request.");
+		} else {
+			response.append("HTTP/1.1 200 OK").append(System.lineSeparator());
+			getResponseHeaders(headers, response);
+			response.append(System.lineSeparator());
+			String first = "";
+			String second = "";
+			String third = "";
+			int count = 0;
+			for(Map.Entry<String, String> kvp : bodyParameters.entrySet()) {
+				switch(count) {
+				case 0: first = kvp.getValue();break;
+				case 1: second = kvp.getKey() + " - " + kvp.getValue();break;
+				case 2: third = kvp.getKey() + " - " + kvp.getValue();break;
+				}
+				count++;
+			}
+			String responseBody = String.format("Greetings %s! You have successfully created %s with %s, %s.", 
+					new String(Base64.getDecoder().decode(headers.get("Authorization").split("\\s+")[1])),
+					first, second, third);
+			response.append(responseBody);
+		}
+		System.out.println(response.toString());
+	}
+	private static List<String> getValidUrls() throws IOException{
+		return Arrays.asList(reader.readLine().split("\\s+"));
+	}
+	private static List<String> getRequest() throws IOException{
+		List<String> request = new ArrayList<>();
+		String line = null;
+		while((line = reader.readLine()) != null && !line.isEmpty()) {
+			request.add(line);
+		}
+		request.add(System.lineSeparator());
+		if((line = reader.readLine()) != null && !line.isEmpty()) {
+			request.add(line);
+		}
+		return request;
+	}
+	private static String getMethod(String line) {
+		return line.split("\\s+")[0];
+	}
+	private static String getUrl(String line) {
+		return line.split("\\s+")[1];
+	}
+	private static Map<String, String> getHeaders(List<String> request){
+		Map<String, String> headers = new LinkedHashMap<>();
+		request.stream()
+				.skip(1)
+				.filter(h -> h.contains(": "))
+				.map(h -> h.split(": "))
+				.forEach(headerKvp -> {
+					headers.put(headerKvp[0], headerKvp[1]);
+				});
+		return headers;
+	}
+	private static Map<String, String> getBodyParams(List<String> request) {
+		Map<String, String> bodyParameters = new LinkedHashMap<>();
+		if(request.get(request.size()- 1).equals("") || request.get(request.size()- 1).equals("\r\n")) {
+			return bodyParameters;
+		}
+		Arrays.stream(request.get(request.size() - 1).split("&")).map(bp -> bp.split("=")).forEach(bpKvp -> {
+			bodyParameters.put(bpKvp[0], bpKvp[1]);
+		});;
+		return bodyParameters;
+	}
+	private static void getResponseHeaders(Map<String, String> headers, StringBuilder response) {
+		for(Map.Entry<String, String> kvp : headers.entrySet()) {
+			if(kvp.getKey().equals("Date") || kvp.getKey().equals("Host") || kvp.getKey().equals("Content-Type")) {
+				response.append(kvp.getKey()).append(": ").append(kvp.getValue()).append(System.lineSeparator());
+			}
+		}
+	}
+}
