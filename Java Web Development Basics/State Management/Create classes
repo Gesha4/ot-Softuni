@@ -1,0 +1,60 @@
+/*Create class – HttpCookie.
+The HttpCookie has the following properties:
+•	key
+•	value
+These properties are both Strings and are passed through the constructor.*/
+
+package cookie;
+public interface cookie {
+	String getKey();
+	String getValue();
+}
+
+package cookie;
+public class HttpCookie implements cookie{
+	private String key;
+	private String value;
+	public HttpCookie(String key, String value) {
+		this.key = key;
+		this.value = value;
+	}
+	@Override
+	public String getKey() {
+		return this.key;
+	}
+	@Override
+	public String getValue() {
+		return this.value;
+	}
+}
+
+package cookie;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		List<HttpCookie> allCookies = new ArrayList<>();
+		String line = null;
+		while((line = reader.readLine()) != null) {
+			if(line.contains("Cookie")) {
+				break;
+			}
+		}
+		String[] cookies = line.split("; ");
+		allCookies.add(new HttpCookie(cookies[0].substring(cookies[0].indexOf(" ") + 1, cookies[0].indexOf("=")),
+				cookies[0].substring(cookies[0].indexOf("=") + 1)));
+		if(cookies.length > 1) {
+			for(int i = 1; i < cookies.length; i++) {
+				String[] params = cookies[i].split("=");
+				allCookies.add(new HttpCookie(params[0], params[1]));
+			}
+		}
+		for(HttpCookie cookie : allCookies) {
+			System.out.println(cookie.getKey() + " <-> " + cookie.getValue());
+		}
+	}
+}
