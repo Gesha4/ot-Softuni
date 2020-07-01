@@ -1,0 +1,31 @@
+/*You have been tasked to extract the Cookies from the Cookie Header of a simple HTTP Request. The Request will be given to you as a
+text. Its contents are insignificant to the exercise itself, but it is important to know that the Request might have any header and 
+might or might not have a body. Extract the Cookies from the given Request Data and print their values in format: {cookieKey} <->
+{cookieValue}.*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+public class zadachi {
+	public static void main(String[] args) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		String line = null;
+		while((line = reader.readLine()) != null) {
+			if(line.contains("Cookie")) {
+				break;
+			}
+		}
+		String[] cookies = line.split("; ");
+		StringBuilder message = new StringBuilder();
+		message.append(cookies[0].substring(cookies[0].indexOf(" ") + 1, cookies[0].indexOf("=")));
+		message.append(" <-> ").append(cookies[0].substring(cookies[0].indexOf("=") + 1));
+		if(cookies.length > 1) {
+			for(int i = 1; i < cookies.length; i++) {
+				message.append(System.lineSeparator());
+				String[] params = cookies[i].split("=");
+				message.append(params[0]).append(" <-> ").append(params[1]);
+			}
+		}
+		System.out.println(message.toString());
+	}
+}
