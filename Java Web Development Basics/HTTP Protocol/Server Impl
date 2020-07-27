@@ -1,0 +1,483 @@
+package javache.http;
+public enum HttpStatus {
+	Ok("200 OK"),
+    Created("201 Created"),
+    NoContent("204 No Content"),
+    SeeOther("303 See Other"),
+    BadRequest("400 Bad Request"),
+    Unauthorized("401 Unauthorized"),
+    Forbidden("403 Forbidden"),
+    NotFound("404 Not Found"),
+    InternalServerError("500 Internal Server Error");
+
+    private String statusPhrase;
+
+    HttpStatus(String statusPhrase) {
+        this.setStatusPhrase(statusPhrase);
+    }
+
+    public int getStatusCode() { return Integer.parseInt(this.statusPhrase.split(" ")[0]);}
+
+    public String getStatusPhrase() {
+        return this.statusPhrase;
+    }
+
+    private void setStatusPhrase(String statusPhrase) {
+        this.statusPhrase = statusPhrase;
+    }
+}
+
+
+package javache.http;
+import java.util.HashMap;
+public interface HttpRequest {
+	HashMap<String, String> getHeaders();
+	HashMap<String, String> getBodyParameters();
+	String getMethod();
+	void setMethod(String method);
+	String getRequestUrl();
+	void setRequestUrl(String requestUrl);
+	void addHeader(String header, String value);
+	void addBodyParameters(String parameter, String value);
+	boolean isResource();
+}
+
+
+package javache.http;
+import java.util.HashMap;
+public class HttpRequestImpl implements HttpRequest{
+	private HashMap<String, String> headers;
+	private HashMap<String, String> bodyParameters;
+	private String method;
+	private String requestUrl;
+	
+	public HttpRequestImpl(String request){
+		this.headers = new HashMap<String, String>();
+		this.bodyParameters = new HashMap<String, String>();
+		this.spliting(request);
+	}
+	
+	@Override
+	public HashMap<String, String> getHeaders() {
+		return this.headers;
+	}
+
+	@Override
+	public HashMap<String, String> getBodyParameters() {
+		return this.bodyParameters;
+	}
+
+	@Override
+	public String getMethod() {
+		return this.method;
+	}
+
+	@Override
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	@Override
+	public String getRequestUrl() {
+		return this.requestUrl;
+	}
+
+	@Override
+	public void setRequestUrl(String requestUrl) {
+		this.requestUrl = requestUrl;
+	}
+
+	@Override
+	public void addHeader(String header, String value) {
+		this.headers.put(header, value);
+	}
+
+	@Override
+	public void addBodyParameters(String parameter, String value) {
+		this.bodyParameters.put(parameter, value);
+	}
+
+	@Override
+	public boolean isResource() {
+		if(this.requestUrl.substring(1).contains("/") || this.requestUrl.contains(".")) {
+			return false;
+		}
+		return true;
+	}
+
+	private void spliting(String request) {
+		String[] rows = request.split(System.lineSeparator());
+		this.methodAndUrl(rows[0]);
+		for(int i = 1; i < rows.length; i++) {
+			this.splitingHeader(rows[i]);
+		}
+		this.splitingBodyParameters(rows[rows.length - 1]);
+	}
+
+	private void splitingBodyParameters(String str) {
+		String[] allParameters = str.split("&");
+		for(String param : allParameters) {
+			String[] data = param.split("=");
+			this.bodyParameters.put(data[0], data[1]);
+		}
+	}
+
+	private void splitingHeader(String str) {
+		String key = str.substring(0, str.indexOf(":"));
+		String value = str.substring(str.indexOf(":") + 1);
+		this.headers.put(key, value);
+	}
+
+	private void methodAndUrl(String str) {
+		String[] line = str.split("\\s+");
+		this.method = line[0];
+		this.requestUrl = line[1];
+	}
+}
+
+
+package javache.http;
+import java.util.HashMap;
+public interface HttpResponse {
+	HashMap<String, String> getHeaders();
+	int getStatusCode();
+	byte[] getContent();
+	byte[] getBytes();
+	void setStatusCode(int statusCode);
+	void setContent(byte[] content);
+	void addHeader(String header, String value);
+}
+
+
+package javache.http;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import javache.io.WebConstants;
+import javache.http.HttpStatus;
+public class HttpResponseImpl implements HttpResponse{
+	enum ResponseLines {
+        Ok (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.Ok.getStatusPhrase()),
+        Created (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.Created.getStatusPhrase()),
+        NoContent (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.NoContent.getStatusPhrase()),
+        SeeOther (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.SeeOther.getStatusPhrase()),
+        BadRequest (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.BadRequest.getStatusPhrase()),
+        Unauthorized (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.Unauthorized.getStatusPhrase()),
+        Forbidden (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.Forbidden.getStatusPhrase()),
+        NotFound (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.NotFound.getStatusPhrase()),
+        InternalServerError (WebConstants.SERVER_HTTP_VERSION + " " + HttpStatus.InternalServerError.getStatusPhrase());
+
+        private String value;
+
+        ResponseLines(String responseLine) {
+            this.value = responseLine;
+        }
+
+        static String getResponseLine(int statusCode) {
+            return ((ResponseLines) Arrays.stream(values()).filter((x) -> x.value.contains("" + statusCode)).toArray()[0]).value;
+        }
+    }
+	private HttpStatus statusCode;
+    private HashMap<String, String> headers;
+    private byte[] content;
+
+    public HttpResponseImpl() {
+        this.setContent(new byte[0]);
+        this.headers = new HashMap<>();
+    }
+    
+	@Override
+	public HashMap<String, String> getHeaders() {
+		return this.headers;
+	}
+
+	@Override
+	public int getStatusCode() {
+		return this.statusCode.getStatusCode();
+	}
+
+	@Override
+	public byte[] getContent() {
+		return this.content;
+	}
+
+	@Override
+	public byte[] getBytes() {
+		byte[] headersBytes = this.getHeadersBytes();
+        byte[] bodyBytes = this.getContent();
+        byte[] fullResponse = new byte[headersBytes.length + bodyBytes.length];
+        System.arraycopy(headersBytes, 0, fullResponse, 0, headersBytes.length);
+        System.arraycopy(bodyBytes, 0, fullResponse, headersBytes.length, bodyBytes.length);
+        return fullResponse;
+	}
+
+	private byte[] getHeadersBytes() {
+		StringBuilder result = new StringBuilder()
+                .append(ResponseLines.getResponseLine(this.getStatusCode())).append(System.lineSeparator());
+        for (Map.Entry<String,String> header : this.getHeaders().entrySet()) {
+            result.append(header.getKey()).append(": ").append(header.getValue()).append(System.lineSeparator());
+        }
+        result.append(System.lineSeparator());
+        return result.toString().getBytes();
+	}
+
+	@Override
+	public void setStatusCode(int statusCode) {
+		this.statusCode = HttpStatus.values()[statusCode];
+	}
+
+	@Override
+	public void setContent(byte[] content) {
+		this.content = content;
+	}
+
+	@Override
+	public void addHeader(String header, String value) {
+		this.headers.putIfAbsent(header, value);
+	}
+}
+
+
+package javache.io;
+import java.io.IOException;
+public class StartUp {
+    public static void main(String[] args) {
+        start(args);
+    }
+    private static void start(String[] args) {
+        int port = WebConstants.DEFAULT_SERVER_PORT;
+        if (args.length > 1) {
+            port = Integer.parseInt(args[1]);
+        }
+        Server server = new Server(port);
+        try {
+            server.run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+package javache.io;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.FutureTask;
+public class Server {
+	private static final Integer SOCKET_TIMEOUT_MILLISECONDS = 5000;
+	private int port;
+    private int timeouts;
+    private ServerSocket server;
+    public Server(int port) {
+        this.port = port;
+        this.timeouts = 0;
+    }
+    public void run() throws IOException {
+    	this.server = new ServerSocket(this.port);
+    	this.server.setSoTimeout(SOCKET_TIMEOUT_MILLISECONDS);
+    	while(true) {
+    		try(Socket clientSocket = this.server.accept()){
+    			clientSocket.setSoTimeout(SOCKET_TIMEOUT_MILLISECONDS);
+    			ConnectionHandler connectionHandler = new ConnectionHandler(new RequestHandler(), clientSocket);
+    			FutureTask<?> task = new FutureTask<>(connectionHandler, null);
+    			task.run();
+    		} catch(SocketTimeoutException e) {
+    			System.out.println("Timeout detected!");
+    			this.timeouts++;
+    		}
+    	}
+    }
+}
+
+
+package javache.io;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+public class ConnectionHandler extends Thread{
+	private RequestHandler requestHandler;
+	private Socket clientSocket;
+	private InputStream clientInputStream;
+	private OutputStream clientOutputStream;
+	ConnectionHandler(RequestHandler requestHandler, Socket clientSocket) throws IOException {
+		this.requestHandler = requestHandler;
+		this.initializeConnoection(clientSocket);
+	}
+	private void initializeConnoection(Socket clientSocket) throws IOException {
+		this.clientSocket = clientSocket;
+		this.clientInputStream = this.clientSocket.getInputStream();
+		this.clientOutputStream = this.clientSocket.getOutputStream();
+	}
+	@Override
+	public void run() {
+		String requestContent;
+		try {
+			requestContent = Reader.readAllLines(this.clientInputStream);
+			byte[] responseContent = this.requestHandler.handleRequest(requestContent);
+			Writer.writeBytes(responseContent, this.clientOutputStream);
+			this.clientInputStream.close();
+			this.clientOutputStream.close();
+			this.clientSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}
+
+
+package javache.io;
+import javache.http.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class RequestHandler {
+    private static final String HTML_EXTENSION_AND_SEPARATOR = ".html";
+    private HttpRequest httpRequest;
+    private HttpResponse httpResponse;
+    public RequestHandler() {   }
+
+    public byte[] handleRequest(String requestContent) {
+        this.httpRequest = new HttpRequestImpl(requestContent);
+        this.httpResponse = new HttpResponseImpl();
+        byte[] result = null;
+        return result;
+    }
+
+    private byte[] ok(byte[] content) {
+        this.httpResponse.setStatusCode(HttpStatus.Ok.ordinal());
+        this.httpResponse.setContent(content);
+        return this.httpResponse.getBytes();
+    }
+
+    private byte[] badRequest(byte[] content) {
+        this.httpResponse.setStatusCode(HttpStatus.BadRequest.ordinal());
+        this.httpResponse.setContent(content);
+        return this.httpResponse.getBytes();
+    }
+
+    private byte[] notFound(byte[] content) {
+        this.httpResponse.setStatusCode(HttpStatus.NotFound.ordinal());
+        this.httpResponse.setContent(content);
+        return this.httpResponse.getBytes();
+    }
+
+    private byte[] redirect(byte[] content, String location) {
+        this.httpResponse.setStatusCode(HttpStatus.SeeOther.ordinal());
+        this.httpResponse.addHeader("Location", location);
+        this.httpResponse.setContent(content);
+        return this.httpResponse.getBytes();
+    }
+
+    private byte[] internalServerError(byte[] content) {
+        this.httpResponse.setStatusCode(HttpStatus.InternalServerError.ordinal());
+        this.httpResponse.setContent(content);
+        return this.httpResponse.getBytes();
+    }
+
+    private String getMimeType(File file) {
+        String fileName = file.getName();
+        if(fileName.endsWith("css")) {
+            return "text/css";
+        } else if (fileName.endsWith("html")) {
+            return "text/html";
+        } else if (fileName.endsWith("jpg") || fileName.endsWith("jpeg")) {
+            return "image/jpeg";
+        } else if (fileName.endsWith("png")) {
+            return "image/png";
+        }
+        return "text/plain";
+    }
+
+    private byte[] processResourceRequest() {
+        String assetPath = WebConstants.ASSETS_FOLDER_PATH +
+                this.httpRequest.getRequestUrl();
+        File file = new File(assetPath);
+        if(!file.exists() || file.isDirectory()) {
+            return this.notFound(("Asset not found!").getBytes());
+        }
+        byte[] result = null;
+        try {
+            result = Files.readAllBytes(Paths.get(assetPath));
+        } catch (IOException e) {
+            return this.internalServerError(("Something went wrong!").getBytes());
+        }
+        this.httpResponse.addHeader("Content-Type", this.getMimeType(file));
+        this.httpResponse.addHeader("Content-Length", result.length + "");
+        this.httpResponse.addHeader("Content-Disposition", "inline");
+        return this.ok(result);
+    }
+
+    private byte[] processPageRequest(String page) {
+        String pagePath = WebConstants.PAGES_FOLDER_PATH +
+                page
+                + HTML_EXTENSION_AND_SEPARATOR;
+        File file = new File(pagePath);
+        if(!file.exists() || file.isDirectory()) {
+            return this.notFound(("Page not found!").getBytes());
+        }
+        byte[] result = null;
+        try {
+            result = Files.readAllBytes(Paths.get(pagePath));
+        } catch (IOException e) {
+            return this.internalServerError(("Something went wrong!").getBytes());
+        }
+        this.httpResponse.addHeader("Content-Type", this.getMimeType(file));
+        return this.ok(result);
+    }
+}
+
+
+package javache.io;
+public class WebConstants {
+	public static final Integer DEFAULT_SERVER_PORT = 8000;
+
+    public static final String SERVER_HTTP_VERSION = "HTTP/1.1";
+
+    public static final String RESOURCE_FOLDER_PATH =
+            System.getProperty("user.dir")
+            + "\\src\\resources\\";
+
+    public static final String ASSETS_FOLDER_PATH =
+            RESOURCE_FOLDER_PATH + "assets\\";
+
+    public static final String PAGES_FOLDER_PATH =
+            RESOURCE_FOLDER_PATH + "pages\\";
+
+    private WebConstants() { }
+}
+
+
+package javache.io;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+public final class Reader {
+	private Reader() {	}
+	public static String readAllLines(InputStream inputStream) throws IOException {
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream));
+		StringBuilder result = new StringBuilder();
+		while(buffer.ready()) {
+			result.append((char)buffer.read());
+		}
+		return result.toString();
+	}
+}
+
+
+package javache.io;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+public final class Writer {
+	private Writer() { }
+	public static void writeBytes(byte[] byteData, OutputStream outputStream) throws IOException {
+		DataOutputStream buffer = new DataOutputStream(outputStream);
+		buffer.write(byteData);
+	}
+}
