@@ -1,0 +1,37 @@
+/*Write a method printNumbers(int start, int end) that prints an integer numbers in a given range [start…end]. If an invalid number or a non-number text is entered, 
+the method should throw an exception. Using this method write a program that enters start and end: 1 < start < end < 100. If the user enters an invalid number, make the user
+enter all of them again.*/
+
+import java.util.Scanner;
+public class zadachi {
+	public static void main(String[] args) {
+		ensureNumbers();
+	}
+	
+	private static void ensureNumbers() {
+		try {
+			Scanner scan = new Scanner(System.in);
+			int start = Integer.parseInt(scan.nextLine());
+			int end = Integer.parseInt(scan.nextLine());
+			printNumbers(start, end);
+		} catch (IllegalArgumentException e) {
+			System.out.println("Invalid nimber/s! Try again:");
+			ensureNumbers();
+		} catch (IllegalStateException e) {
+			System.out.println("Start number can not be bigger or equal to end nummber! Try again:");
+			ensureNumbers();
+		} 
+	}
+
+	static void printNumbers(int start, int end) {
+		if(start < 0 || end < 0 || start > 100 || end > 100) {
+			throw new IllegalArgumentException();
+		}
+		if (start >= end) {
+			throw new IllegalStateException();
+		}
+		for(int i = start; i <= end; i++) {
+			System.out.print(i + " ");
+		}
+	}
+}
